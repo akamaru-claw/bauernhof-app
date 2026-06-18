@@ -757,6 +757,69 @@ const jungtierSvg = svgWrap(
   auge(51,67,2)+auge(59,67,2)
 );
 
+/* ===================== VERBESSERTE TIER-SVGS V2 ===================== */
+
+// Verbesserte Kuh mit Farbverläufen und mehr Details
+const kuhV2 = svgWrapEnhanced(
+  sh(70,104,46)+
+  bn(44,75,12,27,'#B8956A')+bn(96,75,12,27,'#B8956A')+bn(60,78,12,24,'#f3ecdb')+bn(82,78,12,24,'#f3ecdb')+
+  '<ellipse cx="72" cy="82" rx="13" ry="8" fill="#FFB6C1" stroke="'+O+'" stroke-width="1.8"/>'+
+  '<path d="M28 58 q-8 4 -5 16 q6 -3 7 -12Z" fill="#B8956A" stroke="'+O+'" stroke-width="2"/>'+
+  '<ellipse cx="70" cy="56" rx="45" ry="29" fill="url(#cowBody)" stroke="'+O+'" stroke-width="2.6"/>'+
+  '<ellipse cx="52" cy="48" rx="16" ry="12" fill="#6B4226"/>'+
+  '<ellipse cx="88" cy="66" rx="13" ry="10" fill="#6B4226"/>'+
+  '<ellipse cx="115" cy="54" rx="23" ry="22" fill="url(#cowHead)" stroke="'+O+'" stroke-width="2.6"/>'+
+  '<ellipse cx="108" cy="60" rx="11" ry="13" fill="#6B4226"/>'+
+  '<path d="M104 40 Q92 24 88 34 Q98 36 102 46Z" fill="#efe6cf" stroke="'+O+'" stroke-width="2"/>'+
+  '<path d="M126 40 Q138 24 142 34 Q132 36 128 46Z" fill="#efe6cf" stroke="'+O+'" stroke-width="2"/>'+
+  '<ellipse cx="124" cy="62" rx="13" ry="11" fill="#FFD1DC" stroke="'+O+'" stroke-width="2.2"/>'+
+  '<ellipse cx="120" cy="62" rx="1.9" ry="2.6" fill="#4a3322"/><ellipse cx="129" cy="62" rx="1.9" ry="2.6" fill="#4a3322"/>'+
+  auge(110,50,3.2)+
+  '<rect x="90" y="64" width="10" height="11" rx="2" fill="#FFD700" stroke="'+O+'" stroke-width="1.6"/><circle cx="95" cy="62" r="1.6" fill="#DAA520"/>',
+  {defs:'<linearGradient id="cowBody" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFF8E7"/><stop offset="100%" stop-color="#F3ECDB"/></linearGradient><linearGradient id="cowHead" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFFEF5"/><stop offset="100%" stop-color="#F3ECDB"/></linearGradient>'}
+);
+
+// Verbessertes Schwein (Sau) mit rosa Farbverlauf
+const sauV2 = svgWrapEnhanced(
+  sh(72,104,44)+bn(44,76,12,26,'#FF69B4')+bn(94,76,12,26,'#FF69B4')+bn(60,79,12,23,'#FFB6C1')+bn(80,79,12,23,'#FFB6C1')+
+  '<path d="M30 62 q-9 -2 -8 8 q7 0 9 -6Z" fill="#FF69B4" stroke="'+O+'" stroke-width="2"/>'+
+  '<ellipse cx="70" cy="60" rx="44" ry="27" fill="url(#pigBody)" stroke="'+O+'" stroke-width="2.4"/>'+
+  '<ellipse cx="112" cy="60" rx="23" ry="22" fill="url(#pigHead)" stroke="'+O+'" stroke-width="2.4"/>'+
+  '<path d="M100 44 q-6 -10 6 -8 q6 6 -1 12Z" fill="#FF69B4" stroke="'+O+'" stroke-width="2"/>'+
+  '<ellipse cx="131" cy="64" rx="12" ry="9" fill="#FF1493" stroke="'+O+'" stroke-width="2.2"/>'+
+  '<ellipse cx="127" cy="64" rx="1.7" ry="2.4" fill="#8B008B"/><ellipse cx="135" cy="64" rx="1.7" ry="2.4" fill="#8B008B"/>'+
+  auge(115,54,3),
+  {defs:'<linearGradient id="pigBody" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#FFC0CB"/><stop offset="100%" stop-color="#FFB6C1"/></linearGradient><linearGradient id="pigHead" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#FFD1DC"/><stop offset="100%" stop-color="#FFC0CB"/></linearGradient>'}
+);
+
+// Verbessertes Schaf mit flauschiger Wolle
+const aueV2 = svgWrapEnhanced(
+  sh(70,104,44)+bn(50,78,11,24,'#8B7355')+bn(90,78,11,24,'#8B7355')+bn(64,80,11,22,'#A0826D')+bn(80,80,11,22,'#A0826D')+
+  '<ellipse cx="72" cy="84" rx="11" ry="7" fill="#FFB6C1" stroke="'+O+'" stroke-width="1.6"/>'+
+  wolleV2(70,56,42,27)+'<ellipse cx="113" cy="58" rx="18" ry="16" fill="#F5DEB3" stroke="'+O+'" stroke-width="2.4"/>'+
+  '<path d="M99 49 Q90 44 95 56 Q102 56 101 51Z" fill="#8B7355" stroke="'+O+'" stroke-width="1.6"/>'+
+  '<path d="M108 45 q5 -9 11 -2 q-6 1 -7 7Z" fill="#FFF8DC" stroke="'+O+'" stroke-width="1.6"/>'+
+  '<ellipse cx="119" cy="65" rx="8" ry="5.5" fill="#8B7355" stroke="'+O+'" stroke-width="1.6"/>'+
+  auge(108,57,3.2)
+);
+
+// Verbesserte Wolle-Funktion mit Schattierungen
+function wolleV2(cx,cy,rx,ry){
+  let p='<g>';
+  const n=13;
+  for(let i=0;i<n;i++){
+    const a=Math.PI*2*i/n;
+    const x=cx+Math.cos(a)*rx*0.92;
+    const y=cy+Math.sin(a)*ry*0.92;
+    const r=ry*0.5;
+    const shade=i%2===0?'#FFF8DC':'#F5F5DC';
+    p+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r.toFixed(1)+'" fill="'+shade+'" stroke="'+O+'" stroke-width="1.5"/>';
+  }
+  p+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+(rx*0.7)+'" ry="'+(ry*0.7)+'" fill="#FFFACD"/>';
+  p+='</g>';
+  return p;
+}
+
 /* ===================== ALTE TIERE (Gekürzt für Platz) ===================== */
 const eber = svgWrap(sh(72,104,48)+bn(42,74,13,28,'#9c6f68')+bn(94,74,13,28,'#9c6f68')+bn(58,77,13,25,'#b08178')+bn(80,77,13,25,'#b08178')+'<path d="M30 60 q-9 -2 -8 8 q7 0 9 -6Z" fill="#9c6f68" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="70" cy="58" rx="46" ry="29" fill="#b88a80" stroke="'+O+'" stroke-width="2.4"/>'+'<path d="M34 36 q8 -7 16 0 q8 -7 16 0 q8 -7 16 0" fill="none" stroke="#6f4a44" stroke-width="3" stroke-linecap="round"/>'+'<ellipse cx="114" cy="56" rx="25" ry="23" fill="#b88a80" stroke="'+O+'" stroke-width="2.4"/>'+'<path d="M101 36 l-4 -14 l13 9Z" fill="#9c6f68" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="134" cy="62" rx="13" ry="10" fill="#9a6a63" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="130" cy="62" rx="1.8" ry="2.6" fill="#3a2018"/><ellipse cx="138" cy="62" rx="1.8" ry="2.6" fill="#3a2018"/>'+'<path d="M126 70 l-3 11 l7 -8Z" fill="#fffdf3" stroke="'+O+'" stroke-width="1.4"/>'+'<path d="M142 70 l3 11 l-7 -8Z" fill="#fffdf3" stroke="'+O+'" stroke-width="1.4"/>'+auge(116,50,3));
 const sau = svgWrap(sh(72,104,44)+bn(44,76,12,26,'#e890a0')+bn(94,76,12,26,'#e890a0')+bn(60,79,12,23,'#f3a8b2')+bn(80,79,12,23,'#f3a8b2')+'<path d="M30 62 q-9 -2 -8 8 q7 0 9 -6Z" fill="#e890a0" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="70" cy="60" rx="44" ry="27" fill="#f3a8b2" stroke="'+O+'" stroke-width="2.4"/>'+'<ellipse cx="112" cy="60" rx="23" ry="22" fill="#f3a8b2" stroke="'+O+'" stroke-width="2.4"/>'+'<path d="M100 44 q-6 -10 6 -8 q6 6 -1 12Z" fill="#e890a0" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="131" cy="64" rx="12" ry="9" fill="#e890a0" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="127" cy="64" rx="1.7" ry="2.4" fill="#7d3a48"/><ellipse cx="135" cy="64" rx="1.7" ry="2.4" fill="#7d3a48"/>'+auge(115,54,3));
