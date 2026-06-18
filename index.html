@@ -346,7 +346,7 @@
       <p>Finde die passenden Tier-Paare! Klicke auf die Karten, um sie umzudrehen.</p>
     </header>
     <div class="leiste">
-      <div class="fortschritt" id="memory-fortschritt">Paare: <b>0 / 6</b> · Züge: <b>0</b></div>
+      <div class="fortschritt" id="memory-fortschritt">Paare: <b>0 / 8</b> · Züge: <b>0</b></div>
       <button class="knopf wichtig" id="btn-memory-neu" type="button">🔄 Neues Spiel</button>
     </div>
     <div class="memory-grid" id="memory-grid"></div>
@@ -1069,7 +1069,9 @@ const MEMORY_TIERE = [
   { key: 'hund', name: 'Hund', svg: ruedeSvg },
   { key: 'katze', name: 'Katze', svg: katerSvg },
   { key: 'hahn', name: 'Hahn', svg: hahn },
-  { key: 'pferd', name: 'Pferd', svg: hengst }
+  { key: 'pferd', name: 'Pferd', svg: hengst },
+  { key: 'ente', name: 'Ente', svg: ente },
+  { key: 'schaf', name: 'Schaf', svg: aue }
 ];
 
 function starteMemory() {
@@ -1077,7 +1079,7 @@ function starteMemory() {
   memoryZuege = 0;
   memorySperre = false;
   memoryUmgedreht = [];
-  el('memory-fortschritt').innerHTML = 'Paare: <b>0 / 6</b> · Züge: <b>0</b>';
+  el('memory-fortschritt').innerHTML = 'Paare: <b>0 / 8</b> · Züge: <b>0</b>';
   
   // Erstelle Paare (je Tier 2x)
   const paare = [];
@@ -1136,12 +1138,12 @@ function memoryKlick(index) {
         memoryPaare++;
         memoryUmgedreht = [];
         memorySperre = false;
-        el('memory-fortschritt').innerHTML = `Paare: <b>${memoryPaare} / 6</b> · Züge: <b>${memoryZuege}</b>`;
+        el('memory-fortschritt').innerHTML = `Paare: <b>${memoryPaare} / 8</b> · Züge: <b>${memoryZuege}</b>`;
         
-        if (memoryPaare === 6) {
+        if (memoryPaare === 8) {
           setTimeout(() => {
             konfettiRegen();
-            el('memory-fortschritt').innerHTML = `<b style="color:#E8B84B">🏆 Alle Paare gefunden! ${memoryZuege} Züge</b>`;
+            el('memory-fortschritt').innerHTML = `<b style="color:#E8B84B">🏆 Alle 8 Paare gefunden! ${memoryZuege} Züge</b>`;
           }, 400);
         }
       }, 500);
