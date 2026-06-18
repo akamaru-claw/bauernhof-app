@@ -352,6 +352,16 @@
 
   @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important; transition-duration:.001ms !important}}
   @media (max-width:520px){ .staelle{grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:12px} .memory-karte .rueckseite::after { width:28px; height:28px; } }
+
+  /* === DESIGN-UPDATE V3 - Größere Lesbarkeit === */
+  .memory-karte .tier-name { font-family:var(--display); font-weight:800; font-size:clamp(24px, 5.5vw, 36px); text-align:center; padding:18px 12px; color:var(--tinte); background:var(--heu); position:absolute; bottom:0; left:0; right:0; letter-spacing:0.8px; text-shadow:0 2px 4px rgba(0,0,0,.2); }
+  .memory-info { text-align:center; margin-bottom:24px; font-family:var(--display); font-weight:800; color:#fff; font-size:clamp(26px, 6vw, 38px); text-shadow:0 3px 8px rgba(0,0,0,.6), 0 1px 3px rgba(0,0,0,.4); letter-spacing:0.8px; }
+  .quiz-karte-name { text-align:center; font-weight:800; font-family:var(--display); padding:18px 14px; color:var(--tinte); font-size:clamp(24px, 5vw, 32px); background:var(--heu); letter-spacing:0.8px; text-shadow:0 2px 4px rgba(0,0,0,.15); }
+  .artikel-btn { font-family:var(--display); font-weight:800; font-size:clamp(32px, 6vw, 56px); min-width:140px; padding:28px 48px; border:6px solid var(--holz-dunkel); border-radius:20px; cursor:pointer; transition:all .15s; box-shadow:0 10px 0 var(--holz-tief); background:var(--papier); color:var(--tinte); }
+  .slot{ width:100%; min-height:88px; border-radius:16px; border:4px dashed rgba(90,58,30,.55); background:rgba(90,58,30,.10); display:flex; align-items:center; justify-content:center; text-align:center; color:var(--holz-dunkel); font-weight:800; font-size:clamp(20px, 4vw, 28px); padding:16px; transition:background .15s, border-color .15s, transform .1s; cursor:pointer; }
+  .futter-slot { width:100%; min-height:88px; border-radius:16px; border:4px dashed rgba(90,58,30,.55); background:rgba(90,58,30,.10); display:flex; align-items:center; justify-content:center; text-align:center; color:var(--holz-dunkel); font-weight:800; font-size:clamp(18px, 3.5vw, 24px); padding:16px; transition:all .15s; cursor:pointer; }
+  .futter-schild { font-family:var(--display); font-weight:700; font-size:clamp(20px, 4vw, 26px); color:var(--tinte); background:linear-gradient(#E8B84B 0 100%); border:4px solid var(--holz-dunkel); border-radius:16px; padding:18px 26px; cursor:grab; user-select:none; touch-action:pan-y; position:relative; box-shadow:0 5px 0 var(--holz-tief), 0 8px 12px var(--schatten); transition:transform .12s ease; }
+  .futter-tier-name { font-family:var(--display); font-weight:800; color:var(--tinte); margin-bottom:14px; font-size:clamp(22px, 4vw, 28px); }
 </style>
 </head>
 <body>
@@ -2439,6 +2449,27 @@ tutorialModal.addEventListener('click', (e) => {
 // Beim Start prüfen
 zeigeTutorial();
 
+/* --- Neue Werkzeuge + Futter SVGs einbinden --- */
+if (typeof schaufelV3 !== 'undefined') {
+  // V3-Versionen verfügbar - erweitere das WERKZEUGE-Array
+  const WERKZEUGE_V3 = [
+    { key: 'schaufel', name: 'Schaufel', svg: schaufelV3 },
+    { key: 'besen', name: 'Besen', svg: besenV3 },
+    { key: 'giesskanne', name: 'Gießkanne', svg: giesskanneV3 },
+    { key: 'eimer', name: 'Eimer', svg: eimerV3 },
+    { key: 'gabel', name: 'Gabel', svg: gabelV3 },
+    { key: 'hammer', name: 'Hammer', svg: hammerV3 },
+    { key: 'schere', name: 'Schere', svg: schereV3 },
+    { key: 'mistgabel', name: 'Mistgabel', svg: mistgabelV3 },
+    { key: 'sack', name: 'Sack', svg: sackV3 },
+    { key: 'spaten', name: 'Spaten', svg: spatenV3 },
+    { key: 'rechen', name: 'Rechen', svg: rechenV3 }
+  ];
+  // Überschreibe WERKZEUGE
+  WERKZEUGE.length = 0;
+  WERKZEUGE_V3.forEach(w => WERKZEUGE.push(w));
+}
+
 /* --- Service Worker für PWA --- */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -2448,5 +2479,10 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-</body>
-</html>
+<script src="werkzeuge-futter-v3.js"></script>
+<script>
+// V3 SVGs initialisieren wenn verfügbar
+if (typeof schaufelV3 !== 'undefined') {
+  console.log('Werkzeuge V3 geladen');
+}
+</script>
