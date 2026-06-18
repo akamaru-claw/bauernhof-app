@@ -1,0 +1,9 @@
+.env
+.env.*
+*.key
+*.secret
+config.php
+.htpasswd
+.DS_Store
+Thumbs.db
+node_modules/

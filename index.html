@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Bauernhof-App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --weide-tief:#3E6B47; --weide:#6E9655; --gras:#8FB36B;
+    --scheune:#B5462E; --scheune-tief:#8F3220; --heu:#E8B84B;
+    --holz:#A8743F; --holz-tief:#774E27; --holz-dunkel:#5A3A1E;
+    --himmel:#AFCFE0; --himmel-tief:#88B4CE;
+    --papier:#F3E9D6; --tinte:#33281A;
+    --korrekt:#4E8A4A; --falsch:#C8523A; --schatten:rgba(40,28,12,.22);
+    --display:'Fredoka', ui-rounded, 'Segoe UI', system-ui, sans-serif;
+    --body:'Nunito', ui-rounded, 'Segoe UI', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--body); color:var(--tinte);
+    background:
+      radial-gradient(120% 90% at 50% -10%, var(--himmel) 0%, var(--himmel-tief) 38%, transparent 39%),
+      linear-gradient(var(--himmel-tief) 0 32%, var(--gras) 32% 100%);
+    min-height:100vh; overflow-x:hidden; -webkit-tap-highlight-color:transparent;
+  }
+  body::before{
+    content:""; position:fixed; left:8vw; top:5vh; width:78px; height:78px; border-radius:50%;
+    background:radial-gradient(circle at 38% 38%, #FFE7A0, var(--heu));
+    box-shadow:0 0 0 14px rgba(255,231,160,.35), 0 0 0 30px rgba(255,231,160,.18);
+    z-index:0; pointer-events:none;
+  }
+  .wrap{position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:18px 16px 90px}
+  
+  .tabs{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:24px}
+  .tab-btn{
+    font-family:var(--display); font-weight:700; font-size:16px; cursor:pointer;
+    border:3px solid var(--holz-dunkel); background:var(--holz); color:var(--papier);
+    padding:10px 22px; border-radius:12px; box-shadow:0 4px 0 var(--holz-tief);
+    transition:all .15s ease;
+  }
+  .tab-btn:hover{transform:translateY(-2px); box-shadow:0 6px 0 var(--holz-tief);}
+  .tab-btn.aktiv{
+    background:var(--heu); color:var(--tinte); border-color:var(--scheune-tief);
+    box-shadow:0 4px 0 var(--scheune-tief); transform:translateY(2px);
+  }
+  .view{display:none;}
+  .view.aktiv{display:block; animation:fadeIn .3s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)}}
+  
+  header.hof{
+    text-align:center; margin:6px auto 14px; max-width:760px;
+    background:linear-gradient(var(--holz) 0 100%); border:5px solid var(--holz-dunkel);
+    border-radius:18px; padding:18px 22px 20px; position:relative;
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.18), inset 0 -8px 0 rgba(0,0,0,.16),
+      0 10px 0 var(--holz-tief), 0 16px 26px var(--schatten);
+  }
+  header.hof::before,header.hof::after{
+    content:""; position:absolute; top:50%; width:13px; height:13px; border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, #cdb089, #6c4a26);
+    box-shadow:inset 0 0 0 2px rgba(0,0,0,.25); transform:translateY(-50%);
+  }
+  header.hof::before{left:12px} header.hof::after{right:12px}
+  header.hof h1{
+    font-family:var(--display); font-weight:700; color:var(--papier); margin:0;
+    font-size:clamp(26px,5.4vw,46px); letter-spacing:.5px;
+    text-shadow:0 2px 0 var(--holz-tief),0 3px 4px rgba(0,0,0,.3);
+  }
+  header.hof p{
+    margin:8px auto 0; max-width:560px; color:#fbf2dd; font-weight:700;
+    font-size:clamp(14px,2.3vw,16.5px); line-height:1.45; opacity:.96;
+  }
+  .auswahl{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:0 auto 16px; max-width:920px}
+  .auswahl button{
+    font-family:var(--display); font-weight:600; font-size:15px; cursor:pointer;
+    border:3px solid var(--holz-dunkel); background:var(--papier); color:var(--tinte);
+    padding:5px 13px; border-radius:999px; box-shadow:0 3px 0 var(--holz-tief);
+    transition:transform .12s ease, background .12s ease, box-shadow .12s ease;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .auswahl button .ico{width:30px; height:24px; display:block; border-radius:5px; overflow:hidden}
+  .auswahl button .ico svg{width:100%; height:100%; display:block}
+  .auswahl button:hover{transform:translateY(-1px)}
+  .auswahl button:active{transform:translateY(2px); box-shadow:0 1px 0 var(--holz-tief)}
+  .auswahl button.aktiv{background:var(--heu); border-color:var(--scheune-tief); box-shadow:0 3px 0 var(--scheune-tief)}
+  .auswahl button:focus-visible{outline:3px solid #2b5fb3; outline-offset:2px}
+  .leiste{display:flex; align-items:center; gap:12px; justify-content:center; flex-wrap:wrap; margin:0 auto 16px}
+  .fortschritt{
+    background:var(--papier); border:3px solid var(--holz-dunkel); border-radius:999px;
+    padding:6px 16px; font-weight:800; color:var(--holz-dunkel);
+    box-shadow:0 3px 0 var(--holz-tief); min-width:200px; text-align:center;
+  }
+  .fortschritt b{color:var(--scheune)}
+  .leiste .knopf{
+    font-family:var(--display); font-weight:600; cursor:pointer;
+    border:3px solid var(--holz-dunkel); background:var(--weide); color:#fff;
+    padding:8px 20px; border-radius:999px; box-shadow:0 4px 0 var(--weide-tief); transition:transform .12s ease;
+    font-size: 16px;
+  }
+  .leiste .knopf:hover{transform:translateY(-1px)}
+  .leiste .knopf:active{transform:translateY(2px); box-shadow:0 1px 0 var(--weide-tief)}
+  .leiste .knopf:focus-visible{outline:3px solid #2b5fb3; outline-offset:2px}
+  .leiste .knopf.wichtig { background:var(--scheune); border-color:var(--holz-dunkel); box-shadow:0 4px 0 var(--scheune-tief); }
+  .leiste .knopf.wichtig:active { box-shadow:0 1px 0 var(--scheune-tief); }
+
+  .staelle{display:grid; gap:16px; margin:0 auto 24px; grid-template-columns:repeat(auto-fill, minmax(186px,1fr))}
+  .stall{
+    background:repeating-linear-gradient(90deg, var(--holz) 0 26px, #b07c46 26px 28px);
+    border:5px solid var(--holz-dunkel); border-radius:16px 16px 12px 12px; padding:10px 10px 12px;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    box-shadow:inset 0 3px 0 rgba(255,255,255,.14), inset 0 -10px 0 rgba(0,0,0,.16), 0 8px 0 var(--holz-tief), 0 12px 20px var(--schatten);
+  }
+  .stall .buehne{
+    width:100%; overflow:hidden; padding:0; background:#cfe7f3;
+    border:3px solid var(--holz-dunkel); border-radius:10px; line-height:0;
+  }
+  .stall .buehne svg{width:100%; height:auto; display:block}
+  
+  .stall-label {
+    font-weight:800; font-size:14px; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.5);
+    margin: 2px 0 -4px; text-align:center;
+  }
+  
+  .slot{
+    width:100%; min-height:54px; border-radius:10px; border:3px dashed rgba(90,58,30,.55);
+    background:rgba(90,58,30,.10); display:flex; align-items:center; justify-content:center;
+    text-align:center; color:var(--holz-dunkel); font-weight:800; font-size:13px; padding:6px;
+    transition:background .15s, border-color .15s, transform .1s; cursor:pointer;
+  }
+  .slot .platzhalter{opacity:.7; pointer-events:none}
+  .slot.ziel{background:rgba(232,184,75,.55); border-color:var(--scheune); border-style:solid; transform:scale(1.03)}
+  .slot.gefuellt{border-style:solid; border-color:var(--holz); background:rgba(255,255,255,.15); cursor:pointer}
+  .slot.korrekt{border-color:var(--korrekt); background:rgba(78,138,74,.16); cursor:default}
+  .slot.falsch{animation:nope .5s; border-color:var(--falsch); background:rgba(200,82,58,.15);}
+  .slot:focus-visible{outline:3px solid #2b5fb3; outline-offset:2px}
+  @keyframes nope{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+  .geloest-info{margin-top:4px; font-weight:800; color:var(--korrekt); font-size:12px; text-align:center; display:flex; flex-direction:column; gap:1px; animation:fadeIn .3s ease;}
+  .vorrat-titel{text-align:center; font-family:var(--display); font-weight:600; color:#fff; font-size:18px; margin:6px 0 10px; text-shadow:0 1px 2px rgba(0,0,0,.25)}
+  .vorrat{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; min-height:64px; padding:14px; border-radius:16px; background:rgba(58,40,20,.22); border:3px dashed rgba(255,255,255,.4)}
+  
+  .schild{
+    --c:var(--papier);
+    font-family:var(--display); font-weight:600; font-size:clamp(15px,2.4vw,18px);
+    color:var(--tinte); background:linear-gradient(var(--c) 0 100%);
+    border:3px solid var(--holz-dunkel); border-radius:10px; padding:9px 16px;
+    cursor:grab; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
+    touch-action:pan-y;
+    -ms-touch-action:pan-y; white-space:nowrap; position:relative;
+    box-shadow:0 4px 0 var(--holz-tief), 0 6px 10px var(--schatten);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .schild::before,.schild::after{content:""; position:absolute; top:6px; width:6px; height:6px; border-radius:50%; background:radial-gradient(circle at 35% 35%, #d8c19a, #7c5a30)}
+  .schild::before{left:6px} .schild::after{right:6px}
+  @media (hover:hover){ .schild:hover{transform:rotate(-2deg) translateY(-2px)} }
+  .schild:focus-visible{outline:3px solid #2b5fb3; outline-offset:3px}
+  .schild.gewaehlt{--c:#FCEBA6; border-color:var(--scheune); transform:rotate(-2deg) translateY(-2px); box-shadow:0 0 0 4px rgba(232,184,75,.6), 0 4px 0 var(--scheune-tief)}
+  .schild.wird-gezogen{opacity:.30; touch-action:none;}
+  .schild.ghost{position:fixed; z-index:1200; pointer-events:none; transform:rotate(-4deg) scale(1.05); box-shadow:0 16px 28px rgba(0,0,0,.4), 0 4px 0 var(--holz-tief)}
+  .schild.platziert{cursor:default; box-shadow:none; border-color:var(--korrekt); --c:#EAF6E6}
+  .schild.platziert::before,.schild.platziert::after{background:radial-gradient(circle at 35% 35%, #bfe0b8, #4E8A4A)}
+  
+  .banner{position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(33,40,33,.55); z-index:2000; padding:20px}
+  .banner.an{display:flex}
+  .banner .karte{background:var(--papier); border:6px solid var(--scheune-tief); border-radius:20px; max-width:440px; width:100%; padding:26px 24px 22px; text-align:center; box-shadow:0 18px 40px rgba(0,0,0,.4)}
+  .banner h2{font-family:var(--display); font-weight:700; color:var(--scheune); margin:0 0 6px; font-size:30px}
+  .banner p{font-weight:700; line-height:1.5; margin:8px 0}
+  .banner .tipp{background:#fff; border:2px dashed var(--holz); border-radius:12px; padding:12px; margin:14px 0; font-size:14.5px; text-align:left}
+  .banner .tipp b{color:var(--scheune)}
+  .banner .der{color:#2b6fb3}.banner .die{color:#b34a86}.banner .das{color:#3a8a4a}
+  .banner button{font-family:var(--display); font-weight:600; font-size:18px; cursor:pointer; border:3px solid var(--holz-dunkel); background:var(--heu); color:var(--tinte); padding:10px 24px; border-radius:999px; box-shadow:0 4px 0 var(--holz-tief); margin-top:6px}
+  .banner button:active{transform:translateY(2px); box-shadow:0 2px 0 var(--holz-tief)}
+  .konfetti{position:fixed; top:-10px; width:11px; height:14px; z-index:1900; border-radius:2px; pointer-events:none}
+  footer{text-align:center; color:#fff; opacity:.85; font-weight:700; font-size:12.5px; margin-top:8px; text-shadow:0 1px 2px rgba(0,0,0,.3)}
+  
+  /* --- Quiz Styles --- */
+  .quiz-frage-container { text-align:center; margin-bottom:24px; }
+  .quiz-frage { font-size:clamp(22px, 4vw, 32px); font-family:var(--display); font-weight:700; color:#fff; text-shadow:0 2px 4px rgba(0,0,0,.4); background:rgba(0,0,0,.2); padding:12px 24px; border-radius:16px; display:inline-block; border:3px dashed rgba(255,255,255,.3); }
+  .quiz-optionen { display:flex; flex-wrap:wrap; gap:16px; justify-content:center; max-width:900px; margin:0 auto; }
+  .quiz-karte { width:130px; border:4px solid var(--holz-dunkel); border-radius:16px; background:var(--papier); cursor:pointer; transition:transform 0.15s, box-shadow 0.15s; overflow:hidden; box-shadow:0 6px 0 var(--holz-tief); }
+  .quiz-karte:hover { transform:translateY(-3px); }
+  .quiz-karte:active { transform:translateY(2px); box-shadow:0 2px 0 var(--holz-tief); }
+  .quiz-karte.richtig { border-color:var(--korrekt); background:#eaf6e6; box-shadow:0 0 0 6px rgba(78,138,74,.4); transform:scale(1.05); cursor:default; pointer-events:none; }
+  .quiz-karte.falsch { border-color:var(--falsch); background:#fce8e5; animation:nope .42s; }
+  .quiz-karte svg { width:100%; height:auto; display:block; border-bottom:3px solid var(--holz-dunkel); }
+  .quiz-karte-name { text-align:center; font-weight:800; font-family:var(--display); padding:8px 4px; color:var(--tinte); font-size:15px; background:var(--heu); }
+
+  /* --- Präpositionen Styles --- */
+  .praep-scene { max-width:600px; margin:0 auto 24px; background:linear-gradient(to bottom, #AFCFE0 0%, #AFCFE0 60%, #8FB36B 60%, #6E9655 100%); border:5px solid var(--holz-dunkel); border-radius:16px; box-shadow:0 10px 20px rgba(0,0,0,.2); position:relative; overflow:hidden; height:280px; }
+  .praep-obj { position:absolute; }
+  .praep-haus { width:140px; height:120px; background:var(--scheune); border:4px solid var(--holz-dunkel); border-bottom:0; left:50%; transform:translateX(-50%); bottom:40%; display:flex; justify-content:center; align-items:flex-end; }
+  .praep-haus::before { content:""; position:absolute; width:170px; height:0; border-bottom:60px solid var(--scheune-tief); border-left:85px solid transparent; border-right:85px solid transparent; top:-60px; left:-19px; }
+  .praep-haus-tuer { width:40px; height:60px; background:var(--holz); border:4px solid var(--holz-dunkel); border-bottom:0; border-radius:10px 10px 0 0; }
+  .praep-tier { width:100px; position:absolute; transition:all 0.5s ease; filter:drop-shadow(0 4px 4px rgba(0,0,0,.3)); }
+  .praep-tier svg { width:100%; height:auto; }
+  .luecke { display:inline-block; min-width:80px; border-bottom:4px solid #fff; color:var(--heu); padding:0 10px; }
+
+  /* --- Werkzeuge Styles --- */
+  .werkzeug-grid { display:grid; gap:16px; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); margin-bottom:24px; }
+  .werkzeug-karte { background:var(--papier); border:4px solid var(--holz-dunkel); border-radius:16px; padding:16px; display:flex; flex-direction:column; align-items:center; box-shadow:0 6px 0 var(--holz-tief); }
+  .werkzeug-bild { width:100%; max-width:120px; margin-bottom:12px; }
+  .werkzeug-bild svg { width:100%; height:auto; display:block; filter:drop-shadow(0 4px 2px rgba(0,0,0,.2)); }
+
+  @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important; transition-duration:.001ms !important}}
+  @media (max-width:520px){ .staelle{grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:12px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  
+  <nav class="tabs" aria-label="Hauptnavigation">
+    <button class="tab-btn aktiv" data-target="view-zuordnung" type="button">Namen zuordnen</button>
+    <button class="tab-btn" data-target="view-quiz" type="button">Tier-Quiz</button>
+    <button class="tab-btn" data-target="view-praepositionen" type="button">Präpositionen</button>
+    <button class="tab-btn" data-target="view-werkzeuge" type="button">Werkzeuge</button>
+  </nav>
+
+  <div id="view-zuordnung" class="view aktiv">
+    <header class="hof">
+      <h1>Bauernhof-Wörter</h1>
+      <p>Zieh die Holzschilder an den richtigen Stall. Klicke am Ende auf "Prüfen", um zu sehen, ob alles stimmt!</p>
+    </header>
+    <nav class="auswahl" id="auswahl" aria-label="Tierart auswählen"></nav>
+    <div class="leiste">
+      <div class="fortschritt" id="fortschritt" aria-live="polite">0 von 0 richtig</div>
+      <button class="knopf wichtig" id="btn-pruefen" type="button">✔️ Alles Prüfen</button>
+      <button class="knopf" id="mischen" type="button">Mischen</button>
+      <button class="knopf" id="nochmal" type="button">Neustart</button>
+    </div>
+    <main class="staelle" id="staelle"></main>
+    <h2 class="vorrat-titel">Schilder</h2>
+    <div class="vorrat" id="vorrat" aria-label="Schilder zum Zuordnen"></div>
+  </div>
+
+  <div id="view-quiz" class="view">
+    <div class="quiz-frage-container">
+      <div class="quiz-frage" id="quiz-frage-text">Lade Frage...</div>
+    </div>
+    <div class="quiz-optionen" id="quiz-optionen"></div>
+  </div>
+
+  <div id="view-praepositionen" class="view">
+    <header class="hof">
+      <h1>Wo ist das Tier?</h1>
+      <p>Finde das richtige Wort für den Ort.</p>
+    </header>
+    <div class="praep-scene">
+      <div class="praep-obj praep-haus">
+        <div class="praep-haus-tuer"></div>
+      </div>
+      <div class="praep-tier" id="praep-tier-pos"></div>
+    </div>
+    <div class="quiz-frage-container">
+      <div class="quiz-frage">Das Tier ist <span class="luecke" id="praep-luecke">___</span> dem Haus.</div>
+    </div>
+    <div class="auswahl" id="praep-optionen">
+       <button data-val="auf">auf</button>
+       <button data-val="vor">vor</button>
+       <button data-val="neben">neben</button>
+       <button data-val="hinter">hinter</button>
+    </div>
+  </div>
+
+  <div id="view-werkzeuge" class="view">
+    <header class="hof">
+      <h1>Werkzeuge am Hof</h1>
+      <p>Welches Werkzeug ist das? Ziehe die Schilder auf die passenden Kärtchen und prüfe am Ende.</p>
+    </header>
+    <div class="leiste">
+      <button class="knopf wichtig" id="btn-werkzeug-pruefen" type="button">✔️ Werkzeuge Prüfen</button>
+      <button class="knopf" id="werkzeug-neu" type="button">Neu starten</button>
+    </div>
+    <div class="werkzeug-grid" id="werkzeug-staelle"></div>
+    <h2 class="vorrat-titel">Namen</h2>
+    <div class="vorrat" id="werkzeug-vorrat"></div>
+  </div>
+
+  <footer>Selbstgemalter Hof · alle Grafiken sind handgezeichnete SVG-Grafiken</footer>
+</div>
+
+<div class="banner" id="banner" role="dialog" aria-modal="true" aria-labelledby="banner-titel">
+  <div class="karte">
+    <h2 id="banner-titel">Geschafft! 🎉</h2>
+    <p id="banner-text">Alle Schilder hängen richtig.</p>
+    <div class="tipp">
+      <b>Sprach-Trick:</b> Bei Tieren passt der Artikel oft zum Geschlecht:
+      <br><span class="der">der</span> Hahn (Vater) · <span class="die">die</span> Henne (Mutter) · <span class="das">das</span> Küken (Kind).
+      Jungtiere sind im Deutschen fast immer <b>das …</b>
+    </div>
+    <button id="banner-weiter" type="button">Weiter üben</button>
+  </div>
+</div>
+
+<script>
+/* ===== Hilfsfunktionen ===== */
+const O='#3f2d1c';
+function bn(x,y,w,h,c){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(w/2)+'" fill="'+c+'" stroke="'+O+'" stroke-width="2"/>';}
+function sh(cx,cy,rx){return '<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+(rx*0.16).toFixed(1)+'" fill="#2f4d1c" opacity="0.20"/>';}
+function svgWrap(inner){
+  return '<svg viewBox="0 0 150 120" role="img" xmlns="http://www.w3.org/2000/svg">'
+    +'<rect width="150" height="120" fill="#cfe7f3"/>'
+    +'<path d="M0 84 Q36 70 76 82 Q116 94 150 80 L150 120 L0 120Z" fill="#abd073"/>'
+    +'<path d="M0 99 Q40 91 80 97 Q120 103 150 96 L150 120 L0 120Z" fill="#93bd58"/>'
+    +inner+'</svg>';
+}
+function svgTrans(inner){ return '<svg viewBox="0 0 150 120" role="img" xmlns="http://www.w3.org/2000/svg">'+inner+'</svg>'; }
+function auge(x,y,r){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#241308"/><circle cx="'+(x+r*0.35)+'" cy="'+(y-r*0.35)+'" r="'+(r*0.4)+'" fill="#fff"/>';}
+
+/* ===================== NEUE TIERE ===================== */
+
+function hund(b, e) {
+  return sh(75,102,40)+
+         bn(55,80,9,20,b)+bn(85,80,9,20,b)+
+         '<ellipse cx="75" cy="65" rx="32" ry="22" fill="'+b+'" stroke="'+O+'" stroke-width="2.6"/>'+
+         '<path d="M100 60 Q120 40 125 50" fill="none" stroke="'+b+'" stroke-width="6" stroke-linecap="round"/>'+
+         '<ellipse cx="48" cy="48" rx="20" ry="18" fill="'+b+'" stroke="'+O+'" stroke-width="2.6"/>'+
+         '<ellipse cx="38" cy="45" rx="8" ry="16" fill="'+e+'" stroke="'+O+'" stroke-width="2" transform="rotate(-20 38 45)"/>'+
+         '<ellipse cx="58" cy="45" rx="8" ry="16" fill="'+e+'" stroke="'+O+'" stroke-width="2" transform="rotate(20 58 45)"/>'+
+         '<ellipse cx="48" cy="55" rx="10" ry="7" fill="#fdfbf4" stroke="'+O+'" stroke-width="1.6"/>'+
+         '<circle cx="48" cy="52" r="2.5" fill="#241308"/>'+
+         auge(42,44,3)+auge(54,44,3);
+}
+const ruedeSvg = svgWrap(hund('#6B4226', '#4A2E1B'));
+const huendinSvg = svgWrap(hund('#A0522D', '#8B4513'));
+const welpeSvg = svgWrap(
+  sh(75,100,25)+bn(60,80,7,18,'#CD853F')+bn(80,80,7,18,'#CD853F')+
+  '<ellipse cx="75" cy="70" rx="22" ry="15" fill="#CD853F" stroke="'+O+'" stroke-width="2.2"/>'+
+  '<ellipse cx="55" cy="55" rx="16" ry="14" fill="#CD853F" stroke="'+O+'" stroke-width="2.2"/>'+
+  '<ellipse cx="45" cy="52" rx="6" ry="14" fill="#8B4513" stroke="'+O+'" stroke-width="1.8" transform="rotate(-15 45 52)"/>'+
+  '<ellipse cx="65" cy="52" rx="6" ry="14" fill="#8B4513" stroke="'+O+'" stroke-width="1.8" transform="rotate(15 65 52)"/>'+
+  '<ellipse cx="55" cy="62" rx="8" ry="5" fill="#FFF" stroke="'+O+'" stroke-width="1.4"/>'+
+  '<circle cx="55" cy="60" r="2" fill="#000"/>'+
+  auge(50,52,2.5)+auge(60,52,2.5)
+);
+
+function katze(b, s) {
+  return sh(72,102,30)+
+         bn(60,85,6,15,b)+bn(80,85,6,15,b)+
+         '<ellipse cx="72" cy="75" rx="22" ry="16" fill="'+b+'" stroke="'+O+'" stroke-width="2"/>'+
+         '<path d="M90 70 Q110 50 115 80" fill="none" stroke="'+b+'" stroke-width="5" stroke-linecap="round"/>'+
+         '<path d="M45 45 L52 52 L38 52 Z" fill="'+b+'" stroke="'+O+'" stroke-width="1.5" stroke-linejoin="round"/>'+
+         '<path d="M65 45 L72 52 L58 52 Z" fill="'+b+'" stroke="'+O+'" stroke-width="1.5" stroke-linejoin="round"/>'+
+         '<ellipse cx="55" cy="60" rx="16" ry="14" fill="'+b+'" stroke="'+O+'" stroke-width="2"/>'+
+         '<path d="M35 60 L45 62 M35 65 L45 65 M75 60 L65 62 M75 65 L65 65" stroke="'+s+'" stroke-width="1.5" stroke-linecap="round"/>'+
+         '<ellipse cx="55" cy="65" rx="6" ry="4" fill="#fff" stroke="'+O+'" stroke-width="1"/>'+
+         '<circle cx="55" cy="63" r="1.5" fill="#d65170"/>'+
+         auge(50,56,2.5)+auge(60,56,2.5);
+}
+const katerSvg = svgWrap(katze('#E49B0F', '#FFF'));
+const katzeSvg2 = svgWrap(katze('#808080', '#FFF'));
+const kaetzchenSvg = svgWrap(
+  sh(72,100,20)+bn(64,85,5,12,'#F4A460')+bn(78,85,5,12,'#F4A460')+
+  '<ellipse cx="72" cy="78" rx="16" ry="12" fill="#F4A460" stroke="'+O+'" stroke-width="1.8"/>'+
+  '<path d="M85 75 Q100 60 102 82" fill="none" stroke="#F4A460" stroke-width="4" stroke-linecap="round"/>'+
+  '<path d="M48 50 L54 56 L42 56 Z" fill="#F4A460" stroke="'+O+'" stroke-width="1.5"/>'+
+  '<path d="M64 50 L70 56 L58 56 Z" fill="#F4A460" stroke="'+O+'" stroke-width="1.5"/>'+
+  '<ellipse cx="56" cy="64" rx="13" ry="11" fill="#F4A460" stroke="'+O+'" stroke-width="1.8"/>'+
+  '<ellipse cx="56" cy="68" rx="4" ry="3" fill="#fff" stroke="'+O+'" stroke-width="1"/>'+
+  '<circle cx="56" cy="67" r="1.2" fill="#d65170"/>'+
+  auge(52,60,2)+auge(60,60,2)
+);
+
+function pferd(opts){
+  const b=opts.body, m=opts.mane, leg=opts.leg;
+  return ''
+   +bn(44,74,11,28,leg)+bn(60,76,11,26,leg)+bn(80,76,11,26,leg)+bn(96,74,11,28,leg)
+   +'<path d="M28 56 Q12 64 16 94 Q24 86 28 72 Q22 84 32 66Z" fill="'+m+'" stroke="'+O+'" stroke-width="2"/>'
+   +'<ellipse cx="62" cy="62" rx="40" ry="25" fill="'+b+'" stroke="'+O+'" stroke-width="2.6"/>'
+   +'<path d="M84 52 Q92 28 108 28 L120 40 Q104 44 96 66Z" fill="'+b+'" stroke="'+O+'" stroke-width="2.6"/>'
+   +'<path d="M104 26 Q124 24 130 40 Q132 50 122 52 L110 46 Q102 34 104 26Z" fill="'+b+'" stroke="'+O+'" stroke-width="2.4"/>'
+   +'<path d="M86 56 Q88 26 110 26 Q100 32 99 44 Q106 30 98 50 Q96 40 90 60Z" fill="'+m+'" stroke="'+O+'" stroke-width="2" stroke-linejoin="round"/>'
+   // Donkey has longer ears than horse
+   +(opts.isEsel ? '<path d="M106 32 l-4 -20 l12 15Z" fill="'+b+'" stroke="'+O+'" stroke-width="1.8"/><path d="M116 34 l8 -18 l-1 18Z" fill="'+b+'" stroke="'+O+'" stroke-width="1.8"/>' 
+                 : '<path d="M106 28 l-2 -12 l9 8Z" fill="'+b+'" stroke="'+O+'" stroke-width="1.8"/><path d="M114 30 l4 -11 l4 10Z" fill="'+b+'" stroke="'+O+'" stroke-width="1.8"/>')
+   +'<path d="M110 24 q5 -3 9 2 q-5 0 -7 3Z" fill="'+m+'"/>'
+   +'<ellipse cx="128" cy="48" rx="6" ry="5" fill="'+(opts.muz||b)+'" stroke="'+O+'" stroke-width="1.8"/>'
+   +auge(118,38,3.2);
+}
+const eselhengstSvg = svgWrap( sh(70,104,46)+ pferd({body:'#8C949E',mane:'#4A4F55',leg:'#6B7077',muz:'#C0C5CC', isEsel:true}) );
+const eselstuteSvg  = svgWrap( sh(70,104,44)+ pferd({body:'#A8AEB5',mane:'#5D636B',leg:'#8C949E',muz:'#D1D6DC', isEsel:true}) );
+const eselfohlenSvg = svgWrap(
+  sh(82,101,26)+
+  bn(66,76,8,24,'#8C949E')+bn(78,78,8,22,'#8C949E')+bn(90,78,8,22,'#8C949E')+bn(100,76,8,24,'#8C949E')+
+  '<ellipse cx="80" cy="68" rx="28" ry="17" fill="#A8AEB5" stroke="'+O+'" stroke-width="2.2"/>'+
+  '<path d="M98 60 Q104 42 116 42 L124 52 Q112 54 108 70Z" fill="#A8AEB5" stroke="'+O+'" stroke-width="2.2"/>'+
+  '<path d="M114 40 Q128 40 130 52 Q132 60 124 60 L116 56Z" fill="#A8AEB5" stroke="'+O+'" stroke-width="2"/>'+
+  '<path d="M100 60 Q102 42 118 42 Q110 46 110 54Z" fill="#5D636B" stroke="'+O+'" stroke-width="1.6"/>'+
+  '<path d="M115 44 l-3 -16 l10 12Z" fill="#A8AEB5" stroke="'+O+'" stroke-width="1.6"/>'+
+  '<path d="M125 46 l6 -14 l-1 14Z" fill="#A8AEB5" stroke="'+O+'" stroke-width="1.6"/>'+
+  '<ellipse cx="129" cy="56" rx="5.5" ry="4.5" fill="#D1D6DC" stroke="'+O+'" stroke-width="1.6"/>'+
+  '<path d="M62 62 Q50 68 54 86 Q60 80 62 70Z" fill="#5D636B" stroke="'+O+'" stroke-width="1.8"/>'+
+  auge(121,50,3.4)
+);
+
+function kaninchen(b, e) {
+  return sh(72,102,30)+
+         '<ellipse cx="75" cy="85" rx="25" ry="16" fill="'+b+'" stroke="'+O+'" stroke-width="2.2"/>'+
+         '<path d="M95 85 A 6 6 0 1 1 100 80" fill="#fff" stroke="'+O+'" stroke-width="1.5"/>'+
+         '<ellipse cx="48" cy="45" rx="7" ry="24" fill="'+e+'" stroke="'+O+'" stroke-width="2" transform="rotate(-15 48 45)"/>'+
+         '<ellipse cx="62" cy="45" rx="7" ry="24" fill="'+e+'" stroke="'+O+'" stroke-width="2" transform="rotate(15 62 45)"/>'+
+         '<ellipse cx="55" cy="70" rx="16" ry="14" fill="'+b+'" stroke="'+O+'" stroke-width="2.2"/>'+
+         '<circle cx="55" cy="72" r="2" fill="#e890a0"/>'+
+         auge(50,66,2.5)+auge(60,66,2.5);
+}
+const rammlerSvg = svgWrap(kaninchen('#A0522D', '#CD853F'));
+const haesinSvg = svgWrap(kaninchen('#D3D3D3', '#FFF'));
+const jungtierSvg = svgWrap(
+  sh(72,100,20)+
+  '<ellipse cx="68" cy="82" rx="18" ry="12" fill="#DEB887" stroke="'+O+'" stroke-width="1.8"/>'+
+  '<ellipse cx="50" cy="52" rx="5" ry="16" fill="#F5DEB3" stroke="'+O+'" stroke-width="1.8" transform="rotate(-15 50 52)"/>'+
+  '<ellipse cx="60" cy="52" rx="5" ry="16" fill="#F5DEB3" stroke="'+O+'" stroke-width="1.8" transform="rotate(15 60 52)"/>'+
+  '<ellipse cx="55" cy="70" rx="13" ry="11" fill="#DEB887" stroke="'+O+'" stroke-width="1.8"/>'+
+  '<circle cx="55" cy="71" r="1.5" fill="#e890a0"/>'+
+  auge(51,67,2)+auge(59,67,2)
+);
+
+/* ===================== ALTE TIERE (Gekürzt für Platz) ===================== */
+const eber = svgWrap(sh(72,104,48)+bn(42,74,13,28,'#9c6f68')+bn(94,74,13,28,'#9c6f68')+bn(58,77,13,25,'#b08178')+bn(80,77,13,25,'#b08178')+'<path d="M30 60 q-9 -2 -8 8 q7 0 9 -6Z" fill="#9c6f68" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="70" cy="58" rx="46" ry="29" fill="#b88a80" stroke="'+O+'" stroke-width="2.4"/>'+'<path d="M34 36 q8 -7 16 0 q8 -7 16 0 q8 -7 16 0" fill="none" stroke="#6f4a44" stroke-width="3" stroke-linecap="round"/>'+'<ellipse cx="114" cy="56" rx="25" ry="23" fill="#b88a80" stroke="'+O+'" stroke-width="2.4"/>'+'<path d="M101 36 l-4 -14 l13 9Z" fill="#9c6f68" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="134" cy="62" rx="13" ry="10" fill="#9a6a63" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="130" cy="62" rx="1.8" ry="2.6" fill="#3a2018"/><ellipse cx="138" cy="62" rx="1.8" ry="2.6" fill="#3a2018"/>'+'<path d="M126 70 l-3 11 l7 -8Z" fill="#fffdf3" stroke="'+O+'" stroke-width="1.4"/>'+'<path d="M142 70 l3 11 l-7 -8Z" fill="#fffdf3" stroke="'+O+'" stroke-width="1.4"/>'+auge(116,50,3));
+const sau = svgWrap(sh(72,104,44)+bn(44,76,12,26,'#e890a0')+bn(94,76,12,26,'#e890a0')+bn(60,79,12,23,'#f3a8b2')+bn(80,79,12,23,'#f3a8b2')+'<path d="M30 62 q-9 -2 -8 8 q7 0 9 -6Z" fill="#e890a0" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="70" cy="60" rx="44" ry="27" fill="#f3a8b2" stroke="'+O+'" stroke-width="2.4"/>'+'<ellipse cx="112" cy="60" rx="23" ry="22" fill="#f3a8b2" stroke="'+O+'" stroke-width="2.4"/>'+'<path d="M100 44 q-6 -10 6 -8 q6 6 -1 12Z" fill="#e890a0" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="131" cy="64" rx="12" ry="9" fill="#e890a0" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="127" cy="64" rx="1.7" ry="2.4" fill="#7d3a48"/><ellipse cx="135" cy="64" rx="1.7" ry="2.4" fill="#7d3a48"/>'+auge(115,54,3));
+const ferkel = svgWrap(sh(84,101,26)+bn(70,84,8,16,'#f7c4cb')+bn(94,84,8,16,'#f7c4cb')+bn(80,85,8,15,'#fbcfd6')+'<path d="M64 80 q-7 -1 -6 6 q5 0 7 -4Z" fill="#f7c4cb" stroke="'+O+'" stroke-width="1.6"/>'+'<ellipse cx="84" cy="74" rx="27" ry="18" fill="#fbcfd6" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="106" cy="66" rx="18" ry="17" fill="#fbcfd6" stroke="'+O+'" stroke-width="2.2"/>'+'<path d="M98 53 q-5 -8 5 -6 q5 5 -1 10Z" fill="#f3aab4" stroke="'+O+'" stroke-width="1.6"/>'+'<ellipse cx="120" cy="69" rx="9" ry="7" fill="#f0a0ac" stroke="'+O+'" stroke-width="1.8"/>'+'<ellipse cx="117" cy="69" rx="1.4" ry="2" fill="#7d3a48"/><ellipse cx="123" cy="69" rx="1.4" ry="2" fill="#7d3a48"/>'+auge(108,61,3.2));
+const stier = svgWrap(sh(70,104,50)+bn(42,74,14,28,'#5d3f28')+bn(96,74,14,28,'#5d3f28')+bn(60,77,14,25,'#6e4a2e')+bn(82,77,14,25,'#6e4a2e')+'<path d="M28 56 q-8 4 -5 16 q6 -3 7 -12Z" fill="#5d3f28" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="68" cy="56" rx="47" ry="31" fill="#6e4a2e" stroke="'+O+'" stroke-width="2.6"/>'+'<path d="M96 40 q6 -14 18 -14 q-6 8 -4 18Z" fill="#5d3f28" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="118" cy="54" rx="25" ry="23" fill="#7a5333" stroke="'+O+'" stroke-width="2.6"/>'+'<path d="M104 40 Q86 16 80 30 Q92 30 100 46Z" fill="#eee6d4" stroke="'+O+'" stroke-width="2.2"/>'+'<path d="M132 40 Q150 16 156 30 Q144 30 136 46Z" fill="#eee6d4" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="126" cy="64" rx="15" ry="12" fill="#c79d76" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="121" cy="64" rx="2" ry="2.8" fill="#3a2414"/><ellipse cx="131" cy="64" rx="2" ry="2.8" fill="#3a2414"/>'+'<circle cx="122" cy="57" r="3.6" fill="none" stroke="#d9c39f" stroke-width="2"/>'+auge(110,49,3.4));
+const kuh = svgWrap(sh(70,104,46)+bn(44,75,12,27,'#cdb189')+bn(96,75,12,27,'#cdb189')+bn(60,78,12,24,'#f3ecdb')+bn(82,78,12,24,'#f3ecdb')+'<ellipse cx="72" cy="82" rx="13" ry="8" fill="#f6b9c4" stroke="'+O+'" stroke-width="1.8"/>'+'<path d="M28 58 q-8 4 -5 16 q6 -3 7 -12Z" fill="#cdb189" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="70" cy="56" rx="45" ry="29" fill="#f3ecdb" stroke="'+O+'" stroke-width="2.6"/>'+'<ellipse cx="52" cy="48" rx="16" ry="12" fill="#6e4a2e"/>'+'<ellipse cx="88" cy="66" rx="13" ry="10" fill="#6e4a2e"/>'+'<ellipse cx="115" cy="54" rx="23" ry="22" fill="#f3ecdb" stroke="'+O+'" stroke-width="2.6"/>'+'<ellipse cx="108" cy="60" rx="11" ry="13" fill="#6e4a2e"/>'+'<path d="M104 40 Q92 24 88 34 Q98 36 102 46Z" fill="#efe6cf" stroke="'+O+'" stroke-width="2"/>'+'<path d="M126 40 Q138 24 142 34 Q132 36 128 46Z" fill="#efe6cf" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="124" cy="62" rx="13" ry="11" fill="#f6c7cf" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="120" cy="62" rx="1.9" ry="2.6" fill="#4a3322"/><ellipse cx="129" cy="62" rx="1.9" ry="2.6" fill="#4a3322"/>'+auge(110,50,3.2)+'<rect x="90" y="64" width="10" height="11" rx="2" fill="#E8B84B" stroke="'+O+'" stroke-width="1.6"/><circle cx="95" cy="62" r="1.6" fill="#a8761f"/>');
+const kalb = svgWrap(sh(80,101,26)+bn(68,84,9,16,'#d8bb90')+bn(94,84,9,16,'#d8bb90')+bn(80,85,9,15,'#f3ecdb')+'<ellipse cx="82" cy="74" rx="26" ry="17" fill="#f3ecdb" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="70" cy="70" rx="10" ry="9" fill="#9c7048"/>'+'<ellipse cx="106" cy="64" rx="18" ry="17" fill="#f3ecdb" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="100" cy="69" rx="9" ry="10" fill="#9c7048"/>'+'<path d="M97 50 Q92 40 102 44 Q101 52 98 54Z" fill="#ead9bf" stroke="'+O+'" stroke-width="1.8"/>'+'<path d="M115 50 Q120 40 110 44 Q111 52 114 54Z" fill="#ead9bf" stroke="'+O+'" stroke-width="1.8"/>'+'<ellipse cx="113" cy="67" rx="9" ry="7" fill="#f6c7cf" stroke="'+O+'" stroke-width="1.8"/>'+'<ellipse cx="110" cy="67" rx="1.5" ry="2" fill="#4a3322"/><ellipse cx="116" cy="67" rx="1.5" ry="2" fill="#4a3322"/>'+auge(103,60,3.4));
+const hengst = svgWrap( sh(70,104,46)+ pferd({body:'#6b4626',mane:'#2c1b0e',leg:'#5a3b20',muz:'#4f351d'}) );
+const stute  = svgWrap( sh(70,104,44)+ pferd({body:'#b06a35',mane:'#6e3d1c',leg:'#9c5d2c',muz:'#8a4f24'}) );
+const fohlen = svgWrap(sh(82,101,26)+bn(66,76,8,24,'#9c7038')+bn(78,78,8,22,'#9c7038')+bn(90,78,8,22,'#9c7038')+bn(100,76,8,24,'#9c7038')+'<ellipse cx="80" cy="68" rx="28" ry="17" fill="#cfa163" stroke="'+O+'" stroke-width="2.2"/>'+'<path d="M98 60 Q104 42 116 42 L124 52 Q112 54 108 70Z" fill="#cfa163" stroke="'+O+'" stroke-width="2.2"/>'+'<path d="M114 40 Q128 40 130 52 Q132 60 124 60 L116 56Z" fill="#cfa163" stroke="'+O+'" stroke-width="2"/>'+'<path d="M100 60 Q102 42 118 42 Q110 46 110 54Z" fill="#9c7038" stroke="'+O+'" stroke-width="1.6"/>'+'<path d="M116 42 l-1 -10 l7 7Z" fill="#cfa163" stroke="'+O+'" stroke-width="1.6"/>'+'<path d="M124 44 l4 -9 l3 9Z" fill="#cfa163" stroke="'+O+'" stroke-width="1.6"/>'+'<ellipse cx="129" cy="56" rx="5.5" ry="4.5" fill="#b98a52" stroke="'+O+'" stroke-width="1.6"/>'+'<path d="M62 62 Q50 68 54 86 Q60 80 62 70Z" fill="#9c7038" stroke="'+O+'" stroke-width="1.8"/>'+auge(121,50,3.4));
+function wolle(cx,cy,rx,ry,c){let p='<g stroke="'+O+'" stroke-width="2" stroke-linejoin="round">';const n=11; let bumps='';for(let i=0;i<n;i++){const a=Math.PI*2*i/n;const x=cx+Math.cos(a)*rx*0.95;const y=cy+Math.sin(a)*ry*0.95;bumps+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+(ry*0.46).toFixed(1)+'" fill="'+c+'"/>';}p+=bumps+'<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+ry+'" fill="'+c+'" stroke="none"/></g>';return p;}
+const widder = svgWrap(sh(70,104,46)+bn(50,78,11,24,'#5b4a3f')+bn(90,78,11,24,'#5b4a3f')+bn(64,80,11,22,'#6c5848')+bn(80,80,11,22,'#6c5848')+wolle(70,56,42,27,'#f4efe4')+'<ellipse cx="114" cy="58" rx="19" ry="17" fill="#6c5848" stroke="'+O+'" stroke-width="2.4"/>'+'<path d="M100 50 C82 46 80 70 100 70 C114 70 116 56 104 54" fill="none" stroke="#caa46a" stroke-width="7" stroke-linecap="round"/>'+'<path d="M100 50 C84 47 83 66 99 67" fill="none" stroke="#b08d54" stroke-width="3" stroke-linecap="round"/>'+'<path d="M101 52 Q95 46 103 48Z" fill="#5b4a3f"/>'+'<ellipse cx="120" cy="66" rx="8" ry="5.5" fill="#5b4a3f" stroke="'+O+'" stroke-width="1.6"/>'+auge(110,57,3.2));
+const aue = svgWrap(sh(70,104,44)+bn(50,78,11,24,'#6c5848')+bn(90,78,11,24,'#6c5848')+bn(64,80,11,22,'#7d6754')+bn(80,80,11,22,'#7d6754')+'<ellipse cx="72" cy="84" rx="11" ry="7" fill="#f2c7cf" stroke="'+O+'" stroke-width="1.6"/>'+wolle(70,56,42,27,'#fbf7ee')+'<ellipse cx="113" cy="58" rx="18" ry="16" fill="#7d6754" stroke="'+O+'" stroke-width="2.4"/>'+'<path d="M99 49 Q90 44 95 56 Q102 56 101 51Z" fill="#6c5848" stroke="'+O+'" stroke-width="1.6"/>'+'<path d="M108 45 q5 -9 11 -2 q-6 1 -7 7Z" fill="#fbf7ee" stroke="'+O+'" stroke-width="1.6"/>'+'<ellipse cx="119" cy="65" rx="8" ry="5.5" fill="#6c5848" stroke="'+O+'" stroke-width="1.6"/>'+auge(108,57,3.2));
+const lamm = svgWrap(sh(80,101,26)+bn(68,84,8,16,'#7d6754')+bn(92,84,8,16,'#7d6754')+bn(80,85,8,15,'#8b7461')+wolle(80,68,26,17,'#fdfbf4')+'<ellipse cx="106" cy="66" rx="14" ry="13" fill="#8b7461" stroke="'+O+'" stroke-width="2.2"/>'+'<path d="M96 56 Q88 52 92 64 Q99 63 98 58Z" fill="#7d6754" stroke="'+O+'" stroke-width="1.6"/>'+'<path d="M104 50 q4 -8 9 -2 q-5 1 -5 6Z" fill="#fdfbf4" stroke="'+O+'" stroke-width="1.4"/>'+'<ellipse cx="111" cy="71" rx="6.5" ry="4.5" fill="#7d6754" stroke="'+O+'" stroke-width="1.4"/>'+auge(102,63,3.2));
+const ziegenbock = svgWrap(sh(70,104,46)+bn(50,76,11,26,'#8a7152')+bn(90,76,11,26,'#8a7152')+bn(64,78,11,24,'#a98c66')+bn(80,78,11,24,'#a98c66')+'<ellipse cx="68" cy="58" rx="42" ry="26" fill="#c2a578" stroke="'+O+'" stroke-width="2.6"/>'+'<path d="M28 60 q-7 2 -5 12 q5 -2 7 -8Z" fill="#8a7152" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="112" cy="58" rx="19" ry="17" fill="#c2a578" stroke="'+O+'" stroke-width="2.6"/>'+'<path d="M106 46 Q96 20 78 12" fill="none" stroke="#e3d6b6" stroke-width="6.5" stroke-linecap="round"/>'+'<path d="M116 46 Q108 20 92 12" fill="none" stroke="#cdbd96" stroke-width="6.5" stroke-linecap="round"/>'+'<path d="M99 50 q-9 1 -8 11 q6 -1 9 -7Z" fill="#a98c66" stroke="'+O+'" stroke-width="1.8"/>'+'<ellipse cx="123" cy="62" rx="9" ry="7" fill="#a98c66" stroke="'+O+'" stroke-width="2"/>'+'<path d="M118 70 Q120 88 112 90 Q120 82 113 70Z" fill="#efe7d2" stroke="'+O+'" stroke-width="1.8"/>'+auge(118,57,3.2));
+const geiss = svgWrap(sh(70,104,44)+bn(50,76,11,26,'#a98c66')+bn(90,76,11,26,'#a98c66')+bn(64,78,11,24,'#bda078')+bn(80,78,11,24,'#bda078')+'<ellipse cx="72" cy="80" rx="10" ry="6.5" fill="#f2c7cf" stroke="'+O+'" stroke-width="1.6"/>'+'<ellipse cx="68" cy="58" rx="41" ry="25" fill="#d3bb92" stroke="'+O+'" stroke-width="2.6"/>'+'<path d="M28 60 q-7 2 -5 12 q5 -2 7 -8Z" fill="#a98c66" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="112" cy="58" rx="18" ry="16" fill="#d3bb92" stroke="'+O+'" stroke-width="2.6"/>'+'<path d="M106 46 Q102 34 96 28" fill="none" stroke="#e3d6b6" stroke-width="5.5" stroke-linecap="round"/>'+'<path d="M116 46 Q114 34 110 28" fill="none" stroke="#cdbd96" stroke-width="5.5" stroke-linecap="round"/>'+'<path d="M99 50 q-9 1 -8 11 q6 -1 9 -7Z" fill="#bda078" stroke="'+O+'" stroke-width="1.8"/>'+'<ellipse cx="123" cy="62" rx="9" ry="7" fill="#bda078" stroke="'+O+'" stroke-width="2"/>'+auge(118,57,3.2));
+const kitz = svgWrap(sh(80,101,25)+bn(68,84,8,16,'#bda078')+bn(92,84,8,16,'#bda078')+bn(80,85,8,15,'#cdb083')+'<ellipse cx="82" cy="74" rx="25" ry="16" fill="#e2cda3" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="106" cy="64" rx="15" ry="14" fill="#e2cda3" stroke="'+O+'" stroke-width="2.2"/>'+'<path d="M101 51 q-1 -8 3 -11 q1 7 0 11Z" fill="#cbb085" stroke="'+O+'" stroke-width="1.4"/>'+'<path d="M111 51 q1 -8 5 -10 q-1 7 -2 11Z" fill="#cbb085" stroke="'+O+'" stroke-width="1.4"/>'+'<path d="M94 58 q-9 1 -7 10 q5 -1 8 -7Z" fill="#cdb083" stroke="'+O+'" stroke-width="1.6"/>'+'<ellipse cx="116" cy="67" rx="7.5" ry="6" fill="#cdb083" stroke="'+O+'" stroke-width="1.8"/>'+auge(111,62,3.2));
+const hahn = svgWrap(sh(72,104,42)+'<path d="M62 86 l-5 14 m9 -14 l0 16 m6 -15 l5 14" stroke="#E8902B" stroke-width="3.4" stroke-linecap="round"/>'+'<path d="M30 58 Q6 44 14 74 Q2 66 8 90 Q-2 84 16 98 Q40 86 46 66Z" fill="#2f6e4e" stroke="'+O+'" stroke-width="2.2"/>'+'<path d="M28 54 Q8 40 18 62 Q34 56 44 62Z" fill="#2b4f8a" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="68" cy="62" rx="36" ry="28" fill="#b5462e" stroke="'+O+'" stroke-width="2.6"/>'+'<ellipse cx="96" cy="48" rx="19" ry="19" fill="#c2502f" stroke="'+O+'" stroke-width="2.4"/>'+'<path d="M84 30 q3 -11 8 -2 q5 -12 9 -1 q7 -9 8 4 q7 -4 4 9 q-16 -6 -29 -3Z" fill="#d62f2f" stroke="'+O+'" stroke-width="2"/>'+'<path d="M89 64 q5 11 -3 13 q-6 -4 -1 -13Z" fill="#d62f2f" stroke="'+O+'" stroke-width="1.8"/>'+'<path d="M108 44 L128 40 L108 53Z" fill="#E8B84B" stroke="'+O+'" stroke-width="1.8"/>'+auge(98,46,3.4));
+const henne = svgWrap(sh(70,104,40)+'<path d="M62 86 l-4 13 m9 -13 l0 14 m6 -14 l4 13" stroke="#E8902B" stroke-width="3.2" stroke-linecap="round"/>'+'<path d="M32 54 Q14 44 22 66 Q34 60 44 64Z" fill="#9c6a34" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="66" cy="64" rx="34" ry="26" fill="#caa05a" stroke="'+O+'" stroke-width="2.6"/>'+'<ellipse cx="92" cy="54" rx="16" ry="16" fill="#d6ac64" stroke="'+O+'" stroke-width="2.4"/>'+'<path d="M86 40 q3 -6 7 0 q5 -5 5 3 q-9 -2 -12 1Z" fill="#d62f2f" stroke="'+O+'" stroke-width="1.8"/>'+'<path d="M90 66 q4 7 -2 8 q-4 -3 -1 -8Z" fill="#d62f2f" stroke="'+O+'" stroke-width="1.6"/>'+'<path d="M104 52 L120 49 L104 59Z" fill="#E8B84B" stroke="'+O+'" stroke-width="1.8"/>'+auge(95,52,3.2));
+const kueken = svgWrap(sh(80,101,24)+'<path d="M74 86 l-3 11 m7 -11 l0 12 m5 -12 l3 11" stroke="#E8902B" stroke-width="2.8" stroke-linecap="round"/>'+'<ellipse cx="80" cy="72" rx="23" ry="21" fill="#f6d34e" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="98" cy="58" rx="14" ry="14" fill="#fbe06a" stroke="'+O+'" stroke-width="2.2"/>'+'<path d="M90 48 q3 -6 7 -1 q-4 0 -7 1Z" fill="#E8B84B"/>'+'<path d="M110 58 L121 56 L110 63Z" fill="#E8902B" stroke="'+O+'" stroke-width="1.6"/>'+'<path d="M60 70 q-9 2 -2 9 q7 -2 5 -8Z" fill="#ecc63f" stroke="'+O+'" stroke-width="1.6"/>'+auge(100,56,3.2));
+const ganter = svgWrap(sh(72,106,40)+bn(66,90,5,12,'#E8902B')+bn(80,90,5,12,'#E8902B')+'<path d="M34 80 Q20 72 38 68 Q28 78 46 76Z" fill="#f7f4ec" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="68" cy="72" rx="37" ry="24" fill="#fdfbf4" stroke="'+O+'" stroke-width="2.6"/>'+'<path d="M92 64 Q100 18 116 14 Q108 22 106 64Z" fill="#fdfbf4" stroke="'+O+'" stroke-width="2.6"/>'+'<ellipse cx="113" cy="20" rx="13" ry="12" fill="#fdfbf4" stroke="'+O+'" stroke-width="2.4"/>'+'<path d="M123 17 Q138 15 136 25 Q126 25 123 22Z" fill="#E8902B" stroke="'+O+'" stroke-width="2"/>'+'<path d="M123 13 q6 -4 9 1 q-5 0 -8 2Z" fill="#cf7a16"/>'+auge(116,18,3.4));
+const gans = svgWrap(sh(72,106,36)+bn(68,90,5,12,'#E8A23B')+bn(80,90,5,12,'#E8A23B')+'<path d="M38 80 Q26 74 40 70 Q31 78 47 76Z" fill="#f2efe6" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="70" cy="74" rx="33" ry="23" fill="#fefcf6" stroke="'+O+'" stroke-width="2.6"/>'+'<path d="M90 66 Q96 38 108 34 Q102 42 102 66Z" fill="#fefcf6" stroke="'+O+'" stroke-width="2.6"/>'+'<ellipse cx="104" cy="38" rx="12" ry="11" fill="#fefcf6" stroke="'+O+'" stroke-width="2.4"/>'+'<path d="M114 36 Q126 34 124 43 Q115 43 114 40Z" fill="#E8A23B" stroke="'+O+'" stroke-width="2"/>'+auge(107,36,3.2));
+const goessel = svgWrap(sh(80,103,24)+bn(74,90,4.5,11,'#E8A23B')+bn(84,90,4.5,11,'#E8A23B')+'<ellipse cx="78" cy="74" rx="23" ry="19" fill="#e9dd86" stroke="'+O+'" stroke-width="2.2"/>'+'<path d="M92 66 Q98 48 108 46 Q102 54 102 68Z" fill="#e9dd86" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="104" cy="50" rx="11" ry="10" fill="#efe492" stroke="'+O+'" stroke-width="2.2"/>'+'<path d="M113 48 Q123 47 121 54 Q113 53 113 51Z" fill="#E8A23B" stroke="'+O+'" stroke-width="1.6"/>'+auge(107,48,3.2));
+const erpel = svgWrap(sh(72,106,40)+bn(66,90,5,12,'#E8902B')+bn(80,90,5,12,'#E8902B')+'<path d="M36 76 Q24 66 42 64 Q33 74 50 74Z" fill="#6b6f78" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="66" cy="68" rx="36" ry="23" fill="#8c949e" stroke="'+O+'" stroke-width="2.6"/>'+'<path d="M38 60 Q66 52 98 60 L98 72 Q66 64 38 70Z" fill="#7a4a30" stroke="'+O+'" stroke-width="0"/>'+'<path d="M90 60 Q90 36 108 36 Q124 36 124 52 Q124 66 104 66Z" fill="#2f8a56" stroke="'+O+'" stroke-width="2.4"/>'+'<path d="M86 64 q16 -3 24 1" stroke="#fdfbf4" stroke-width="4" fill="none"/>'+'<path d="M122 48 Q137 46 135 56 Q124 56 122 53Z" fill="#E8C24B" stroke="'+O+'" stroke-width="2"/>'+'<path d="M30 60 q-6 -8 0 -13 q4 5 5 11Z" fill="#3a4048" stroke="'+O+'" stroke-width="1.6"/>'+auge(114,46,3.4));
+const ente = svgWrap(sh(72,106,38)+bn(66,90,5,12,'#E8A23B')+bn(80,90,5,12,'#E8A23B')+'<path d="M38 76 Q26 66 44 64 Q35 74 52 74Z" fill="#9c7a4e" stroke="'+O+'" stroke-width="2"/>'+'<ellipse cx="66" cy="68" rx="35" ry="23" fill="#b08e5c" stroke="'+O+'" stroke-width="2.6"/>'+'<path d="M40 60 Q66 52 92 60" stroke="#8a6a40" stroke-width="3" fill="none"/>'+'<ellipse cx="100" cy="54" rx="14" ry="13" fill="#a98452" stroke="'+O+'" stroke-width="2.4"/>'+'<path d="M112 50 Q127 48 125 58 Q113 58 112 55Z" fill="#E8A23B" stroke="'+O+'" stroke-width="2"/>'+auge(103,52,3.4));
+const entenkueken = svgWrap(sh(80,103,24)+bn(74,90,4.5,11,'#E8A23B')+bn(84,90,4.5,11,'#E8A23B')+'<ellipse cx="78" cy="74" rx="22" ry="19" fill="#f6d652" stroke="'+O+'" stroke-width="2.2"/>'+'<ellipse cx="98" cy="58" rx="13" ry="12" fill="#fbe06a" stroke="'+O+'" stroke-width="2.2"/>'+'<path d="M108 56 Q119 55 116 62 Q108 61 108 58Z" fill="#E8A23B" stroke="'+O+'" stroke-width="1.6"/>'+'<path d="M60 72 q-9 2 -2 9 q7 -2 5 -8Z" fill="#e6c63f" stroke="'+O+'" stroke-width="1.6"/>'+auge(101,56,3.2));
+
+
+const FAMILIEN = [
+  { id:'schwein', name:'Schwein', icon:sau, tiere:[
+    {key:'eber',  wort:'Eber',  art:'der', rolle:'Vater', kategorie:'Nutztier', nutzen:['Fleisch'], svg:eber},
+    {key:'sau',   wort:'Sau',   art:'die', rolle:'Mutter', kategorie:'Nutztier', nutzen:['Fleisch'], svg:sau},
+    {key:'ferkel',wort:'Ferkel',art:'das', rolle:'Kind', kategorie:'Nutztier', nutzen:['Fleisch'], svg:ferkel},
+  ]},
+  { id:'rind', name:'Rind', icon:kuh, tiere:[
+    {key:'stier', wort:'Bulle', art:'der', rolle:'Vater', kategorie:'Nutztier', nutzen:['Fleisch', 'Milch'], svg:stier},
+    {key:'kuh',   wort:'Kuh',   art:'die', rolle:'Mutter', kategorie:'Nutztier', nutzen:['Fleisch', 'Milch'], svg:kuh},
+    {key:'kalb',  wort:'Kalb',  art:'das', rolle:'Kind', kategorie:'Nutztier', nutzen:['Fleisch'], svg:kalb},
+  ]},
+  { id:'pferd', name:'Pferd', icon:stute, tiere:[
+    {key:'hengst',wort:'Hengst',art:'der', rolle:'Vater', kategorie:'Nutztier', nutzen:['Reiten'], svg:hengst},
+    {key:'stute', wort:'Stute', art:'die', rolle:'Mutter', kategorie:'Nutztier', nutzen:['Reiten'], svg:stute},
+    {key:'fohlen',wort:'Fohlen',art:'das', rolle:'Kind', kategorie:'Nutztier', nutzen:[], svg:fohlen},
+  ]},
+  { id:'schaf', name:'Schaf', icon:aue, tiere:[
+    {key:'widder',      wort:'Widder',      art:'der', rolle:'Vater', kategorie:'Nutztier', nutzen:['Wolle', 'Fleisch'], svg:widder},
+    {key:'mutterschaf', wort:'Mutterschaf', art:'das', rolle:'Mutter', kategorie:'Nutztier', nutzen:['Wolle', 'Fleisch', 'Milch'], svg:aue},
+    {key:'lamm',        wort:'Lamm',        art:'das', rolle:'Kind', kategorie:'Nutztier', nutzen:['Wolle', 'Fleisch'], svg:lamm},
+  ]},
+  { id:'ziege', name:'Ziege', icon:geiss, tiere:[
+    {key:'ziegenbock',wort:'Ziegenbock',art:'der', rolle:'Vater', kategorie:'Nutztier', nutzen:['Milch', 'Fleisch'], svg:ziegenbock},
+    {key:'geiss',     wort:'Gei\u00df', art:'die', rolle:'Mutter', kategorie:'Nutztier', nutzen:['Milch', 'Fleisch'], svg:geiss},
+    {key:'kitz',      wort:'Kitz',      art:'das', rolle:'Kind', kategorie:'Nutztier', nutzen:['Fleisch'], svg:kitz},
+  ]},
+  { id:'huhn', name:'Huhn', icon:henne, tiere:[
+    {key:'hahn',  wort:'Hahn',  art:'der', rolle:'Vater', kategorie:'Nutztier', nutzen:['Fleisch', 'Aufpassen'], svg:hahn},
+    {key:'henne', wort:'Henne', art:'die', rolle:'Mutter', kategorie:'Nutztier', nutzen:['Eier', 'Fleisch'], svg:henne},
+    {key:'kueken',wort:'K\u00fcken', art:'das', rolle:'Kind', kategorie:'Nutztier', nutzen:[], svg:kueken},
+  ]},
+  { id:'gans', name:'Gans', icon:gans, tiere:[
+    {key:'ganter', wort:'Ganter', art:'der', rolle:'Vater', kategorie:'Nutztier', nutzen:['Fleisch', 'Aufpassen', 'Eier'], svg:ganter},
+    {key:'gans',   wort:'Gans',   art:'die', rolle:'Mutter', kategorie:'Nutztier', nutzen:['Fleisch', 'Eier'], svg:gans},
+    {key:'goessel',wort:'G\u00f6ssel', art:'das', rolle:'Kind', kategorie:'Nutztier', nutzen:[], svg:goessel},
+  ]},
+  { id:'ente', name:'Ente', icon:ente, tiere:[
+    {key:'erpel',      wort:'Erpel',      art:'der', rolle:'Vater', kategorie:'Nutztier', nutzen:['Fleisch'], svg:erpel},
+    {key:'ente',       wort:'Ente',       art:'die', rolle:'Mutter', kategorie:'Nutztier', nutzen:['Fleisch', 'Eier'], svg:ente},
+    {key:'entenkueken',wort:'Entenk\u00fcken', art:'das', rolle:'Kind', kategorie:'Nutztier', nutzen:[], svg:entenkueken},
+  ]},
+  { id:'hund', name:'Hund', icon:huendinSvg, tiere:[
+    {key:'ruede',  wort:'Rüde',   art:'der', rolle:'Vater', kategorie:'Haustier', nutzen:['Aufpassen', 'Kuscheln'], svg:ruedeSvg},
+    {key:'huendin',wort:'Hündin', art:'die', rolle:'Mutter', kategorie:'Haustier', nutzen:['Aufpassen', 'Kuscheln'], svg:huendinSvg},
+    {key:'welpe',  wort:'Welpe',  art:'der', rolle:'Kind', kategorie:'Haustier', nutzen:['Kuscheln'], svg:welpeSvg},
+  ]},
+  { id:'katze', name:'Katze', icon:katzeSvg2, tiere:[
+    {key:'kater',   wort:'Kater',    art:'der', rolle:'Vater', kategorie:'Haustier', nutzen:['Kuscheln'], svg:katerSvg},
+    {key:'katze2',  wort:'Katze',    art:'die', rolle:'Mutter', kategorie:'Haustier', nutzen:['Kuscheln'], svg:katzeSvg2},
+    {key:'kaetzchen',wort:'Kätzchen',art:'das', rolle:'Kind', kategorie:'Haustier', nutzen:['Kuscheln'], svg:kaetzchenSvg},
+  ]},
+  { id:'esel', name:'Esel', icon:eselstuteSvg, tiere:[
+    {key:'eselhengst',wort:'Eselhengst',art:'der', rolle:'Vater', kategorie:'Nutztier', nutzen:['Reiten'], svg:eselhengstSvg},
+    {key:'eselstute', wort:'Eselstute', art:'die', rolle:'Mutter', kategorie:'Nutztier', nutzen:['Reiten'], svg:eselstuteSvg},
+    {key:'eselfohlen',wort:'Eselfohlen',art:'das', rolle:'Kind', kategorie:'Nutztier', nutzen:[], svg:eselfohlenSvg},
+  ]},
+  { id:'kaninchen', name:'Kaninchen', icon:haesinSvg, tiere:[
+    {key:'rammler', wort:'Rammler', art:'der', rolle:'Vater', kategorie:'Haustier', nutzen:['Kuscheln', 'Fleisch'], svg:rammlerSvg},
+    {key:'haesin',  wort:'Häsin',   art:'die', rolle:'Mutter', kategorie:'Haustier', nutzen:['Kuscheln', 'Fleisch'], svg:haesinSvg},
+    {key:'jungtier',wort:'Jungtier',art:'das', rolle:'Kind', kategorie:'Haustier', nutzen:['Kuscheln'], svg:jungtierSvg},
+  ]},
+];
+
+const ALLE = FAMILIEN.flatMap(f => f.tiere.map(t => ({...t, familie:f.name})));
+function mischen(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+const el = id => document.getElementById(id);
+const auswahlEl = el('auswahl'), staelleEl = el('staelle'), vorratEl = el('vorrat');
+const fortschrittEl = el('fortschritt'), bannerEl = el('banner');
+let aktuelleTiere = [], geloest = 0, gewaehltesSchild = null, aktuelleId = 'schwein';
+
+/* --- Tab-Navigation --- */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('aktiv'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('aktiv'));
+    btn.classList.add('aktiv');
+    el(btn.dataset.target).classList.add('aktiv');
+    if(btn.dataset.target === 'view-quiz') ladeQuizFrage();
+    if(btn.dataset.target === 'view-praepositionen') startePraeposition();
+    if(btn.dataset.target === 'view-werkzeuge') starteWerkzeuge();
+  });
+});
+
+FAMILIEN.forEach(f=>{
+  const b=document.createElement('button'); b.type='button'; b.dataset.id=f.id;
+  b.innerHTML='<span class="ico">'+f.icon+'</span>'+f.name;
+  b.addEventListener('click',()=>starte(f.id,b));
+  auswahlEl.appendChild(b);
+});
+const bMix=document.createElement('button'); bMix.type='button'; bMix.dataset.id='mix';
+bMix.textContent='🎲 Gemischt'; bMix.addEventListener('click',()=>starte('mix',bMix)); auswahlEl.appendChild(bMix);
+const bAll=document.createElement('button'); bAll.type='button'; bAll.dataset.id='all';
+bAll.textContent='🚜 Ganzer Hof'; bAll.addEventListener('click',()=>starte('all',bAll)); auswahlEl.appendChild(bAll);
+
+/* --- ZUORDNUNGS-LOGIK --- */
+function starte(id, knopf){
+  aktuelleId=id;
+  document.querySelectorAll('.auswahl button').forEach(b=>b.classList.remove('aktiv'));
+  (knopf||document.querySelector('.auswahl button[data-id="'+id+'"]')).classList.add('aktiv');
+  if(id==='mix') aktuelleTiere = mischen(ALLE).slice(0,6);
+  else if(id==='all') aktuelleTiere = ALLE.slice();
+  else aktuelleTiere = FAMILIEN.find(f=>f.id===id).tiere.slice();
+  renderRunde();
+}
+function renderRunde(){
+  geloest=0; gewaehltesSchild=null;
+  staelleEl.innerHTML='';
+  mischen(aktuelleTiere).forEach(t=>{
+    const stall=document.createElement('div'); stall.className='stall';
+    let prefix = 'Das Kind heißt:';
+    if(t.rolle === 'Vater') prefix = 'Der Vater heißt:';
+    else if(t.rolle === 'Mutter') prefix = 'Die Mutter heißt:';
+
+    stall.innerHTML='<div class="buehne">'+t.svg+'</div>'+
+      '<div class="stall-label">'+prefix+'</div>'+
+      '<div class="slot" tabindex="0" role="button" data-key="'+t.key+'" aria-label="Stall"><span class="platzhalter">Schild hierher</span></div>';
+    const slot=stall.querySelector('.slot');
+    slot.addEventListener('click',()=>slotAngetippt(slot));
+    slot.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();slotAngetippt(slot);} });
+    staelleEl.appendChild(stall);
+  });
+  vorratEl.innerHTML='';
+  mischen(aktuelleTiere).forEach(t=>{
+    const s=document.createElement('div');
+    s.className='schild'; s.dataset.key=t.key; s.textContent=t.art + ' ' + t.wort;
+    s.tabIndex=0; s.setAttribute('role','button'); s.setAttribute('aria-label','Schild '+t.art+' '+t.wort);
+    zieheEinrichten(s);
+    s.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();schildGewaehlt(s);} });
+    vorratEl.appendChild(s);
+  });
+  aktualisiereFortschritt();
+}
+function aktualisiereFortschritt(){ fortschrittEl.innerHTML='<b>'+geloest+'</b> von '+aktuelleTiere.length+' richtig'; }
+
+function schildGewaehlt(s){
+  if(s.classList.contains('platziert')) return;
+  if(gewaehltesSchild===s){ s.classList.remove('gewaehlt'); gewaehltesSchild=null; return; }
+  if(gewaehltesSchild) gewaehltesSchild.classList.remove('gewaehlt');
+  gewaehltesSchild=s; s.classList.add('gewaehlt');
+}
+function slotAngetippt(slot){
+  if(slot.classList.contains('korrekt')) return;
+  if(!gewaehltesSchild) {
+     const altesSchild = slot.querySelector('.schild');
+     if(altesSchild && !altesSchild.classList.contains('platziert')) {
+         slot.innerHTML='<span class="platzhalter">Schild hierher</span>';
+         slot.classList.remove('gefuellt');
+         altesSchild.tabIndex=0;
+         vorratEl.appendChild(altesSchild);
+     }
+     return;
+  }
+  platziere(gewaehltesSchild, slot);
+}
+
+function platziere(schild, slot){
+  schild.classList.remove('gewaehlt','wird-gezogen');
+  schild.tabIndex=-1;
+  const altesSchild = slot.querySelector('.schild');
+  if(altesSchild) {
+      altesSchild.tabIndex=0;
+      vorratEl.appendChild(altesSchild);
+  }
+  slot.innerHTML=''; slot.classList.remove('ziel'); slot.classList.add('gefuellt');
+  slot.appendChild(schild);
+  gewaehltesSchild=null;
+}
+
+el('btn-pruefen').addEventListener('click', () => {
+  staelleEl.querySelectorAll('.slot').forEach(slot => {
+    if(slot.classList.contains('korrekt')) return;
+    const schild = slot.querySelector('.schild');
+    if(!schild) return;
+
+    if(slot.dataset.key === schild.dataset.key) {
+       slot.classList.add('korrekt');
+       slot.classList.remove('gefuellt');
+       schild.classList.add('platziert');
+       const t = aktuelleTiere.find(x=>x.key===slot.dataset.key);
+       const info = document.createElement('div'); info.className='geloest-info';
+       info.innerHTML='<span>'+t.rolle+'</span>';
+       slot.appendChild(info);
+       geloest++;
+    } else {
+       slot.classList.add('falsch');
+       setTimeout(() => {
+         slot.classList.remove('falsch');
+         slot.classList.remove('gefuellt');
+         schild.tabIndex=0;
+         vorratEl.appendChild(schild);
+         slot.innerHTML='<span class="platzhalter">Schild hierher</span>';
+       }, 600);
+    }
+  });
+  aktualisiereFortschritt();
+  if(geloest === aktuelleTiere.length && aktuelleTiere.length > 0) setTimeout(fertig, 400);
+});
+
+
+function zieheEinrichten(s){
+  let aktiv=false, bewegt=false, sx=0, sy=0, ghost=null, ox=0, oy=0, letzterZiel=null, pid=null;
+  function start(){
+    bewegt=true;
+    const r=s.getBoundingClientRect();
+    ox=sx-r.left; oy=sy-r.top;
+    ghost=s.cloneNode(true);
+    ghost.classList.add('ghost'); ghost.classList.remove('gewaehlt');
+    ghost.style.left=r.left+'px'; ghost.style.top=r.top+'px';
+    ghost.style.width=r.width+'px'; ghost.style.height=r.height+'px'; ghost.style.margin='0';
+    document.body.appendChild(ghost);
+    s.classList.add('wird-gezogen');
+  }
+  function zielUnter(x,y){
+    if(ghost) ghost.style.visibility='hidden';
+    const u=document.elementFromPoint(x,y);
+    if(ghost) ghost.style.visibility='';
+    const st=u&&u.closest?u.closest('.stall'):null;
+    let slot=st?st.querySelector('.slot'):(u&&u.closest?u.closest('.slot'):null);
+    if(slot&&slot.classList.contains('korrekt')) slot=null;
+    return slot;
+  }
+  function bewege(x,y){
+    ghost.style.left=(x-ox)+'px'; ghost.style.top=(y-oy)+'px';
+    const z=zielUnter(x,y);
+    if(letzterZiel&&letzterZiel!==z) letzterZiel.classList.remove('ziel');
+    if(z) z.classList.add('ziel');
+    letzterZiel=z;
+  }
+  function aufraeumen(){
+    if(ghost){ ghost.remove(); ghost=null; }
+    s.classList.remove('wird-gezogen');
+    if(letzterZiel){ letzterZiel.classList.remove('ziel'); letzterZiel=null; }
+    window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerup', onUp);
+    window.removeEventListener('pointercancel', onCancel);
+    aktiv=false; bewegt=false; pid=null;
+  }
+  function onMove(e){
+    if(!aktiv || e.pointerId!==pid) return;
+    if(!bewegt){ if(Math.hypot(e.clientX-sx,e.clientY-sy)<7) return; start(); }
+    if(e.cancelable) e.preventDefault();
+    bewege(e.clientX,e.clientY);
+  }
+  function onUp(e){
+    if(!aktiv || e.pointerId!==pid) return;
+    const warBewegt=bewegt;
+    const x=e.clientX, y=e.clientY;
+    const slot = warBewegt ? zielUnter(x,y) : null;
+    aufraeumen();
+    if(!warBewegt){ schildGewaehlt(s); return; }
+    if(slot){ platziere(s,slot); }
+  }
+  function onCancel(e){ if(e.pointerId===pid) aufraeumen(); }
+
+  s.addEventListener('pointerdown',e=>{
+    if(s.classList.contains('platziert')) return;
+    if(pid!==null) return;
+    if(e.button!==undefined && e.button>0) return;
+    aktiv=true; bewegt=false; pid=e.pointerId; sx=e.clientX; sy=e.clientY;
+    window.addEventListener('pointermove', onMove, {passive:false});
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onCancel);
+  });
+}
+
+function fertig(){
+  el('banner-text').textContent =
+    aktuelleId==='all' ? 'Wow \u2013 der ganze Hof ist beschildert!' :
+    aktuelleId==='mix' ? 'Stark! Alle gemischten Schilder sitzen.' :
+    'Super \u2013 alle Schilder h\u00e4ngen am richtigen Stall!';
+  bannerEl.classList.add('an'); konfettiRegen();
+}
+el('banner-weiter').addEventListener('click',()=>{ bannerEl.classList.remove('an'); naechsteRunde(); });
+bannerEl.addEventListener('click',e=>{ if(e.target===bannerEl){ bannerEl.classList.remove('an'); }});
+function naechsteRunde(){ if(aktuelleId==='mix') aktuelleTiere = mischen(ALLE).slice(0,6); renderRunde(); }
+el('mischen').addEventListener('click',()=>{ const offen=[...vorratEl.querySelectorAll('.schild:not(.platziert)')]; mischen(offen).forEach(s=>vorratEl.appendChild(s)); });
+el('nochmal').addEventListener('click',renderRunde);
+
+function konfettiRegen(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const farben=['#E8B84B','#B5462E','#6E9655','#88B4CE','#F3E9D6','#cf2e2e'];
+  for(let i=0;i<70;i++){
+    const k=document.createElement('div'); k.className='konfetti';
+    k.style.left=Math.random()*100+'vw'; k.style.background=farben[i%farben.length];
+    const dauer=2.2+Math.random()*1.8, verz=Math.random()*0.6;
+    k.animate([{transform:'translateY(-20px) rotate(0deg)',opacity:1},{transform:'translateY(105vh) rotate(720deg)',opacity:1},{opacity:0}],{duration:dauer*1000, delay:verz*1000, easing:'cubic-bezier(.3,.6,.6,1)'});
+    document.body.appendChild(k);
+    setTimeout(()=>k.remove(),(dauer+verz)*1000+200);
+  }
+}
+
+/* --- Quiz-Logik --- */
+const quizFragen = [
+  { text: "Welche Tiere legen Eier?", pruefe: f => f.tiere.some(t => t.nutzen.includes('Eier')) },
+  { text: "Welche Tiere geben Milch?", pruefe: f => f.tiere.some(t => t.nutzen.includes('Milch')) },
+  { text: "Welche Tiere geben uns Wolle?", pruefe: f => f.tiere.some(t => t.nutzen.includes('Wolle')) },
+  { text: "Welche Tiere sind Haustiere?", pruefe: f => f.tiere.some(t => t.kategorie === 'Haustier') },
+  { text: "Welche Tiere sind Nutztiere?", pruefe: f => f.tiere.some(t => t.kategorie === 'Nutztier') },
+  { text: "Auf welchen Tieren kann man reiten?", pruefe: f => f.tiere.some(t => t.nutzen.includes('Reiten')) }
+];
+let aktuelleFrageIdx = -1;
+
+function ladeQuizFrage() {
+  aktuelleFrageIdx = (aktuelleFrageIdx + 1) % quizFragen.length;
+  const frage = quizFragen[aktuelleFrageIdx];
+  el('quiz-frage-text').textContent = frage.text;
+  const optionenEl = el('quiz-optionen');
+  optionenEl.innerHTML = '';
+  
+  mischen(FAMILIEN).forEach(f => {
+    const karte = document.createElement('div');
+    karte.className = 'quiz-karte';
+    karte.innerHTML = f.icon + '<div class="quiz-karte-name">' + f.name + '</div>';
+    
+    karte.addEventListener('click', () => {
+      if(frage.pruefe(f)) {
+        karte.classList.add('richtig');
+        konfettiRegen();
+        setTimeout(ladeQuizFrage, 2000);
+      } else {
+        karte.classList.add('falsch');
+        setTimeout(() => karte.classList.remove('falsch'), 500);
+      }
+    });
+    optionenEl.appendChild(karte);
+  });
+}
+
+/* --- Präpositionen-Logik --- */
+const praepSzenen = [
+  { posStyles: { left:'50%', transform:'translateX(-50%)', bottom:'50%', zIndex:2 }, wort:'auf' },
+  { posStyles: { left:'50%', transform:'translateX(-50%)', bottom:'0%', zIndex:10 }, wort:'vor' },
+  { posStyles: { left:'15%', transform:'none', bottom:'0%', zIndex:1 }, wort:'neben' },
+  { posStyles: { left:'75%', transform:'none', bottom:'30%', zIndex:0 }, wort:'hinter' }
+];
+
+function startePraeposition() {
+  const tier = ALLE[Math.floor(Math.random()*ALLE.length)];
+  const szene = praepSzenen[Math.floor(Math.random()*praepSzenen.length)];
+  const tEl = el('praep-tier-pos');
+  tEl.innerHTML = tier.svg;
+  Object.assign(tEl.style, szene.posStyles);
+  
+  el('praep-luecke').textContent = '___';
+  el('praep-luecke').style.borderColor = '#fff';
+  el('praep-luecke').style.color = 'var(--heu)';
+  
+  const btns = el('praep-optionen').querySelectorAll('button');
+  btns.forEach(b => {
+    b.onclick = () => {
+      if(b.dataset.val === szene.wort) {
+        el('praep-luecke').textContent = szene.wort;
+        el('praep-luecke').style.color = '#fff';
+        el('praep-luecke').style.borderColor = 'transparent';
+        konfettiRegen();
+        setTimeout(startePraeposition, 2500);
+      } else {
+        b.style.animation = 'nope .4s';
+        b.style.background = 'var(--falsch)';
+        setTimeout(() => { b.style.animation = ''; b.style.background=''; }, 500);
+      }
+    };
+  });
+}
+
+/* --- Werkzeuge-Logik --- */
+const WERKZEUGE = [
+  { key: 'schaufel', name: 'Schaufel', svg: svgTrans('<rect x="68" y="20" width="14" height="60" fill="#cdb189"/><path d="M55 80 Q75 70 95 80 L90 110 L60 110 Z" fill="#b0b5bc"/><rect x="60" y="10" width="30" height="10" rx="4" fill="#5A3A1E"/>') },
+  { key: 'besen', name: 'Besen', svg: svgTrans('<rect x="70" y="10" width="10" height="70" fill="#cdb189"/><path d="M50 80 L100 80 L110 110 L40 110 Z" fill="#E8B84B"/><rect x="45" y="80" width="60" height="8" rx="2" fill="#8F3220"/>') },
+  { key: 'giesskanne', name: 'Gießkanne', svg: svgTrans('<ellipse cx="75" cy="80" rx="30" ry="25" fill="#4E8A4A"/><path d="M100 70 L130 50 L135 55 Z" fill="#4E8A4A"/><path d="M45 70 A 25 25 0 0 1 45 40" fill="none" stroke="#4E8A4A" stroke-width="8"/><rect x="60" y="45" width="30" height="15" fill="#4E8A4A"/>') },
+  { key: 'eimer', name: 'Eimer', svg: svgTrans('<path d="M45 50 L105 50 L95 100 L55 100 Z" fill="#88B4CE"/><path d="M45 50 Q75 20 105 50" fill="none" stroke="#33281A" stroke-width="4"/><ellipse cx="75" cy="50" rx="30" ry="8" fill="#AFCFE0"/>') }
+];
+
+let werkzeugGewaehlt = null;
+
+function starteWerkzeuge() {
+  const gEl = el('werkzeug-staelle');
+  const vEl = el('werkzeug-vorrat');
+  gEl.innerHTML = ''; vEl.innerHTML = '';
+  
+  mischen(WERKZEUGE).forEach(w => {
+    const k = document.createElement('div'); k.className = 'werkzeug-karte';
+    k.innerHTML = '<div class="werkzeug-bild">'+w.svg+'</div><div class="slot" tabindex="0" data-key="'+w.key+'"><span class="platzhalter">Name hierher</span></div>';
+    const slot = k.querySelector('.slot');
+    slot.addEventListener('click', () => {
+      if(slot.classList.contains('korrekt')) return;
+      if(!werkzeugGewaehlt) {
+         const alt = slot.querySelector('.schild');
+         if(alt && !alt.classList.contains('platziert')) {
+            slot.innerHTML='<span class="platzhalter">Name hierher</span>';
+            slot.classList.remove('gefuellt');
+            alt.tabIndex=0; vEl.appendChild(alt);
+         }
+         return;
+      }
+      werkzeugGewaehlt.classList.remove('gewaehlt','wird-gezogen');
+      werkzeugGewaehlt.tabIndex=-1;
+      const alt = slot.querySelector('.schild');
+      if(alt) { alt.tabIndex=0; vEl.appendChild(alt); }
+      slot.innerHTML=''; slot.classList.add('gefuellt'); slot.appendChild(werkzeugGewaehlt);
+      werkzeugGewaehlt=null;
+    });
+    gEl.appendChild(k);
+  });
+  
+  mischen(WERKZEUGE).forEach(w => {
+    const s = document.createElement('div'); s.className = 'schild'; s.dataset.key = w.key; s.textContent = w.name;
+    s.tabIndex=0;
+    zieheEinrichten(s);
+    s.addEventListener('click', () => {
+       if(s.classList.contains('platziert')) return;
+       if(werkzeugGewaehlt===s){ s.classList.remove('gewaehlt'); werkzeugGewaehlt=null; return; }
+       if(werkzeugGewaehlt) werkzeugGewaehlt.classList.remove('gewaehlt');
+       werkzeugGewaehlt=s; s.classList.add('gewaehlt');
+    });
+    vEl.appendChild(s);
+  });
+}
+
+el('btn-werkzeug-pruefen').addEventListener('click', () => {
+  let alleRichtig = true;
+  el('werkzeug-staelle').querySelectorAll('.slot').forEach(slot => {
+     if(slot.classList.contains('korrekt')) return;
+     const schild = slot.querySelector('.schild');
+     if(!schild) { alleRichtig=false; return; }
+     if(slot.dataset.key === schild.dataset.key) {
+        slot.classList.add('korrekt'); slot.classList.remove('gefuellt'); schild.classList.add('platziert');
+     } else {
+        alleRichtig = false;
+        slot.classList.add('falsch');
+        setTimeout(() => {
+          slot.classList.remove('falsch','gefuellt');
+          schild.tabIndex=0; el('werkzeug-vorrat').appendChild(schild);
+          slot.innerHTML='<span class="platzhalter">Name hierher</span>';
+        }, 600);
+     }
+  });
+  if(alleRichtig && el('werkzeug-vorrat').children.length === 0) konfettiRegen();
+});
+el('werkzeug-neu').addEventListener('click', starteWerkzeuge);
+
+starte('schwein', document.querySelector('.auswahl button[data-id="schwein"]'));
+</script>
+</body>
+</html>
