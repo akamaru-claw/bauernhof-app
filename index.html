@@ -643,6 +643,7 @@
 const O='#3f2d1c';
 function bn(x,y,w,h,c){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(w/2)+'" fill="'+c+'" stroke="'+O+'" stroke-width="2"/>';}
 function sh(cx,cy,rx){return '<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+(rx*0.16).toFixed(1)+'" fill="#2f4d1c" opacity="0.20"/>';}
+function svgWrap(inner) { return svgWrapEnhanced(inner); }
 function svgWrapEnhanced(inner, opts={}){
   const bg = opts.bg || '#cfe7f3';
   const hasDefs = opts.defs || '';
