@@ -330,7 +330,7 @@
 <div class="info-modal" id="info-modal" role="dialog" aria-modal="true" aria-labelledby="info-titel">
   <div class="info-karte">
     <h2 id="info-titel">🚜 Bauernhof-App</h2>
-    <div class="version">Version 1.7 · 18. Juni 2026</div>
+    <div class="version">Version 1.8 · 18. Juni 2026</div>
     <p>Eine spielerische App zum Lernen von Bauernhof-Tieren, deren Namen, Artikeln und mehr!</p>
     <div class="features">
       <h3>✨ Features</h3>
@@ -341,7 +341,7 @@
         <li>📍 Präpositionen üben</li>
         <li>🔧 Werkzeuge erkennen (jetzt mit 9 Werkzeugen!)</li>
         <li>🍎 Was fressen die Tiere?</li>
-        <li>🧠 Memory-Spiel mit Highscore</li>
+        <li>🧠 Memory-Spiel mit Highscore + Bestzeit</li>
         <li>⭐ Erfolge tracken</li>
         <li>🔊 Sound-Effekte (an/aus)</li>
         <li>📱 Funktioniert offline (PWA)</li>
@@ -526,6 +526,8 @@
         <h3>Memory</h3>
         <div class="statistik-wert" id="stat-memory-rekord">–</div>
         <p class="statistik-label">Wenigste Züge</p>
+        <div class="statistik-wert" style="font-size:20px;margin-top:8px;" id="stat-memory-bestzeit">–</div>
+        <p class="statistik-label" style="font-size:12px;">Bestzeit</p>
       </div>
       <div class="statistik-karte">
         <div class="statistik-icon">📚</div>
@@ -1346,6 +1348,8 @@ el('werkzeug-neu').addEventListener('click', starteWerkzeuge);
 
 /* --- LocalStorage Highscore für Memory --- */
 const MEMORY_HIGHSCORE_KEY = 'bauernhof_memory_highscore';
+const MEMORY_BESTZEIT_KEY = 'bauernhof_memory_bestzeit';
+
 function ladeMemoryHighscore() {
   const gespeichert = localStorage.getItem(MEMORY_HIGHSCORE_KEY);
   return gespeichert ? parseInt(gespeichert, 10) : null;
@@ -1357,6 +1361,25 @@ function speichereMemoryHighscore(zuege) {
     return true;
   }
   return false;
+}
+
+function ladeMemoryBestzeit() {
+  const gespeichert = localStorage.getItem(MEMORY_BESTZEIT_KEY);
+  return gespeichert ? parseInt(gespeichert, 10) : null;
+}
+function speichereMemoryBestzeit(sekunden) {
+  const aktuell = ladeMemoryBestzeit();
+  if (aktuell === null || sekunden < aktuell) {
+    localStorage.setItem(MEMORY_BESTZEIT_KEY, sekunden.toString());
+    return true;
+  }
+  return false;
+}
+
+function formatiereZeit(sekunden) {
+  const min = Math.floor(sekunden / 60);
+  const sec = sekunden % 60;
+  return min + ':' + (sec < 10 ? '0' + sec : sec);
 }
 
 /* --- Artikel-Quiz Logik --- */
@@ -1512,6 +1535,7 @@ if (localStorage.getItem(LAST_TAB_KEY)) {
 
 /* --- Memory-Spiel Logik --- */
 let memoryKarten = [], memoryUmgedreht = [], memoryPaare = 0, memoryZuege = 0, memorySperre = false;
+let memoryStartZeit = 0, memoryTimerInterval = null, memoryVerstricheneZeit = 0;
 
 const MEMORY_TIERE = [
   { key: 'kuh', name: 'Kuh', svg: kuh },
@@ -1529,10 +1553,22 @@ function starteMemory() {
   memoryZuege = 0;
   memorySperre = false;
   memoryUmgedreht = [];
+  memoryStartZeit = Date.now();
+  memoryVerstricheneZeit = 0;
+  
+  // Timer starten
+  if (memoryTimerInterval) clearInterval(memoryTimerInterval);
+  memoryTimerInterval = setInterval(() => {
+    memoryVerstricheneZeit = Math.floor((Date.now() - memoryStartZeit) / 1000);
+    updateMemoryAnzeige();
+  }, 1000);
   
   const highscore = ladeMemoryHighscore();
-  const highscoreText = highscore ? ` · Rekord: ${highscore} Züge` : '';
-  el('memory-fortschritt').innerHTML = 'Paare: <b>0 / 8</b> · Züge: <b>0</b>' + highscoreText;
+  const bestzeit = ladeMemoryBestzeit();
+  let infoText = 'Paare: <b>0 / 8</b> · Züge: <b>0</b>';
+  if (highscore) infoText += ` · Rekord: ${highscore} Züge`;
+  if (bestzeit) infoText += ` · Bestzeit: ${formatiereZeit(bestzeit)}`;
+  el('memory-fortschritt').innerHTML = infoText + ' · Zeit: <b>0:00</b>';
   
   // Erstelle Paare (je Tier 2x)
   const paare = [];
@@ -1561,6 +1597,16 @@ function starteMemory() {
   });
 }
 
+function updateMemoryAnzeige() {
+  const highscore = ladeMemoryHighscore();
+  const bestzeit = ladeMemoryBestzeit();
+  let infoText = `Paare: <b>${memoryPaare} / 8</b> · Züge: <b>${memoryZuege}</b>`;
+  if (highscore) infoText += ` · Rekord: ${highscore} Züge`;
+  if (bestzeit) infoText += ` · Bestzeit: ${formatiereZeit(bestzeit)}`;
+  infoText += ` · Zeit: <b>${formatiereZeit(memoryVerstricheneZeit)}</b>`;
+  el('memory-fortschritt').innerHTML = infoText;
+}
+
 function memoryKlick(index) {
   if (memorySperre) return;
   const karte = el('memory-grid').children[index];
@@ -1574,9 +1620,7 @@ function memoryKlick(index) {
   if (memoryUmgedreht.length === 2) {
     memoryZuege++;
     memorySperre = true;
-    const highscore = ladeMemoryHighscore();
-    const highscoreText = highscore ? ` · Rekord: ${highscore}` : '';
-    el('memory-fortschritt').innerHTML = `Paare: <b>${memoryPaare} / 8</b> · Züge: <b>${memoryZuege}</b>${highscoreText}`;
+    updateMemoryAnzeige();
     
     const [idx1, idx2] = memoryUmgedreht;
     const karte1 = memoryKarten[idx1];
@@ -1597,18 +1641,30 @@ function memoryKlick(index) {
         memorySperre = false;
         playSound('match');
         hapticFeedback();
-        const highscore = ladeMemoryHighscore();
-        const highscoreText = highscore ? ` · Rekord: ${highscore}` : '';
-        el('memory-fortschritt').innerHTML = `Paare: <b>${memoryPaare} / 8</b> · Züge: <b>${memoryZuege}</b>${highscoreText}`;
+        updateMemoryAnzeige();
         
         if (memoryPaare === 8) {
+          // Timer stoppen
+          if (memoryTimerInterval) {
+            clearInterval(memoryTimerInterval);
+            memoryTimerInterval = null;
+          }
+          const finaleZeit = memoryVerstricheneZeit;
+          
           setTimeout(() => {
             konfettiRegen();
             playSound('win');
             const neuerHighscore = speichereMemoryHighscore(memoryZuege);
-            const nachricht = neuerHighscore 
-              ? `🎉 Neuer Rekord! Alle 8 Paare in ${memoryZuege} Zügen!` 
-              : `🏆 Alle 8 Paare gefunden! ${memoryZuege} Züge`;
+            const neueBestzeit = speichereMemoryBestzeit(finaleZeit);
+            
+            let nachricht = '🏆 Alle 8 Paare gefunden!';
+            if (neuerHighscore && neueBestzeit) {
+              nachricht = `🎉 Doppelter Rekord! ${memoryZuege} Züge · ${formatiereZeit(finaleZeit)}`;
+            } else if (neuerHighscore) {
+              nachricht = `🎉 Neuer Rekord: ${memoryZuege} Züge!`;
+            } else if (neueBestzeit) {
+              nachricht = `⚡ Neue Bestzeit: ${formatiereZeit(finaleZeit)}!`;
+            }
             el('memory-fortschritt').innerHTML = `<b style="color:#E8B84B">${nachricht}</b>`;
           }, 400);
         }
@@ -1813,9 +1869,11 @@ function erhoeheSpielZaehler() {
 }
 
 function aktualisiereStatistik() {
-  // Memory Highscore
+  // Memory Highscore + Bestzeit
   const memoryRekord = ladeStatistik(STATISTIK_KEYS.memory);
   el('stat-memory-rekord').textContent = memoryRekord ? memoryRekord + ' Züge' : '–';
+  const memoryBestzeit = ladeMemoryBestzeit();
+  el('stat-memory-bestzeit').textContent = memoryBestzeit ? formatiereZeit(memoryBestzeit) : '–';
   
   // Artikel-Quiz Best
   const artikelBest = ladeStatistik(STATISTIK_KEYS.artikel);
@@ -1842,6 +1900,7 @@ function aktualisiereStatistik() {
 el('btn-statistik-reset').addEventListener('click', () => {
   if (confirm('Möchtest du wirklich alle Erfolge löschen?')) {
     Object.values(STATISTIK_KEYS).forEach(key => localStorage.removeItem(key));
+    localStorage.removeItem(MEMORY_BESTZEIT_KEY);
     aktualisiereStatistik();
   }
 });
