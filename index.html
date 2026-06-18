@@ -125,6 +125,9 @@
     border:3px solid var(--holz-dunkel); border-radius:10px; line-height:0;
   }
   .stall .buehne svg{width:100%; height:auto; display:block}
+  .stall .buehne.tier-klickbar{cursor:pointer;transition:transform .15s,box-shadow .15s}
+  .stall .buehne.tier-klickbar:hover{transform:scale(1.03);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+  .stall .buehne.tier-klickbar:active{transform:scale(.98)}
   
   .stall-label {
     font-weight:800; font-size:14px; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.5);
@@ -410,6 +413,20 @@
   </div>
 </div>
 
+<div class="banner" id="tier-info-banner" role="dialog" aria-modal="true" aria-labelledby="tier-info-titel">
+  <div class="karte">
+    <h2 id="tier-info-titel">🐄 Tier-Info</h2>
+    <div id="tier-info-bild" style="max-width:200px;margin:0 auto 16px;"></div>
+    <p id="tier-info-name" style="font-size:24px;font-family:var(--display);font-weight:700;color:var(--scheune);margin:0 0 8px;"></p>
+    <div class="tipp" id="tier-info-details" style="text-align:center;">
+      <p><b>Rolle:</b> <span id="tier-info-rolle"></span></p>
+      <p><b>Kategorie:</b> <span id="tier-info-kategorie"></span></p>
+      <p id="tier-info-nutzen-p"><b>Nutzen:</b> <span id="tier-info-nutzen"></span></p>
+    </div>
+    <button id="tier-info-schliessen" type="button">Schließen</button>
+  </div>
+</div>
+
 <script>
 /* ===== Hilfsfunktionen ===== */
 const O='#3f2d1c';
@@ -674,12 +691,15 @@ function renderRunde(){
     if(t.rolle === 'Vater') prefix = 'Der Vater heißt:';
     else if(t.rolle === 'Mutter') prefix = 'Die Mutter heißt:';
 
-    stall.innerHTML='<div class="buehne">'+t.svg+'</div>'+
+    stall.innerHTML='<div class="buehne tier-klickbar" data-key="'+t.key+'" role="button" tabindex="0" aria-label="'+t.art+' '+t.wort+' - Klicken für Info">'+t.svg+'</div>'+
       '<div class="stall-label">'+prefix+'</div>'+
       '<div class="slot" tabindex="0" role="button" data-key="'+t.key+'" aria-label="Stall"><span class="platzhalter">Schild hierher</span></div>';
     const slot=stall.querySelector('.slot');
     slot.addEventListener('click',()=>slotAngetippt(slot));
     slot.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();slotAngetippt(slot);} });
+    const buehne=stall.querySelector('.buehne');
+    buehne.addEventListener('click',()=>zeigeTierInfo(t));
+    buehne.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();zeigeTierInfo(t);} });
     staelleEl.appendChild(stall);
   });
   vorratEl.innerHTML='';
@@ -835,6 +855,26 @@ function fertig(){
 }
 el('banner-weiter').addEventListener('click',()=>{ bannerEl.classList.remove('an'); naechsteRunde(); });
 bannerEl.addEventListener('click',e=>{ if(e.target===bannerEl){ bannerEl.classList.remove('an'); }});
+
+/* --- Tier-Info Modal --- */
+const tierInfoBanner = el('tier-info-banner');
+function zeigeTierInfo(tier) {
+  el('tier-info-bild').innerHTML = tier.svg;
+  el('tier-info-name').innerHTML = tier.art + ' ' + tier.wort + ' <small style="font-size:14px;color:var(--tinte);">(' + tier.rolle + ')</small>';
+  el('tier-info-rolle').textContent = tier.rolle;
+  el('tier-info-kategorie').textContent = tier.kategorie === 'Nutztier' ? '🚜 Nutztier' : '🏠 Haustier';
+  const nutzenEl = el('tier-info-nutzen');
+  const nutzenP = el('tier-info-nutzen-p');
+  if (tier.nutzen && tier.nutzen.length > 0) {
+    nutzenEl.textContent = tier.nutzen.join(', ');
+    nutzenP.style.display = 'block';
+  } else {
+    nutzenP.style.display = 'none';
+  }
+  tierInfoBanner.classList.add('an');
+}
+el('tier-info-schliessen').addEventListener('click', () => tierInfoBanner.classList.remove('an'));
+tierInfoBanner.addEventListener('click', e => { if(e.target === tierInfoBanner) tierInfoBanner.classList.remove('an'); });
 function naechsteRunde(){ if(aktuelleId==='mix') aktuelleTiere = mischen(ALLE).slice(0,6); renderRunde(); }
 el('mischen').addEventListener('click',()=>{ const offen=[...vorratEl.querySelectorAll('.schild:not(.platziert)')]; mischen(offen).forEach(s=>vorratEl.appendChild(s)); });
 el('nochmal').addEventListener('click',renderRunde);
