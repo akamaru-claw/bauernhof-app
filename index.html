@@ -713,7 +713,6 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     if(btn.dataset.target === 'view-praepositionen') startePraeposition();
     if(btn.dataset.target === 'view-werkzeuge') starteWerkzeuge();
     if(btn.dataset.target === 'view-statistik') aktualisiereStatistik();
-    localStorage.setItem('bauernhof_last_tab', btn.dataset.target);
   });
 });
 
