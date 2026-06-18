@@ -197,6 +197,24 @@
   .praep-tier svg { width:100%; height:auto; }
   .luecke { display:inline-block; min-width:80px; border-bottom:4px solid #fff; color:var(--heu); padding:0 10px; }
 
+  /* --- Artikel-Quiz Styles --- */
+  .artikel-container { max-width:600px; margin:0 auto 24px; text-align:center; }
+  .artikel-tier-bild { max-width:280px; margin:0 auto 20px; background:linear-gradient(to bottom, #AFCFE0 0%, #AFCFE0 60%, #8FB36B 60%, #6E9655 100%); border:5px solid var(--holz-dunkel); border-radius:16px; box-shadow:0 10px 20px rgba(0,0,0,.2); overflow:hidden; }
+  .artikel-tier-bild svg { width:100%; height:auto; display:block; }
+  .artikel-frage { font-size:clamp(20px, 4vw, 28px); font-family:var(--display); font-weight:700; color:#fff; text-shadow:0 2px 4px rgba(0,0,0,.4); margin-bottom:24px; background:rgba(0,0,0,.2); padding:12px 24px; border-radius:16px; border:3px dashed rgba(255,255,255,.3); display:inline-block; }
+  .artikel-buttons { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:24px; }
+  .artikel-btn { font-family:var(--display); font-weight:700; font-size:clamp(24px, 6vw, 36px); min-width:90px; padding:16px 28px; border:4px solid var(--holz-dunkel); border-radius:16px; cursor:pointer; transition:all .15s; box-shadow:0 6px 0 var(--holz-tief); background:var(--papier); color:var(--tinte); }
+  .artikel-btn:hover { transform:translateY(-3px); }
+  .artikel-btn:active { transform:translateY(2px); box-shadow:0 2px 0 var(--holz-tief); }
+  .artikel-btn.richtig { background:var(--korrekt); border-color:#3a6b36; color:#fff; box-shadow:0 0 0 6px rgba(78,138,74,.4); transform:scale(1.05); }
+  .artikel-btn.falsch { background:var(--falsch); border-color:#8a3a2a; color:#fff; animation:nope .42s; }
+  .artikel-btn.disabled { opacity:.5; pointer-events:none; }
+  .artikel-fortschritt { text-align:center; font-family:var(--display); font-weight:700; color:#fff; font-size:18px; text-shadow:0 2px 4px rgba(0,0,0,.4); margin-bottom:16px; }
+  .artikel-ergebnis { background:var(--papier); border:5px solid var(--scheune-tief); border-radius:16px; padding:24px; max-width:400px; margin:0 auto; text-align:center; }
+  .artikel-ergebnis h3 { font-family:var(--display); font-weight:700; color:var(--scheune); margin:0 0 12px; font-size:24px; }
+  .artikel-ergebnis p { margin:0 0 16px; font-weight:700; }
+  .artikel-stern { font-size:48px; margin:8px 0; }
+
   /* --- Werkzeuge Styles --- */
   .werkzeug-grid { display:grid; gap:16px; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); margin-bottom:24px; }
   .werkzeug-karte { background:var(--papier); border:4px solid var(--holz-dunkel); border-radius:16px; padding:16px; display:flex; flex-direction:column; align-items:center; box-shadow:0 6px 0 var(--holz-tief); }
@@ -213,6 +231,7 @@
   <nav class="tabs" aria-label="Hauptnavigation">
     <button class="tab-btn aktiv" data-target="view-zuordnung" type="button">Namen zuordnen</button>
     <button class="tab-btn" data-target="view-quiz" type="button">Tier-Quiz</button>
+    <button class="tab-btn" data-target="view-artikel" type="button">Der/Die/Das</button>
     <button class="tab-btn" data-target="view-praepositionen" type="button">Präpositionen</button>
     <button class="tab-btn" data-target="view-werkzeuge" type="button">Werkzeuge</button>
   </nav>
@@ -239,6 +258,29 @@
       <div class="quiz-frage" id="quiz-frage-text">Lade Frage...</div>
     </div>
     <div class="quiz-optionen" id="quiz-optionen"></div>
+  </div>
+
+  <div id="view-artikel" class="view">
+    <header class="hof">
+      <h1>Der, Die oder Das?</h1>
+      <p>Wähle den richtigen Artikel für das Tier.</p>
+    </header>
+    <div class="artikel-container">
+      <div class="artikel-fortschritt" id="artikel-fortschritt">Frage 1 von 10</div>
+      <div class="artikel-tier-bild" id="artikel-bild"></div>
+      <div class="artikel-frage" id="artikel-frage">___ Kuh</div>
+      <div class="artikel-buttons" id="artikel-buttons">
+        <button class="artikel-btn" data-artikel="der">der</button>
+        <button class="artikel-btn" data-artikel="die">die</button>
+        <button class="artikel-btn" data-artikel="das">das</button>
+      </div>
+      <div class="artikel-ergebnis" id="artikel-ergebnis" style="display:none;">
+        <h3>Geschafft! 🎉</h3>
+        <p id="artikel-punkte">Du hast 8 von 10 richtig!</p>
+        <div class="artikel-stern" id="artikel-stern">⭐⭐⭐</div>
+        <button class="knopf wichtig" id="artikel-neustart">Nochmal spielen</button>
+      </div>
+    </div>
   </div>
 
   <div id="view-praepositionen" class="view">
@@ -884,6 +926,103 @@ el('btn-werkzeug-pruefen').addEventListener('click', () => {
   if(alleRichtig && el('werkzeug-vorrat').children.length === 0) konfettiRegen();
 });
 el('werkzeug-neu').addEventListener('click', starteWerkzeuge);
+
+/* --- Artikel-Quiz Logik --- */
+const ARTIKEL_FRAGEN = 10;
+let artikelFragen = [], artikelAktuell = 0, artikelRichtig = 0;
+
+function ladeArtikelQuiz() {
+  // Mische alle Tiere und nimm die ersten 10
+  artikelFragen = mischen(ALLE).slice(0, ARTIKEL_FRAGEN);
+  artikelAktuell = 0;
+  artikelRichtig = 0;
+  el('artikel-ergebnis').style.display = 'none';
+  zeigeArtikelFrage();
+}
+
+function zeigeArtikelFrage() {
+  const tier = artikelFragen[artikelAktuell];
+  el('artikel-fortschritt').textContent = 'Frage ' + (artikelAktuell + 1) + ' von ' + ARTIKEL_FRAGEN;
+  el('artikel-bild').innerHTML = tier.svg;
+  el('artikel-frage').innerHTML = '___ ' + tier.wort;
+  
+  const buttons = el('artikel-buttons').querySelectorAll('button');
+  buttons.forEach(b => {
+    b.className = 'artikel-btn';
+    b.disabled = false;
+    b.onclick = () => pruefeArtikel(b, tier.art);
+  });
+}
+
+function pruefeArtikel(btn, richtigerArtikel) {
+  const buttons = el('artikel-buttons').querySelectorAll('button');
+  buttons.forEach(b => b.disabled = true);
+  
+  if (btn.dataset.artikel === richtigerArtikel) {
+    btn.classList.add('richtig');
+    artikelRichtig++;
+    el('artikel-frage').innerHTML = '<span style="color:var(--korrekt)">' + richtigerArtikel + '</span> ' + artikelFragen[artikelAktuell].wort;
+    setTimeout(() => {
+      artikelAktuell++;
+      if (artikelAktuell < ARTIKEL_FRAGEN) {
+        zeigeArtikelFrage();
+      } else {
+        zeigeArtikelErgebnis();
+      }
+    }, 1200);
+  } else {
+    btn.classList.add('falsch');
+    // Zeige die richtige Antwort
+    buttons.forEach(b => {
+      if (b.dataset.artikel === richtigerArtikel) b.classList.add('richtig');
+    });
+    el('artikel-frage').innerHTML = '<span style="color:var(--korrekt)">' + richtigerArtikel + '</span> ' + artikelFragen[artikelAktuell].wort;
+    setTimeout(() => {
+      artikelAktuell++;
+      if (artikelAktuell < ARTIKEL_FRAGEN) {
+        zeigeArtikelFrage();
+      } else {
+        zeigeArtikelErgebnis();
+      }
+    }, 1800);
+  }
+}
+
+function zeigeArtikelErgebnis() {
+  el('artikel-fortschritt').style.display = 'none';
+  el('artikel-bild').style.display = 'none';
+  el('artikel-frage').style.display = 'none';
+  el('artikel-buttons').style.display = 'none';
+  
+  el('artikel-ergebnis').style.display = 'block';
+  el('artikel-punkte').textContent = 'Du hast ' + artikelRichtig + ' von ' + ARTIKEL_FRAGEN + ' richtig!';
+  
+  let sterne = '⭐';
+  if (artikelRichtig >= 7) sterne = '⭐⭐';
+  if (artikelRichtig >= 9) sterne = '⭐⭐⭐';
+  if (artikelRichtig === 10) sterne = '🏆⭐⭐⭐🏆';
+  el('artikel-stern').textContent = sterne;
+  
+  if (artikelRichtig >= 8) konfettiRegen();
+}
+
+el('artikel-neustart').addEventListener('click', () => {
+  el('artikel-fortschritt').style.display = 'block';
+  el('artikel-bild').style.display = 'block';
+  el('artikel-frage').style.display = 'block';
+  el('artikel-buttons').style.display = 'flex';
+  ladeArtikelQuiz();
+});
+
+/* Tab-Wechsel für Artikel-Quiz */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  const origClick = btn.onclick;
+  btn.addEventListener('click', () => {
+    if (btn.dataset.target === 'view-artikel') {
+      ladeArtikelQuiz();
+    }
+  });
+});
 
 starte('schwein', document.querySelector('.auswahl button[data-id="schwein"]'));
 </script>
