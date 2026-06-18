@@ -221,8 +221,28 @@
   .werkzeug-bild { width:100%; max-width:120px; margin-bottom:12px; }
   .werkzeug-bild svg { width:100%; height:auto; display:block; filter:drop-shadow(0 4px 2px rgba(0,0,0,.2)); }
 
+  /* --- Memory Styles --- */
+  .memory-grid { display:grid; gap:12px; grid-template-columns:repeat(4, 1fr); max-width:600px; margin:0 auto 24px; }
+  .memory-karte { aspect-ratio:1; border:4px solid var(--holz-dunkel); border-radius:16px; cursor:pointer; position:relative; transform-style:preserve-3d; transition:transform 0.4s; box-shadow:0 6px 0 var(--holz-tief); background:var(--papier); }
+  .memory-karte:hover { transform:translateY(-2px); }
+  .memory-karte:active { transform:translateY(2px); box-shadow:0 2px 0 var(--holz-tief); }
+  .memory-karte.umgedreht { transform:rotateY(180deg); }
+  .memory-karte.gematched { border-color:var(--korrekt); box-shadow:0 0 0 4px rgba(78,138,74,.4); cursor:default; }
+  .memory-karte .vorderseite, .memory-karte .rueckseite { position:absolute; inset:0; backface-visibility:hidden; border-radius:12px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .memory-karte .vorderseite { background:linear-gradient(135deg, var(--holz) 0%, var(--holz-tief) 100%); transform:rotateY(180deg); }
+  .memory-karte .rueckseite { background:linear-gradient(135deg, var(--scheune) 0%, var(--scheune-tief) 100%); }
+  .memory-karte .rueckseite::before { content:""; position:absolute; inset:8px; background:repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,.15) 8px, rgba(255,255,255,.15) 16px); border-radius:8px; border:2px dashed rgba(255,255,255,.3); }
+  .memory-karte .rueckseite::after { content:""; width:40px; height:40px; background:url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"%23fff\"><path d=\"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/></svg>'); opacity:.4; }
+  .memory-karte.umgedreht .rueckseite::after { display:none; }
+  .memory-karte svg { width:85%; height:85%; display:block; filter:drop-shadow(0 2px 4px rgba(0,0,0,.2)); }
+  .memory-karte .tier-name { font-family:var(--display); font-weight:700; font-size:clamp(14px, 3vw, 18px); color:var(--tinte); text-align:center; padding:8px; background:var(--heu); position:absolute; bottom:0; left:0; right:0; }
+  .memory-info { text-align:center; margin-bottom:20px; font-family:var(--display); font-weight:700; color:#fff; font-size:20px; text-shadow:0 2px 4px rgba(0,0,0,.4); }
+  .memory-info span { color:var(--heu); }
+  @keyframes memoryMatch { 0%{transform:rotateY(180deg) scale(1)} 50%{transform:rotateY(180deg) scale(1.1)} 100%{transform:rotateY(180deg) scale(1)} }
+  .memory-karte.match-anim { animation:memoryMatch .4s ease; }
+
   @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important; transition-duration:.001ms !important}}
-  @media (max-width:520px){ .staelle{grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:12px} }
+  @media (max-width:520px){ .staelle{grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:12px} .memory-karte .rueckseite::after { width:28px; height:28px; } }
 </style>
 </head>
 <body>
@@ -234,6 +254,7 @@
     <button class="tab-btn" data-target="view-artikel" type="button">Der/Die/Das</button>
     <button class="tab-btn" data-target="view-praepositionen" type="button">Präpositionen</button>
     <button class="tab-btn" data-target="view-werkzeuge" type="button">Werkzeuge</button>
+    <button class="tab-btn" data-target="view-memory" type="button">Memory</button>
   </nav>
 
   <div id="view-zuordnung" class="view aktiv">
@@ -317,6 +338,18 @@
     <div class="werkzeug-grid" id="werkzeug-staelle"></div>
     <h2 class="vorrat-titel">Namen</h2>
     <div class="vorrat" id="werkzeug-vorrat"></div>
+  </div>
+
+  <div id="view-memory" class="view">
+    <header class="hof">
+      <h1>Tier-Memory</h1>
+      <p>Finde die passenden Tier-Paare! Klicke auf die Karten, um sie umzudrehen.</p>
+    </header>
+    <div class="leiste">
+      <div class="fortschritt" id="memory-fortschritt">Paare: <b>0 / 6</b> · Züge: <b>0</b></div>
+      <button class="knopf wichtig" id="btn-memory-neu" type="button">🔄 Neues Spiel</button>
+    </div>
+    <div class="memory-grid" id="memory-grid"></div>
   </div>
 
   <footer>Selbstgemalter Hof · alle Grafiken sind handgezeichnete SVG-Grafiken</footer>
@@ -1021,8 +1054,110 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     if (btn.dataset.target === 'view-artikel') {
       ladeArtikelQuiz();
     }
+    if (btn.dataset.target === 'view-memory') {
+      starteMemory();
+    }
   });
 });
+
+/* --- Memory-Spiel Logik --- */
+let memoryKarten = [], memoryUmgedreht = [], memoryPaare = 0, memoryZuege = 0, memorySperre = false;
+
+const MEMORY_TIERE = [
+  { key: 'kuh', name: 'Kuh', svg: kuh },
+  { key: 'schwein', name: 'Schwein', svg: sau },
+  { key: 'hund', name: 'Hund', svg: ruedeSvg },
+  { key: 'katze', name: 'Katze', svg: katerSvg },
+  { key: 'hahn', name: 'Hahn', svg: hahn },
+  { key: 'pferd', name: 'Pferd', svg: hengst }
+];
+
+function starteMemory() {
+  memoryPaare = 0;
+  memoryZuege = 0;
+  memorySperre = false;
+  memoryUmgedreht = [];
+  el('memory-fortschritt').innerHTML = 'Paare: <b>0 / 6</b> · Züge: <b>0</b>';
+  
+  // Erstelle Paare (je Tier 2x)
+  const paare = [];
+  MEMORY_TIERE.forEach(tier => {
+    paare.push({ ...tier, id: tier.key + '_1', uniqueId: Math.random() });
+    paare.push({ ...tier, id: tier.key + '_2', uniqueId: Math.random() });
+  });
+  
+  // Mische
+  paare.sort((a, b) => a.uniqueId - b.uniqueId);
+  memoryKarten = paare;
+  
+  // Rendern
+  const grid = el('memory-grid');
+  grid.innerHTML = '';
+  memoryKarten.forEach((karte, index) => {
+    const div = document.createElement('div');
+    div.className = 'memory-karte';
+    div.dataset.index = index;
+    div.innerHTML = `
+      <div class="rueckseite"></div>
+      <div class="vorderseite">${karte.svg}<div class="tier-name">${karte.name}</div></div>
+    `;
+    div.addEventListener('click', () => memoryKlick(index));
+    grid.appendChild(div);
+  });
+}
+
+function memoryKlick(index) {
+  if (memorySperre) return;
+  const karte = el('memory-grid').children[index];
+  if (karte.classList.contains('umgedreht') || karte.classList.contains('gematched')) return;
+  
+  // Umgedreht
+  karte.classList.add('umgedreht');
+  memoryUmgedreht.push(index);
+  
+  if (memoryUmgedreht.length === 2) {
+    memoryZuege++;
+    memorySperre = true;
+    el('memory-fortschritt').innerHTML = `Paare: <b>${memoryPaare} / 6</b> · Züge: <b>${memoryZuege}</b>`;
+    
+    const [idx1, idx2] = memoryUmgedreht;
+    const karte1 = memoryKarten[idx1];
+    const karte2 = memoryKarten[idx2];
+    
+    if (karte1.key === karte2.key) {
+      // Paar gefunden!
+      setTimeout(() => {
+        el('memory-grid').children[idx1].classList.add('gematched', 'match-anim');
+        el('memory-grid').children[idx2].classList.add('gematched', 'match-anim');
+        setTimeout(() => {
+          el('memory-grid').children[idx1].classList.remove('match-anim');
+          el('memory-grid').children[idx2].classList.remove('match-anim');
+        }, 400);
+        memoryPaare++;
+        memoryUmgedreht = [];
+        memorySperre = false;
+        el('memory-fortschritt').innerHTML = `Paare: <b>${memoryPaare} / 6</b> · Züge: <b>${memoryZuege}</b>`;
+        
+        if (memoryPaare === 6) {
+          setTimeout(() => {
+            konfettiRegen();
+            el('memory-fortschritt').innerHTML = `<b style="color:#E8B84B">🏆 Alle Paare gefunden! ${memoryZuege} Züge</b>`;
+          }, 400);
+        }
+      }, 500);
+    } else {
+      // Kein Paar - wieder umdrehen
+      setTimeout(() => {
+        el('memory-grid').children[idx1].classList.remove('umgedreht');
+        el('memory-grid').children[idx2].classList.remove('umgedreht');
+        memoryUmgedreht = [];
+        memorySperre = false;
+      }, 1200);
+    }
+  }
+}
+
+el('btn-memory-neu').addEventListener('click', starteMemory);
 
 starte('schwein', document.querySelector('.auswahl button[data-id="schwein"]'));
 </script>
