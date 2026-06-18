@@ -296,7 +296,7 @@
   .memory-karte.umgedreht .rueckseite::after { display:none; }
   .memory-karte svg { width:85%; height:85%; display:block; filter:drop-shadow(0 2px 4px rgba(0,0,0,.2)); }
   .memory-karte .tier-name { font-family:var(--display); font-weight:800; font-size:clamp(18px, 4vw, 24px); text-align:center; padding:14px 10px; color:var(--tinte); background:var(--heu); position:absolute; bottom:0; left:0; right:0; letter-spacing:0.5px; }
-  .memory-info { text-align:center; margin-bottom:24px; font-family:var(--display); font-weight:700; color:#fff; font-size:var(--text-md); text-shadow:0 2px 4px rgba(0,0,0,.4); }
+  .memory-info { text-align:center; margin-bottom:24px; font-family:var(--display); font-weight:700; color:#fff; font-size:clamp(20px, 4vw, 26px); text-shadow:0 2px 4px rgba(0,0,0,.4); }
   .memory-info span { color:var(--heu); }
   @keyframes memoryMatch { 0%{transform:rotateY(180deg) scale(1)} 50%{transform:rotateY(180deg) scale(1.1)} 100%{transform:rotateY(180deg) scale(1)} }
   .memory-karte.match-anim { animation:memoryMatch .4s ease; }
@@ -308,7 +308,7 @@
   .statistik-icon { font-size:48px; margin-bottom:8px; }
   .statistik-karte h3 { font-family:var(--display); font-weight:700; color:var(--scheune); margin:0 0 8px; font-size:18px; }
   .statistik-wert { font-family:var(--display); font-size:32px; font-weight:800; color:var(--tinte); margin:8px 0; }
-  .statistik-label { font-size:14px; color:var(--tinte); opacity:.8; margin:0; }
+  .statistik-label { font-size:15px; color:var(--tinte); opacity:.8; margin:0; font-weight:600; }
 
   /* --- Info-Modal Styles --- */
   .info-btn { position:fixed; top:12px; right:12px; width:42px; height:42px; border-radius:50%; border:3px solid var(--holz-dunkel); background:var(--papier); color:var(--tinte); font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 4px 0 var(--holz-tief); z-index:100; transition:transform .15s, box-shadow .15s; }
