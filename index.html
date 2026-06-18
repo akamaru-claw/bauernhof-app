@@ -304,6 +304,22 @@
   .info-schliessen:hover { transform:translateY(-2px); }
   .info-schliessen:active { transform:translateY(2px); box-shadow:0 1px 0 var(--weide-tief); }
 
+  /* --- Willkommen/Tutorial Styles --- */
+  .tutorial-modal { position:fixed; inset:0; background:rgba(0,0,0,.7); display:flex; align-items:center; justify-content:center; z-index:300; opacity:0; pointer-events:none; transition:opacity .3s ease; }
+  .tutorial-modal.sichtbar { opacity:1; pointer-events:auto; }
+  .tutorial-karte { background:var(--papier); border:6px solid var(--scheune); border-radius:20px; padding:28px; max-width:520px; width:90%; text-align:center; box-shadow:0 14px 0 var(--scheune-tief), 0 28px 56px rgba(0,0,0,.5); transform:translateY(20px) scale(.95); transition:transform .25s ease; }
+  .tutorial-modal.sichtbar .tutorial-karte { transform:translateY(0) scale(1); }
+  .tutorial-karte h2 { font-family:var(--display); font-size:32px; color:var(--scheune); margin:0 0 12px; }
+  .tutorial-karte .emoji { font-size:48px; margin-bottom:8px; }
+  .tutorial-schritte { display:flex; flex-direction:column; gap:12px; margin:20px 0; text-align:left; }
+  .tutorial-schritt { display:flex; gap:14px; align-items:flex-start; background:rgba(255,255,255,.5); padding:14px; border-radius:12px; border:2px solid var(--holz); }
+  .tutorial-schritt .num { background:var(--scheune); color:#fff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-weight:700; flex-shrink:0; font-size:16px; }
+  .tutorial-schritt .txt { font-size:15px; line-height:1.5; }
+  .tutorial-schritt .txt b { color:var(--scheune); }
+  .tutorial-start { font-family:var(--display); font-weight:700; font-size:20px; border:4px solid var(--holz-dunkel); background:var(--heu); color:var(--tinte); padding:14px 40px; border-radius:999px; box-shadow:0 5px 0 var(--holz-tief); cursor:pointer; margin-top:8px; transition:transform .12s ease; }
+  .tutorial-start:hover { transform:translateY(-2px); }
+  .tutorial-start:active { transform:translateY(2px); box-shadow:0 2px 0 var(--holz-tief); }
+
   @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important; transition-duration:.001ms !important}}
   @media (max-width:520px){ .staelle{grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:12px} .memory-karte .rueckseite::after { width:28px; height:28px; } }
 </style>
@@ -333,6 +349,34 @@
     </div>
     <p class="footer-note">Alle Grafiken sind handgezeichnet.<br>Made with ❤️ für Kinder.</p>
     <button class="info-schliessen" id="info-schliessen" type="button">Schließen</button>
+  </div>
+</div>
+
+<!-- Willkommen/Tutorial Modal -->
+<div class="tutorial-modal" id="tutorial-modal" role="dialog" aria-modal="true" aria-labelledby="tutorial-titel">
+  <div class="tutorial-karte">
+    <div class="emoji">🚜</div>
+    <h2 id="tutorial-titel">Willkommen auf dem Hof!</h2>
+    <p>Hier lernst du spielerisch alles über Bauernhof-Tiere.</p>
+    <div class="tutorial-schritte">
+      <div class="tutorial-schritt">
+        <span class="num">1</span>
+        <span class="txt"><b>Namen zuordnen:</b> Zieh die Schilder zu den richtigen Tieren.</span>
+      </div>
+      <div class="tutorial-schritt">
+        <span class="num">2</span>
+        <span class="txt"><b>Quiz:</b> Beantworte Fragen über die Tiere.</span>
+      </div>
+      <div class="tutorial-schritt">
+        <span class="num">3</span>
+        <span class="txt"><b>Der/Die/Das:</b> Lerne die richtigen Artikel.</span>
+      </div>
+      <div class="tutorial-schritt">
+        <span class="num">4</span>
+        <span class="txt"><b>⭐ Erfolge:</b> Deine Bestleistungen werden gespeichert!</span>
+      </div>
+    </div>
+    <button class="tutorial-start" id="tutorial-start" type="button">Los geht's! 🚀</button>
   </div>
 </div>
 <div class="wrap">
@@ -430,7 +474,7 @@
       <p>Welches Werkzeug ist das? Ziehe die Schilder auf die passenden Kärtchen und prüfe am Ende.</p>
     </header>
     <div class="leiste">
-      <div class="fortschritt" id="werkzeug-fortschritt"><b>0</b> von 6 richtig</div>
+      <div class="fortschritt" id="werkzeug-fortschritt"><b>0</b> von <span id="werkzeug-total">6</span> richtig</div>
       <button class="knopf wichtig" id="btn-werkzeug-pruefen" type="button">✔️ Werkzeuge Prüfen</button>
       <button class="knopf" id="werkzeug-neu" type="button">Neu starten</button>
     </div>
@@ -1169,7 +1213,9 @@ let werkzeugRichtig = 0;
 
 function starteWerkzeuge() {
   werkzeugRichtig = 0;
-  el('werkzeug-fortschritt').innerHTML = '<b>0</b> von 6 richtig';
+  const gewaehlteAnzahl = 6; // Anzahl der Werkzeuge pro Runde
+  el('werkzeug-total').textContent = gewaehlteAnzahl;
+  el('werkzeug-fortschritt').innerHTML = '<b>0</b> von ' + gewaehlteAnzahl + ' richtig';
   const gEl = el('werkzeug-staelle');
   const vEl = el('werkzeug-vorrat');
   const ergebnisEl = el('werkzeug-ergebnis');
@@ -1178,8 +1224,8 @@ function starteWerkzeuge() {
   el('btn-werkzeug-pruefen').style.display = 'inline-block';
   el('werkzeug-neu').textContent = 'Neu starten';
   
-  // 6 zufällige Werkzeuge auswählen
-  const gewaehlteWerkzeuge = mischen(WERKZEUGE).slice(0, 6);
+  // Zufällige Werkzeuge auswählen
+  const gewaehlteWerkzeuge = mischen(WERKZEUGE).slice(0, gewaehlteAnzahl);
   
   gewaehlteWerkzeuge.forEach(w => {
     const k = document.createElement('div'); k.className = 'werkzeug-karte';
@@ -1270,7 +1316,8 @@ el('btn-werkzeug-pruefen').addEventListener('click', () => {
   });
   
   werkzeugRichtig = neueRichtige;
-  el('werkzeug-fortschritt').innerHTML = '<b>' + werkzeugRichtig + '</b> von 6 richtig';
+  const total = document.querySelectorAll('#werkzeug-staelle .slot').length;
+  el('werkzeug-fortschritt').innerHTML = '<b>' + werkzeugRichtig + '</b> von ' + total + ' richtig';
   
   // Prüfe ob alle richtig sind
   const alleBelegt = [...slots].every(s => s.classList.contains('korrekt') || s.classList.contains('gefuellt'));
@@ -1956,6 +2003,33 @@ function playSound(type) {
       break;
   }
 }
+
+/* --- Tutorial / Willkommen Logik --- */
+const TUTORIAL_SHOWN_KEY = 'bauernhof_tutorial_shown';
+const tutorialModal = document.getElementById('tutorial-modal');
+const tutorialStart = document.getElementById('tutorial-start');
+
+function zeigeTutorial() {
+  // Nur beim ersten Besitz anzeigen
+  if (localStorage.getItem(TUTORIAL_SHOWN_KEY)) return;
+  
+  tutorialModal.classList.add('sichtbar');
+}
+
+function schliesseTutorial() {
+  tutorialModal.classList.remove('sichtbar');
+  localStorage.setItem(TUTORIAL_SHOWN_KEY, 'true');
+}
+
+if (tutorialStart) {
+  tutorialStart.addEventListener('click', schliesseTutorial);
+}
+tutorialModal.addEventListener('click', (e) => {
+  if (e.target === tutorialModal) schliesseTutorial();
+});
+
+// Beim Start prüfen
+zeigeTutorial();
 
 /* --- Service Worker für PWA --- */
 if ('serviceWorker' in navigator) {
