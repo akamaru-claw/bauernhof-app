@@ -540,6 +540,18 @@
         <p class="statistik-label">Bester Score</p>
       </div>
       <div class="statistik-karte">
+        <div class="statistik-icon">🔧</div>
+        <h3>Werkzeuge</h3>
+        <div class="statistik-wert" id="stat-werkzeuge-best">–</div>
+        <p class="statistik-label">Bester Score</p>
+      </div>
+      <div class="statistik-karte">
+        <div class="statistik-icon">🥕</div>
+        <h3>Futter</h3>
+        <div class="statistik-wert" id="stat-futter-best">–</div>
+        <p class="statistik-label">Bester Score</p>
+      </div>
+      <div class="statistik-karte">
         <div class="statistik-icon">🏆</div>
         <h3>Gesamt</h3>
         <div class="statistik-wert" id="stat-gesamt-spiele">0</div>
@@ -1285,6 +1297,9 @@ function zeigeWerkzeugErgebnis() {
     konfettiRegen();
     if (werkzeugRichtig >= 6) playSound('win');
   }
+  
+  // Statistik speichern
+  speichereWerkzeugeBestwert(werkzeugRichtig);
 }
 
 el('btn-werkzeug-pruefen').addEventListener('click', () => {
@@ -1756,6 +1771,8 @@ el('btn-futter-pruefen').addEventListener('click', () => {
       konfettiRegen();
       playSound('win');
       el('futter-fortschritt').innerHTML = '<b style="color:#E8B84B">🎉 Super! Alle Tiere sind satt!</b>';
+      // Statistik speichern
+      speichereFutterBestwert(futterRichtig);
     }, 400);
   }
 });
@@ -1776,6 +1793,8 @@ const STATISTIK_KEYS = {
   memory: 'bauernhof_memory_highscore',
   artikel: 'bauernhof_artikel_best',
   praepositionen: 'bauernhof_praep_best',
+  werkzeuge: 'bauernhof_werkzeuge_best',
+  futter: 'bauernhof_futter_best',
   spiele: 'bauernhof_gesamt_spiele'
 };
 
@@ -1805,6 +1824,14 @@ function aktualisiereStatistik() {
   // Präpositionen Best
   const praepBest = ladeStatistik(STATISTIK_KEYS.praepositionen);
   el('stat-praep-best').textContent = praepBest ? praepBest + '/10' : '–';
+  
+  // Werkzeuge Best
+  const werkzeugeBest = ladeStatistik(STATISTIK_KEYS.werkzeuge);
+  el('stat-werkzeuge-best').textContent = werkzeugeBest ? werkzeugeBest + '/6' : '–';
+  
+  // Futter Best
+  const futterBest = ladeStatistik(STATISTIK_KEYS.futter);
+  el('stat-futter-best').textContent = futterBest ? futterBest + '/6' : '–';
   
   // Gesamt Spiele
   const gesamtSpiele = parseInt(localStorage.getItem(STATISTIK_KEYS.spiele) || '0', 10);
@@ -1862,6 +1889,26 @@ memoryKlick = function(index) {
     erhoeheSpielZaehler();
   }
 };
+
+/* --- Werkzeuge & Futter Statistik Hooks --- */
+
+// Speichere Bestwert für Werkzeuge (muss am Ende des Spiels aufgerufen werden)
+function speichereWerkzeugeBestwert(punkte) {
+  const aktuellerBest = ladeStatistik(STATISTIK_KEYS.werkzeuge);
+  if (aktuellerBest === null || punkte > aktuellerBest) {
+    speichereStatistik(STATISTIK_KEYS.werkzeuge, punkte);
+  }
+  erhoeheSpielZaehler();
+}
+
+// Speichere Bestwert für Futter (muss am Ende des Spiels aufgerufen werden)
+function speichereFutterBestwert(punkte) {
+  const aktuellerBest = ladeStatistik(STATISTIK_KEYS.futter);
+  if (aktuellerBest === null || punkte > aktuellerBest) {
+    speichereStatistik(STATISTIK_KEYS.futter, punkte);
+  }
+  erhoeheSpielZaehler();
+}
 
 /* --- Haptic Feedback Helper --- */
 function hapticFeedback(stark = false) {
