@@ -284,6 +284,10 @@
   .info-btn { position:fixed; top:12px; right:12px; width:42px; height:42px; border-radius:50%; border:3px solid var(--holz-dunkel); background:var(--papier); color:var(--tinte); font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 4px 0 var(--holz-tief); z-index:100; transition:transform .15s, box-shadow .15s; }
   .info-btn:hover { transform:translateY(-2px); box-shadow:0 6px 0 var(--holz-tief); }
   .info-btn:active { transform:translateY(2px); box-shadow:0 1px 0 var(--holz-tief); }
+  .sound-btn { position:fixed; top:12px; right:60px; width:42px; height:42px; border-radius:50%; border:3px solid var(--holz-dunkel); background:var(--papier); color:var(--tinte); font-size:20px; cursor:pointer; box-shadow:0 4px 0 var(--holz-tief); z-index:100; transition:transform .15s, box-shadow .15s; }
+  .sound-btn:hover { transform:translateY(-2px); box-shadow:0 6px 0 var(--holz-tief); }
+  .sound-btn:active { transform:translateY(2px); box-shadow:0 1px 0 var(--holz-tief); }
+  .sound-btn.stumm { background:#e8d5c0; }
   .info-modal { position:fixed; inset:0; background:rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center; z-index:200; opacity:0; pointer-events:none; transition:opacity .25s ease; }
   .info-modal.sichtbar { opacity:1; pointer-events:auto; }
   .info-karte { background:var(--papier); border:5px solid var(--holz-dunkel); border-radius:20px; padding:28px; max-width:420px; width:90%; text-align:center; box-shadow:0 12px 0 var(--holz-tief), 0 24px 48px rgba(0,0,0,.4); transform:translateY(20px) scale(.95); transition:transform .25s ease; }
@@ -306,10 +310,11 @@
 </head>
 <body>
 <button class="info-btn" id="info-btn" type="button" title="Über die App">ℹ️</button>
+<button class="sound-btn" id="sound-btn" type="button" title="Ton an/aus">🔊</button>
 <div class="info-modal" id="info-modal" role="dialog" aria-modal="true" aria-labelledby="info-titel">
   <div class="info-karte">
     <h2 id="info-titel">🚜 Bauernhof-App</h2>
-    <div class="version">Version 1.6 · 18. Juni 2026</div>
+    <div class="version">Version 1.7 · 18. Juni 2026</div>
     <p>Eine spielerische App zum Lernen von Bauernhof-Tieren, deren Namen, Artikeln und mehr!</p>
     <div class="features">
       <h3>✨ Features</h3>
@@ -322,6 +327,7 @@
         <li>🍎 Was fressen die Tiere?</li>
         <li>🧠 Memory-Spiel mit Highscore</li>
         <li>⭐ Erfolge tracken</li>
+        <li>🔊 Sound-Effekte (an/aus)</li>
         <li>📱 Funktioniert offline (PWA)</li>
       </ul>
     </div>
@@ -869,8 +875,10 @@ el('btn-pruefen').addEventListener('click', () => {
        info.innerHTML='<span>'+t.rolle+'</span>';
        slot.appendChild(info);
        geloest++;
+       playSound('success');
     } else {
        slot.classList.add('falsch');
+       playSound('error');
        setTimeout(() => {
          slot.classList.remove('falsch');
          slot.classList.remove('gefuellt');
@@ -957,6 +965,7 @@ function fertig(){
     aktuelleId==='mix' ? 'Stark! Alle gemischten Schilder sitzen.' :
     'Super \u2013 alle Schilder h\u00e4ngen am richtigen Stall!';
   bannerEl.classList.add('an'); konfettiRegen();
+  playSound('win');
 }
 el('banner-weiter').addEventListener('click',()=>{ bannerEl.classList.remove('an'); naechsteRunde(); });
 bannerEl.addEventListener('click',e=>{ if(e.target===bannerEl){ bannerEl.classList.remove('an'); }});
@@ -1025,10 +1034,12 @@ function ladeQuizFrage() {
       if(frage.pruefe(f)) {
         karte.classList.add('richtig');
         hapticFeedback();
+        playSound('success');
         konfettiRegen();
         setTimeout(ladeQuizFrage, 2000);
       } else {
         karte.classList.add('falsch');
+        playSound('error');
         setTimeout(() => karte.classList.remove('falsch'), 500);
       }
     });
@@ -1097,6 +1108,7 @@ function ladePraepFrage() {
         el('praep-luecke').style.color = '#fff';
         el('praep-luecke').style.borderColor = 'transparent';
         praepPunkte++;
+        playSound('success');
         if (praepPunkte >= 8) konfettiRegen();
         setTimeout(() => {
           praepAktuelleFrage++;
@@ -1106,6 +1118,7 @@ function ladePraepFrage() {
       } else {
         b.style.animation = 'nope .4s';
         b.style.background = 'var(--falsch)';
+        playSound('error');
         setTimeout(() => {
           praepAktuelleFrage++;
           btns.forEach(btn => { btn.disabled = false; btn.classList.remove('disabled'); });
@@ -1130,7 +1143,10 @@ function zeigePraepErgebnis() {
   else sterne = '💪';
   el('praep-stern').textContent = sterne;
   
-  if (praepPunkte >= 8) konfettiRegen();
+  if (praepPunkte >= 8) {
+    konfettiRegen();
+    if (praepPunkte >= 9) playSound('win');
+  }
 }
 
 el('praep-neustart').addEventListener('click', startePraeposition);
@@ -1219,7 +1235,10 @@ function zeigeWerkzeugErgebnis() {
   el('werkzeug-stern').textContent = sterne;
   
   ergebnisEl.style.display = 'block';
-  if (werkzeugRichtig >= 5) konfettiRegen();
+  if (werkzeugRichtig >= 5) {
+    konfettiRegen();
+    if (werkzeugRichtig >= 6) playSound('win');
+  }
 }
 
 el('btn-werkzeug-pruefen').addEventListener('click', () => {
@@ -1237,9 +1256,11 @@ el('btn-werkzeug-pruefen').addEventListener('click', () => {
      if(slot.dataset.key === schild.dataset.key) {
         slot.classList.add('korrekt'); slot.classList.remove('gefuellt'); schild.classList.add('platziert');
         neueRichtige++;
+        playSound('success');
         hapticFeedback();
      } else {
         slot.classList.add('falsch');
+        playSound('error');
         setTimeout(() => {
           slot.classList.remove('falsch','gefuellt');
           schild.tabIndex=0; el('werkzeug-vorrat').appendChild(schild);
@@ -1310,6 +1331,7 @@ function pruefeArtikel(btn, richtigerArtikel) {
   if (btn.dataset.artikel === richtigerArtikel) {
     btn.classList.add('richtig');
     hapticFeedback(); // Sanftes Feedback bei richtiger Antwort
+    playSound('success');
     artikelRichtig++;
     el('artikel-frage').innerHTML = '<span style="color:var(--korrekt)">' + richtigerArtikel + '</span> ' + artikelFragen[artikelAktuell].wort;
     setTimeout(() => {
@@ -1322,6 +1344,7 @@ function pruefeArtikel(btn, richtigerArtikel) {
     }, 1200);
   } else {
     btn.classList.add('falsch');
+    playSound('error');
     // Zeige die richtige Antwort
     buttons.forEach(b => {
       if (b.dataset.artikel === richtigerArtikel) b.classList.add('richtig');
@@ -1353,7 +1376,10 @@ function zeigeArtikelErgebnis() {
   if (artikelRichtig === 10) sterne = '🏆⭐⭐⭐🏆';
   el('artikel-stern').textContent = sterne;
   
-  if (artikelRichtig >= 8) konfettiRegen();
+  if (artikelRichtig >= 8) {
+    konfettiRegen();
+    playSound('win');
+  }
 }
 
 el('artikel-neustart').addEventListener('click', () => {
@@ -1481,6 +1507,7 @@ function memoryKlick(index) {
   // Umgedreht
   karte.classList.add('umgedreht');
   memoryUmgedreht.push(index);
+  playSound('click');
   
   if (memoryUmgedreht.length === 2) {
     memoryZuege++;
@@ -1506,6 +1533,8 @@ function memoryKlick(index) {
         memoryPaare++;
         memoryUmgedreht = [];
         memorySperre = false;
+        playSound('match');
+        hapticFeedback();
         const highscore = ladeMemoryHighscore();
         const highscoreText = highscore ? ` · Rekord: ${highscore}` : '';
         el('memory-fortschritt').innerHTML = `Paare: <b>${memoryPaare} / 8</b> · Züge: <b>${memoryZuege}</b>${highscoreText}`;
@@ -1513,6 +1542,7 @@ function memoryKlick(index) {
         if (memoryPaare === 8) {
           setTimeout(() => {
             konfettiRegen();
+            playSound('win');
             const neuerHighscore = speichereMemoryHighscore(memoryZuege);
             const nachricht = neuerHighscore 
               ? `🎉 Neuer Rekord! Alle 8 Paare in ${memoryZuege} Zügen!` 
@@ -1658,8 +1688,10 @@ el('btn-futter-pruefen').addEventListener('click', () => {
       slot.classList.add('korrekt');
       slot.classList.remove('gefuellt');
       neueRichtige++;
+      playSound('success');
     } else {
       slot.classList.add('falsch');
+      playSound('error');
       setTimeout(() => {
         slot.classList.remove('falsch', 'gefuellt');
         schild.classList.remove('platziert');
@@ -1675,6 +1707,7 @@ el('btn-futter-pruefen').addEventListener('click', () => {
   if (futterRichtig === 6) {
     setTimeout(() => {
       konfettiRegen();
+      playSound('win');
       el('futter-fortschritt').innerHTML = '<b style="color:#E8B84B">🎉 Super! Alle Tiere sind satt!</b>';
     }, 400);
   }
@@ -1815,6 +1848,114 @@ document.addEventListener('keydown', (e) => {
     schliesseInfo();
   }
 });
+
+/* --- Sound System (Web Audio API) --- */
+const SOUND_ENABLED_KEY = 'bauernhof_sound_enabled';
+let soundEnabled = localStorage.getItem(SOUND_ENABLED_KEY) !== 'false';
+const soundBtn = document.getElementById('sound-btn');
+
+function updateSoundButton() {
+  if (soundBtn) {
+    soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
+    soundBtn.classList.toggle('stumm', !soundEnabled);
+  }
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  localStorage.setItem(SOUND_ENABLED_KEY, soundEnabled.toString());
+  updateSoundButton();
+  // Test-Sound wenn wieder an
+  if (soundEnabled) {
+    playSound('click');
+  }
+}
+
+if (soundBtn) {
+  soundBtn.addEventListener('click', toggleSound);
+}
+updateSoundButton();
+
+// Web Audio API für Sound-Effekte
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playSound(type) {
+  if (!soundEnabled) return;
+  
+  // AudioContext muss nach User-Interaction resumed werden
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  
+  switch(type) {
+    case 'success': // Für richtige Antworten/Paare
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+      osc.frequency.exponentialRampToValueAtTime(1046.5, audioCtx.currentTime + 0.1); // C6
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.4);
+      break;
+      
+    case 'error': // Für falsche Antworten
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+      osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.25);
+      break;
+      
+    case 'click': // Für Buttons/Klicks
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.05);
+      break;
+      
+    case 'match': // Für Memory-Paare
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(659.25, audioCtx.currentTime); // E5
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1); // A5
+      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.3);
+      break;
+      
+    case 'win': // Für Spiel-Ende
+      const t = audioCtx.currentTime;
+      [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(0, t + i * 0.1);
+        g.gain.linearRampToValueAtTime(0.2, t + i * 0.1 + 0.05);
+        g.gain.exponentialRampToValueAtTime(0.01, t + i * 0.1 + 0.4);
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        o.start(t + i * 0.1);
+        o.stop(t + i * 0.1 + 0.4);
+      });
+      break;
+  }
+}
 
 /* --- Service Worker für PWA --- */
 if ('serviceWorker' in navigator) {

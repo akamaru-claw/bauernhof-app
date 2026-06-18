@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bauernhof-v2';
+const CACHE_NAME = 'bauernhof-v3';
 const urlsToCache = [
   '/bauernhof-test/',
   '/bauernhof-test/index.html'
