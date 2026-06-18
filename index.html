@@ -42,7 +42,8 @@
   }
   .wrap{position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:18px 16px 90px}
   
-  .tabs{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:24px}
+  .tabs{display:flex; flex-wrap:nowrap; gap:10px; justify-content:flex-start; margin-bottom:24px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none; -webkit-overflow-scrolling:touch}
+  .tabs::-webkit-scrollbar{display:none}
   .tab-btn{
     font-family:var(--display); font-weight:700; font-size:16px; cursor:pointer;
     border:3px solid var(--holz-dunkel); background:var(--holz); color:var(--papier);
@@ -888,6 +889,7 @@ el('nochmal').addEventListener('click',renderRunde);
 
 function konfettiRegen(){
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  hapticFeedback(true); // Starkes Haptic bei Erfolg
   const farben=['#E8B84B','#B5462E','#6E9655','#88B4CE','#F3E9D6','#cf2e2e'];
   for(let i=0;i<70;i++){
     const k=document.createElement('div'); k.className='konfetti';
@@ -925,6 +927,7 @@ function ladeQuizFrage() {
     karte.addEventListener('click', () => {
       if(frage.pruefe(f)) {
         karte.classList.add('richtig');
+        hapticFeedback();
         konfettiRegen();
         setTimeout(ladeQuizFrage, 2000);
       } else {
@@ -1159,6 +1162,7 @@ function pruefeArtikel(btn, richtigerArtikel) {
   
   if (btn.dataset.artikel === richtigerArtikel) {
     btn.classList.add('richtig');
+    hapticFeedback(); // Sanftes Feedback bei richtiger Antwort
     artikelRichtig++;
     el('artikel-frage').innerHTML = '<span style="color:var(--korrekt)">' + richtigerArtikel + '</span> ' + artikelFragen[artikelAktuell].wort;
     setTimeout(() => {
@@ -1299,6 +1303,7 @@ function memoryKlick(index) {
     
     if (karte1.key === karte2.key) {
       // Paar gefunden!
+      hapticFeedback(); // Feedback beim Finden eines Paares
       setTimeout(() => {
         el('memory-grid').children[idx1].classList.add('gematched', 'match-anim');
         el('memory-grid').children[idx2].classList.add('gematched', 'match-anim');
@@ -1493,6 +1498,13 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 starte('schwein', document.querySelector('.auswahl button[data-id="schwein"]'));
+
+/* --- Haptic Feedback Helper --- */
+function hapticFeedback(stark = false) {
+  if (navigator.vibrate) {
+    navigator.vibrate(stark ? [60, 30, 60] : 50);
+  }
+}
 
 /* --- Service Worker für PWA --- */
 if ('serviceWorker' in navigator) {
