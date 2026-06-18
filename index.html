@@ -309,7 +309,7 @@
 <div class="info-modal" id="info-modal" role="dialog" aria-modal="true" aria-labelledby="info-titel">
   <div class="info-karte">
     <h2 id="info-titel">🚜 Bauernhof-App</h2>
-    <div class="version">Version 1.5 · 18. Juni 2026</div>
+    <div class="version">Version 1.6 · 18. Juni 2026</div>
     <p>Eine spielerische App zum Lernen von Bauernhof-Tieren, deren Namen, Artikeln und mehr!</p>
     <div class="features">
       <h3>✨ Features</h3>
@@ -318,7 +318,7 @@
         <li>🎯 Tier-Quiz mit 6 Fragen</li>
         <li>📚 Der/Die/Das – Artikel lernen</li>
         <li>📍 Präpositionen üben</li>
-        <li>🔧 Werkzeuge erkennen</li>
+        <li>🔧 Werkzeuge erkennen (jetzt mit 9 Werkzeugen!)</li>
         <li>🍎 Was fressen die Tiere?</li>
         <li>🧠 Memory-Spiel mit Highscore</li>
         <li>⭐ Erfolge tracken</li>
@@ -424,10 +424,16 @@
       <p>Welches Werkzeug ist das? Ziehe die Schilder auf die passenden Kärtchen und prüfe am Ende.</p>
     </header>
     <div class="leiste">
+      <div class="fortschritt" id="werkzeug-fortschritt"><b>0</b> von 6 richtig</div>
       <button class="knopf wichtig" id="btn-werkzeug-pruefen" type="button">✔️ Werkzeuge Prüfen</button>
       <button class="knopf" id="werkzeug-neu" type="button">Neu starten</button>
     </div>
     <div class="werkzeug-grid" id="werkzeug-staelle"></div>
+    <div class="artikel-ergebnis" id="werkzeug-ergebnis" style="display:none;margin-top:20px;">
+      <h3>Geschafft! 🎉</h3>
+      <p id="werkzeug-punkte">Du hast 6 von 6 richtig!</p>
+      <div class="artikel-stern" id="werkzeug-stern">⭐⭐⭐</div>
+    </div>
     <h2 class="vorrat-titel">Namen</h2>
     <div class="vorrat" id="werkzeug-vorrat"></div>
   </div>
@@ -1131,20 +1137,35 @@ el('praep-neustart').addEventListener('click', startePraeposition);
 
 /* --- Werkzeuge-Logik --- */
 const WERKZEUGE = [
-  { key: 'schaufel', name: 'Schaufel', svg: svgTrans('<rect x="68" y="20" width="14" height="60" fill="#cdb189"/><path d="M55 80 Q75 70 95 80 L90 110 L60 110 Z" fill="#b0b5bc"/><rect x="60" y="10" width="30" height="10" rx="4" fill="#5A3A1E"/>') },
-  { key: 'besen', name: 'Besen', svg: svgTrans('<rect x="70" y="10" width="10" height="70" fill="#cdb189"/><path d="M50 80 L100 80 L110 110 L40 110 Z" fill="#E8B84B"/><rect x="45" y="80" width="60" height="8" rx="2" fill="#8F3220"/>') },
-  { key: 'giesskanne', name: 'Gießkanne', svg: svgTrans('<ellipse cx="75" cy="80" rx="30" ry="25" fill="#4E8A4A"/><path d="M100 70 L130 50 L135 55 Z" fill="#4E8A4A"/><path d="M45 70 A 25 25 0 0 1 45 40" fill="none" stroke="#4E8A4A" stroke-width="8"/><rect x="60" y="45" width="30" height="15" fill="#4E8A4A"/>') },
-  { key: 'eimer', name: 'Eimer', svg: svgTrans('<path d="M45 50 L105 50 L95 100 L55 100 Z" fill="#88B4CE"/><path d="M45 50 Q75 20 105 50" fill="none" stroke="#33281A" stroke-width="4"/><ellipse cx="75" cy="50" rx="30" ry="8" fill="#AFCFE0"/>') }
+  { key: 'schaufel', name: 'Schaufel', svg: svgTrans('<rect x="68" y="20" width="14" height="60" fill="#8B4513"/><path d="M55 80 Q75 70 95 80 L90 110 L60 110 Z" fill="#A0A0A0" stroke="#666" stroke-width="2"/><rect x="60" y="10" width="30" height="10" rx="4" fill="#5A3A1E"/>') },
+  { key: 'besen', name: 'Besen', svg: svgTrans('<rect x="70" y="10" width="10" height="70" fill="#8B4513"/><path d="M50 80 L100 80 L110 110 L40 110 Z" fill="#DAA520" stroke="#B8860B" stroke-width="2"/><rect x="45" y="80" width="60" height="8" rx="2" fill="#8B3220"/>') },
+  { key: 'giesskanne', name: 'Gießkanne', svg: svgTrans('<ellipse cx="75" cy="80" rx="30" ry="25" fill="#4E8A4A" stroke="#2E5A2E" stroke-width="2"/><path d="M100 70 L130 50 L135 55 Z" fill="#4E8A4A"/><path d="M45 70 A 25 25 0 0 1 45 40" fill="none" stroke="#4E8A4A" stroke-width="8"/><rect x="60" y="45" width="30" height="15" fill="#4E8A4A"/>') },
+  { key: 'eimer', name: 'Eimer', svg: svgTrans('<path d="M45 50 L105 50 L95 100 L55 100 Z" fill="#4682B4" stroke="#2F4F4F" stroke-width="2"/><path d="M45 50 Q75 20 105 50" fill="none" stroke="#C0C0C0" stroke-width="4"/><ellipse cx="75" cy="50" rx="30" ry="8" fill="#87CEEB"/>') },
+  { key: 'gabel', name: 'Gabel', svg: svgTrans('<rect x="70" y="40" width="10" height="50" fill="#8B4513"/><path d="M60 40 L60 15 M70 40 L70 10 M80 40 L80 15" stroke="#A0A0A0" stroke-width="4" fill="none"/><rect x="65" y="35" width="20" height="8" fill="#666"/>') },
+  { key: 'hammer', name: 'Hammer', svg: svgTrans('<rect x="72" y="35" width="8" height="60" fill="#8B4513"/><rect x="55" y="25" width="42" height="18" rx="3" fill="#A0A0A0" stroke="#666" stroke-width="2"/><rect x="65" y="32" width="22" height="10" fill="#666"/>') },
+  { key: 'schere', name: 'Schere', svg: svgTrans('<path d="M70 20 L70 70 M80 25 L80 65" stroke="#C0C0C0" stroke-width="6"/><circle cx="68" cy="75" r="8" fill="none" stroke="#D2691E" stroke-width="3"/><circle cx="82" cy="75" r="8" fill="none" stroke="#D2691E" stroke-width="3"/><circle cx="70" cy="25" r="3" fill="#A0A0A0"/><circle cx="80" cy="28" r="3" fill="#A0A0A0"/>') },
+  { key: 'mistgabel', name: 'Mistgabel', svg: svgTrans('<rect x="72" y="20" width="8" height="70" fill="#8B4513"/><path d="M58 20 L58 5 M72 20 L72 5 M86 20 L86 5" stroke="#A0A0A0" stroke-width="4" fill="none"/><rect x="55" y="18" width="40" height="6" fill="#666"/>') },
+  { key: 'sack', name: 'Sack', svg: svgTrans('<ellipse cx="75" cy="85" rx="25" ry="20" fill="#D2B48C" stroke="#8B7355" stroke-width="2"/><path d="M55 70 Q75 60 95 70" fill="none" stroke="#8B7355" stroke-width="3"/><ellipse cx="75" cy="68" rx="20" ry="5" fill="#F5DEB3"/><text x="75" y="88" text-anchor="middle" font-size="12" fill="#8B7355" font-weight="bold">Mehl</text>') }
 ];
 
 let werkzeugGewaehlt = null;
+let werkzeugRichtig = 0;
 
 function starteWerkzeuge() {
+  werkzeugRichtig = 0;
+  el('werkzeug-fortschritt').innerHTML = '<b>0</b> von 6 richtig';
   const gEl = el('werkzeug-staelle');
   const vEl = el('werkzeug-vorrat');
+  const ergebnisEl = el('werkzeug-ergebnis');
   gEl.innerHTML = ''; vEl.innerHTML = '';
+  if (ergebnisEl) ergebnisEl.style.display = 'none';
+  el('btn-werkzeug-pruefen').style.display = 'inline-block';
+  el('werkzeug-neu').textContent = 'Neu starten';
   
-  mischen(WERKZEUGE).forEach(w => {
+  // 6 zufällige Werkzeuge auswählen
+  const gewaehlteWerkzeuge = mischen(WERKZEUGE).slice(0, 6);
+  
+  gewaehlteWerkzeuge.forEach(w => {
     const k = document.createElement('div'); k.className = 'werkzeug-karte';
     k.innerHTML = '<div class="werkzeug-bild">'+w.svg+'</div><div class="slot" tabindex="0" data-key="'+w.key+'"><span class="platzhalter">Name hierher</span></div>';
     const slot = k.querySelector('.slot');
@@ -1169,7 +1190,7 @@ function starteWerkzeuge() {
     gEl.appendChild(k);
   });
   
-  mischen(WERKZEUGE).forEach(w => {
+  mischen(gewaehlteWerkzeuge).forEach(w => {
     const s = document.createElement('div'); s.className = 'schild'; s.dataset.key = w.key; s.textContent = w.name;
     s.tabIndex=0;
     zieheEinrichten(s);
@@ -1183,16 +1204,41 @@ function starteWerkzeuge() {
   });
 }
 
+function zeigeWerkzeugErgebnis() {
+  el('btn-werkzeug-pruefen').style.display = 'none';
+  el('werkzeug-neu').textContent = 'Nochmal spielen';
+  const ergebnisEl = el('werkzeug-ergebnis');
+  el('werkzeug-punkte').textContent = 'Du hast ' + werkzeugRichtig + ' von 6 richtig!';
+  
+  let sterne = '';
+  if (werkzeugRichtig >= 6) sterne = '🏆⭐⭐⭐🏆';
+  else if (werkzeugRichtig >= 5) sterne = '⭐⭐⭐';
+  else if (werkzeugRichtig >= 4) sterne = '⭐⭐';
+  else if (werkzeugRichtig >= 3) sterne = '⭐';
+  else sterne = '💪';
+  el('werkzeug-stern').textContent = sterne;
+  
+  ergebnisEl.style.display = 'block';
+  if (werkzeugRichtig >= 5) konfettiRegen();
+}
+
 el('btn-werkzeug-pruefen').addEventListener('click', () => {
-  let alleRichtig = true;
-  el('werkzeug-staelle').querySelectorAll('.slot').forEach(slot => {
-     if(slot.classList.contains('korrekt')) return;
+  let neueRichtige = 0;
+  const slots = el('werkzeug-staelle').querySelectorAll('.slot');
+  
+  slots.forEach(slot => {
+     if(slot.classList.contains('korrekt')) {
+       neueRichtige++;
+       return;
+     }
      const schild = slot.querySelector('.schild');
-     if(!schild) { alleRichtig=false; return; }
+     if(!schild) return;
+     
      if(slot.dataset.key === schild.dataset.key) {
         slot.classList.add('korrekt'); slot.classList.remove('gefuellt'); schild.classList.add('platziert');
+        neueRichtige++;
+        hapticFeedback();
      } else {
-        alleRichtig = false;
         slot.classList.add('falsch');
         setTimeout(() => {
           slot.classList.remove('falsch','gefuellt');
@@ -1201,7 +1247,17 @@ el('btn-werkzeug-pruefen').addEventListener('click', () => {
         }, 600);
      }
   });
-  if(alleRichtig && el('werkzeug-vorrat').children.length === 0) konfettiRegen();
+  
+  werkzeugRichtig = neueRichtige;
+  el('werkzeug-fortschritt').innerHTML = '<b>' + werkzeugRichtig + '</b> von 6 richtig';
+  
+  // Prüfe ob alle richtig sind
+  const alleBelegt = [...slots].every(s => s.classList.contains('korrekt') || s.classList.contains('gefuellt'));
+  const alleRichtig = werkzeugRichtig === 6;
+  
+  if (alleRichtig || (alleBelegt && slots.length === document.querySelectorAll('#werkzeug-vorrat .schild').length + werkzeugRichtig)) {
+    setTimeout(zeigeWerkzeugErgebnis, alleRichtig ? 400 : 800);
+  }
 });
 el('werkzeug-neu').addEventListener('click', starteWerkzeuge);
 
