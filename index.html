@@ -1667,10 +1667,11 @@ function starteMemory() {
   
   const highscore = ladeMemoryHighscore();
   const bestzeit = ladeMemoryBestzeit();
-  let infoText = 'Paare: <b>0 / 8</b> · Züge: <b>0</b>';
-  if (highscore) infoText += ` · Rekord: ${highscore} Züge`;
-  if (bestzeit) infoText += ` · Bestzeit: ${formatiereZeit(bestzeit)}`;
-  el('memory-fortschritt').innerHTML = infoText + ' · Zeit: <b>0:00</b>';
+  // Format: "Paare 0/8 · Züge 0 · Zeit 0:00" mit Icons
+  let infoText = '👥 <b>0 / 8</b> · 🎯 <b>0</b> · ⏱️ <b>0:00</b>';
+  if (highscore) infoText += ' · 🏆 Rekord: ' + highscore + ' Züge';
+  if (bestzeit) infoText += ' · ⚡ Bestzeit: ' + formatiereZeit(bestzeit);
+  el('memory-fortschritt').innerHTML = infoText;
   
   // Erstelle Paare (je Tier 2x)
   const paare = [];
@@ -1705,10 +1706,10 @@ function starteMemory() {
 function updateMemoryAnzeige() {
   const highscore = ladeMemoryHighscore();
   const bestzeit = ladeMemoryBestzeit();
-  let infoText = `Paare: <b>${memoryPaare} / 8</b> · Züge: <b>${memoryZuege}</b>`;
-  if (highscore) infoText += ` · Rekord: ${highscore} Züge`;
-  if (bestzeit) infoText += ` · Bestzeit: ${formatiereZeit(bestzeit)}`;
-  infoText += ` · Zeit: <b>${formatiereZeit(memoryVerstricheneZeit)}</b>`;
+  // Icons für bessere Lesbarkeit
+  let infoText = `👥 <b>${memoryPaare} / 8</b> · 🎯 <b>${memoryZuege}</b> · ⏱️ <b>${formatiereZeit(memoryVerstricheneZeit)}</b>`;
+  if (highscore) infoText += ` · 🏆 Rekord: ${highscore}`;
+  if (bestzeit) infoText += ` · ⚡ Bestzeit: ${formatiereZeit(bestzeit)}`;
   el('memory-fortschritt').innerHTML = infoText;
 }
 
