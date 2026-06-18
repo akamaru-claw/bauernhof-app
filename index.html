@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#6E9655">
+<meta name="description" content="Lerne Bauernhof-Tiere spielerisch kennen - mit Namen, Artikeln, Quiz und Memory!">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bauernhof">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%236E9655' width='192' height='192'/%3E%3Ctext x='96' y='120' font-size='100' text-anchor='middle'%3E🚜%3C/text%3E%3C/svg%3E">
 <title>Bauernhof-App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1377,6 +1384,15 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 starte('schwein', document.querySelector('.auswahl button[data-id="schwein"]'));
+
+/* --- Service Worker für PWA --- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then((registration) => console.log('SW registriert:', registration.scope))
+      .catch((error) => console.log('SW Fehler:', error));
+  });
+}
 </script>
 </body>
 </html>
