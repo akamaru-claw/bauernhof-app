@@ -1217,18 +1217,63 @@ el('artikel-neustart').addEventListener('click', () => {
   ladeArtikelQuiz();
 });
 
-/* Tab-Wechsel für Artikel-Quiz */
+/* Tab-Wechsel für Artikel-Quiz + Tab-Speicherung */
+const LAST_TAB_KEY = 'bauernhof_last_tab';
+
 document.querySelectorAll('.tab-btn').forEach(btn => {
-  const origClick = btn.onclick;
   btn.addEventListener('click', () => {
+    // Aktiven Tab speichern
+    localStorage.setItem(LAST_TAB_KEY, btn.dataset.target);
+    
+    // Visuelles Feedback
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('aktiv'));
+    btn.classList.add('aktiv');
+    
+    // View wechseln
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('aktiv'));
+    const targetView = document.getElementById(btn.dataset.target);
+    if (targetView) targetView.classList.add('aktiv');
+    
+    // Spiel-spezifische Initialisierung
     if (btn.dataset.target === 'view-artikel') {
       ladeArtikelQuiz();
     }
     if (btn.dataset.target === 'view-memory') {
       starteMemory();
     }
+    if (btn.dataset.target === 'view-praepositionen') {
+      startePraeposition();
+    }
   });
 });
+
+// Gespeicherten Tab beim Start wiederherstellen
+function restoreLastTab() {
+  const lastTab = localStorage.getItem(LAST_TAB_KEY);
+  if (lastTab) {
+    const btn = document.querySelector('.tab-btn[data-target="' + lastTab + '"]');
+    if (btn) {
+      // Aktiven State zurücksetzen
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('aktiv'));
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('aktiv'));
+      // Neuen Tab aktivieren
+      btn.classList.add('aktiv');
+      const targetView = document.getElementById(lastTab);
+      if (targetView) targetView.classList.add('aktiv');
+      // Spiel initialisieren falls nötig
+      if (lastTab === 'view-artikel') ladeArtikelQuiz();
+      if (lastTab === 'view-memory') starteMemory();
+      if (lastTab === 'view-praepositionen') startePraeposition();
+    }
+  }
+}
+
+// Nach Initialisierung der Seite den letzten Tab wiederherstellen
+// (Überschreibt den Default-Tab, aber nur wenn ein gespeicherter Tab existiert)
+if (localStorage.getItem(LAST_TAB_KEY)) {
+  // Kurz warten, damit die Initialisierung abgeschlossen ist
+  setTimeout(restoreLastTab, 50);
+}
 
 /* --- Memory-Spiel Logik --- */
 let memoryKarten = [], memoryUmgedreht = [], memoryPaare = 0, memoryZuege = 0, memorySperre = false;
