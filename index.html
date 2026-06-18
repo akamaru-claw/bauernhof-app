@@ -519,7 +519,7 @@
       </svg>
     </div>
     <div class="quiz-frage-container">
-      <div class="quiz-frage">Das Tier ist <span class="luecke" id="praep-luecke">___</span> dem Haus.</div>
+      <div class="quiz-frage" id="praep-satz"><span id="praep-tier-name">Das Tier</span> ist <span class="luecke" id="praep-luecke">___</span> dem Haus.</div>
     </div>
     <div class="auswahl" id="praep-optionen">
        <button data-val="auf">auf</button>
@@ -1413,6 +1413,8 @@ const praepSzenen = [
 let praepAktuelleFrage = 0;
 let praepPunkte = 0;
 let aktuellePraepSzene = null;
+let praepLetzteSzeneWort = null;
+let praepWiederholung = false;
 
 function praepSetzeTier(tier, szene) {
   // Alle Layer leeren
@@ -1464,10 +1466,21 @@ function ladePraepFrage() {
     return;
   }
 
-  const tier = ALLE[Math.floor(Math.random()*ALLE.length)];
-  aktuellePraepSzene = praepSzenen[Math.floor(Math.random()*praepSzenen.length)];
+  // Neue Präposition wählen, aber nicht dieselbe wie zuletzt (außer Wiederholung)
+  let kandidaten;
+  if (praepWiederholung) {
+    kandidaten = praepSzenen.filter(s => s.wort === aktuellePraepSzene.wort);
+  } else {
+    kandidaten = praepSzenen.filter(s => s.wort !== praepLetzteSzeneWort);
+  }
+  aktuellePraepSzene = kandidaten[Math.floor(Math.random() * kandidaten.length)];
+
+  // Tier wählen (immer ein anderes als zuvor, wenn möglich)
+  const tier = ALLE[Math.floor(Math.random() * ALLE.length)];
   praepSetzeTier(tier, aktuellePraepSzene);
 
+  // Satz mit echtem Tier aktualisieren
+  el('praep-tier-name').textContent = tier.art + ' ' + tier.wort;
   el('praep-luecke').textContent = '___';
   el('praep-luecke').style.borderColor = '#fff';
   el('praep-luecke').style.color = 'var(--heu)';
@@ -1488,6 +1501,8 @@ function ladePraepFrage() {
         el('praep-luecke').style.color = '#fff';
         el('praep-luecke').style.borderColor = 'transparent';
         praepPunkte++;
+        praepWiederholung = false;
+        praepLetzteSzeneWort = aktuellePraepSzene.wort;
         playSound('success');
         if (praepPunkte >= 8) konfettiRegen();
         setTimeout(() => {
@@ -1498,9 +1513,9 @@ function ladePraepFrage() {
       } else {
         b.style.animation = 'nope .4s';
         b.style.background = 'var(--falsch)';
+        praepWiederholung = true;
         playSound('error');
         setTimeout(() => {
-          praepAktuelleFrage++;
           btns.forEach(btn => { btn.disabled = false; btn.classList.remove('disabled'); });
           ladePraepFrage();
         }, 1200);
