@@ -337,8 +337,9 @@
   <div id="view-praepositionen" class="view">
     <header class="hof">
       <h1>Wo ist das Tier?</h1>
-      <p>Finde das richtige Wort für den Ort.</p>
+      <p>Finde das richtige Wort für den Ort. 10 Fragen, so viele Punkte wie möglich!</p>
     </header>
+    <div class="artikel-fortschritt" id="praep-fortschritt">Frage 1 von 10</div>
     <div class="praep-scene">
       <div class="praep-obj praep-haus">
         <div class="praep-haus-tuer"></div>
@@ -353,6 +354,12 @@
        <button data-val="vor">vor</button>
        <button data-val="neben">neben</button>
        <button data-val="hinter">hinter</button>
+    </div>
+    <div class="artikel-ergebnis" id="praep-ergebnis" style="display:none;margin-top:20px;">
+      <h3>Geschafft! 🎉</h3>
+      <p id="praep-punkte">Du hast 8 von 10 richtig!</p>
+      <div class="artikel-stern" id="praep-stern">⭐⭐⭐</div>
+      <button class="knopf wichtig" id="praep-neustart">Nochmal spielen</button>
     </div>
   </div>
 
@@ -937,34 +944,96 @@ const praepSzenen = [
   { posStyles: { left:'75%', transform:'none', bottom:'30%', zIndex:0 }, wort:'hinter' }
 ];
 
+let praepAktuelleFrage = 0;
+let praepPunkte = 0;
+let aktuellePraepSzene = null;
+
 function startePraeposition() {
+  praepAktuelleFrage = 0;
+  praepPunkte = 0;
+  el('praep-ergebnis').style.display = 'none';
+  el('praep-optionen').style.display = 'flex';
+  el('praep-fortschritt').style.display = 'block';
+  el('praep-fortschritt').textContent = 'Frage 1 von 10';
+  
+  // Buttons zurücksetzen
+  el('praep-optionen').querySelectorAll('button').forEach(b => {
+    b.disabled = false;
+    b.classList.remove('disabled');
+  });
+  
+  ladePraepFrage();
+}
+
+function ladePraepFrage() {
+  if (praepAktuelleFrage >= 10) {
+    zeigePraepErgebnis();
+    return;
+  }
+  
   const tier = ALLE[Math.floor(Math.random()*ALLE.length)];
-  const szene = praepSzenen[Math.floor(Math.random()*praepSzenen.length)];
+  aktuellePraepSzene = praepSzenen[Math.floor(Math.random()*praepSzenen.length)];
   const tEl = el('praep-tier-pos');
   tEl.innerHTML = tier.svg;
-  Object.assign(tEl.style, szene.posStyles);
+  Object.assign(tEl.style, aktuellePraepSzene.posStyles);
   
   el('praep-luecke').textContent = '___';
   el('praep-luecke').style.borderColor = '#fff';
   el('praep-luecke').style.color = 'var(--heu)';
   
+  el('praep-fortschritt').textContent = 'Frage ' + (praepAktuelleFrage + 1) + ' von 10';
+  
   const btns = el('praep-optionen').querySelectorAll('button');
   btns.forEach(b => {
+    b.style.animation = '';
+    b.style.background = '';
+    b.disabled = false;
+    b.classList.remove('disabled');
     b.onclick = () => {
-      if(b.dataset.val === szene.wort) {
-        el('praep-luecke').textContent = szene.wort;
+      btns.forEach(btn => { btn.disabled = true; btn.classList.add('disabled'); });
+      
+      if (b.dataset.val === aktuellePraepSzene.wort) {
+        el('praep-luecke').textContent = aktuellePraepSzene.wort;
         el('praep-luecke').style.color = '#fff';
         el('praep-luecke').style.borderColor = 'transparent';
-        konfettiRegen();
-        setTimeout(startePraeposition, 2500);
+        praepPunkte++;
+        if (praepPunkte >= 8) konfettiRegen();
+        setTimeout(() => {
+          praepAktuelleFrage++;
+          btns.forEach(btn => { btn.disabled = false; btn.classList.remove('disabled'); });
+          ladePraepFrage();
+        }, 1500);
       } else {
         b.style.animation = 'nope .4s';
         b.style.background = 'var(--falsch)';
-        setTimeout(() => { b.style.animation = ''; b.style.background=''; }, 500);
+        setTimeout(() => {
+          praepAktuelleFrage++;
+          btns.forEach(btn => { btn.disabled = false; btn.classList.remove('disabled'); });
+          ladePraepFrage();
+        }, 1200);
       }
     };
   });
 }
+
+function zeigePraepErgebnis() {
+  el('praep-optionen').style.display = 'none';
+  el('praep-fortschritt').style.display = 'none';
+  el('praep-ergebnis').style.display = 'block';
+  el('praep-punkte').textContent = 'Du hast ' + praepPunkte + ' von 10 richtig!';
+  
+  let sterne = '';
+  if (praepPunkte >= 9) sterne = '🏆⭐⭐⭐🏆';
+  else if (praepPunkte >= 7) sterne = '⭐⭐⭐';
+  else if (praepPunkte >= 5) sterne = '⭐⭐';
+  else if (praepPunkte >= 3) sterne = '⭐';
+  else sterne = '💪';
+  el('praep-stern').textContent = sterne;
+  
+  if (praepPunkte >= 8) konfettiRegen();
+}
+
+el('praep-neustart').addEventListener('click', startePraeposition);
 
 /* --- Werkzeuge-Logik --- */
 const WERKZEUGE = [
