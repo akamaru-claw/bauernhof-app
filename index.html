@@ -1400,12 +1400,12 @@ function ladeQuizFrage() {
 const praepSzenen = [
   // auf dem Dach (wirklich oben auf dem Giebel)
   { layer: 'praep-layer-vorne', transform: 'translate(120, 45) scale(0.55)', wort: 'auf' },
-  // vor der Tür, etwas weiter unten auf dem Rasen
-  { layer: 'praep-layer-vorne', transform: 'translate(162, 158) scale(0.60)', wort: 'vor' },
+  // vor der Tür, weiter unten auf dem Rasen
+  { layer: 'praep-layer-vorne', transform: 'translate(162, 178) scale(0.60)', wort: 'vor' },
   // links daneben auf gleicher Höhe mit der Tür
   { layer: 'praep-layer-vorne', transform: 'translate(12, 142) scale(0.60)', wort: 'neben' },
-  // wirklich hinter dem Haus, fast verdeckt, mit Hervorguck-Animation
-  { layer: 'praep-layer-hinter', transform: 'translate(252, 150) scale(0.50)', wort: 'hinter' },
+  // wirklich hinter dem Haus, klein und hinter der rechten Hauswand, mit Hervorguck-Animation
+  { layer: 'praep-layer-hinter', transform: 'translate(258, 150) scale(0.42)', wort: 'hinter' },
   // im Haus, sichtbar durch die offene Tür
   { layer: 'praep-layer-innen', transform: 'translate(148, 126) scale(0.52)', wort: 'im' }
 ];
@@ -1430,12 +1430,10 @@ function praepSetzeTier(tier, szene) {
     const anim = document.createElementNS('http://www.w3.org/2000/svg', 'animateTransform');
     anim.setAttribute('attributeName', 'transform');
     anim.setAttribute('type', 'translate');
-    anim.setAttribute('from', '252 150');
-    anim.setAttribute('to', '290 150');
-    anim.setAttribute('dur', '1.4s');
+    anim.setAttribute('dur', '1.6s');
     anim.setAttribute('repeatCount', 'indefinite');
     anim.setAttribute('calcMode', 'easeInOut');
-    anim.setAttribute('values', '252 150; 290 150; 252 150');
+    anim.setAttribute('values', '0 0; 28 0; 0 0');
     anim.setAttribute('keyTimes', '0; 0.5; 1');
     anim.setAttribute('additive', 'sum');
     g.appendChild(anim);
@@ -1479,8 +1477,8 @@ function ladePraepFrage() {
   const tier = ALLE[Math.floor(Math.random() * ALLE.length)];
   praepSetzeTier(tier, aktuellePraepSzene);
 
-  // Satz mit echtem Tier aktualisieren
-  el('praep-tier-name').textContent = tier.art + ' ' + tier.wort;
+  // Satz mit echtem Tier aktualisieren (Artikel groß)
+  el('praep-tier-name').textContent = tier.art.charAt(0).toUpperCase() + tier.art.slice(1) + ' ' + tier.wort;
   el('praep-luecke').textContent = '___';
   el('praep-luecke').style.borderColor = '#fff';
   el('praep-luecke').style.color = 'var(--heu)';
