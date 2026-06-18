@@ -1386,10 +1386,15 @@ function ladeQuizFrage() {
 
 /* --- Präpositionen-Logik --- */
 const praepSzenen = [
-  { layer: 'praep-layer-vorne', transform: 'translate(140, 100) scale(0.85)', wort: 'auf' },
+  // auf dem Dach (wirklich oben auf dem Giebel)
+  { layer: 'praep-layer-vorne', transform: 'translate(120, 45) scale(0.55)', wort: 'auf' },
+  // vor der Tür
   { layer: 'praep-layer-vorne', transform: 'translate(140, 210) scale(0.85)', wort: 'vor' },
+  // links neben dem Haus
   { layer: 'praep-layer-vorne', transform: 'translate(40, 210) scale(0.85)', wort: 'neben' },
+  // rechts hinter dem Haus (teilweise hinter Vorderwand, aber sichtbar)
   { layer: 'praep-layer-hinter', transform: 'translate(300, 180) scale(0.75)', wort: 'hinter' },
+  // im Haus, sichtbar durch die offene Tür
   { layer: 'praep-layer-innen', transform: 'translate(148, 125) scale(0.55)', wort: 'im' }
 ];
 
