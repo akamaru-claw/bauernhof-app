@@ -207,32 +207,9 @@
   .quiz-karte svg { width:100%; height:auto; display:block; border-bottom:3px solid var(--holz-dunkel); }
   .quiz-karte-name { text-align:center; font-weight:800; font-family:var(--display); padding:18px 14px; color:var(--tinte); font-size:clamp(22px, 4.5vw, 32px); background:var(--heu); letter-spacing:0.5px; text-shadow:0 1px 2px rgba(0,0,0,.1); }
 
-  /* --- Präpositionen Styles --- */
-  .praep-scene { max-width:600px; margin:0 auto 24px; background:linear-gradient(to bottom, #B8D9EC 0%, #B8D9EC 55%, #A3D36D 55%, #7EBD4F 100%); border:5px solid var(--holz-dunkel); border-radius:18px; box-shadow:0 12px 24px rgba(0,0,0,.22), inset 0 -12px 0 rgba(0,0,0,.06); position:relative; overflow:hidden; height:320px; }
-  .praep-scene::before { content:""; position:absolute; top:18px; left:45px; width:70px; height:24px; border-radius:50%; background:rgba(255,255,255,.85); filter:drop-shadow(18px 4px 0 rgba(255,255,255,.55)); }
-  .praep-scene::after { content:""; position:absolute; top:10px; right:60px; width:50px; height:18px; border-radius:50%; background:rgba(255,255,255,.65); }
-  .praep-obj { position:absolute; }
-  .praep-haus {
-    width:190px; height:135px; background:repeating-linear-gradient(90deg, var(--scheune) 0 22px, #9e3b27 22px 26px);
-    border:5px solid var(--holz-dunkel); border-bottom:0; left:50%; transform:translateX(-50%); bottom:38%;
-    display:flex; justify-content:center; align-items:flex-end; border-radius:4px 4px 0 0;
-    box-shadow:inset 0 6px 0 rgba(255,255,255,.10), inset 0 -14px 0 rgba(0,0,0,.12);
-  }
-  .praep-haus::before {
-    content:""; position:absolute; width:230px; height:0; border-bottom:70px solid var(--scheune-tief);
-    border-left:110px solid transparent; border-right:110px solid transparent; top:-70px; left:-24px;
-    filter:drop-shadow(0 3px 0 rgba(0,0,0,.18));
-  }
-  .praep-haus::after {
-    content:""; position:absolute; top:0; left:0; right:0; height:22px; background:repeating-linear-gradient(90deg, var(--scheune) 0 16px, #a3412b 16px 20px);
-    border-bottom:4px solid var(--holz-dunkel);
-  }
-  .praep-haus-tuer { width:46px; height:74px; background:linear-gradient(90deg, var(--holz) 0%, #8f5f32 100%); border:4px solid var(--holz-dunkel); border-bottom:0; border-radius:12px 12px 0 0; position:relative; z-index:1; box-shadow:inset 2px 0 0 rgba(255,255,255,.15); }
-  .praep-fenster { position:absolute; top:28px; width:34px; height:34px; background:#dbebf5; border:4px solid var(--holz-dunkel); border-radius:6px; z-index:1; }
-  .praep-fenster::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg, transparent 45%, var(--holz-dunkel) 45%, var(--holz-dunkel) 55%, transparent 55%), linear-gradient(transparent 45%, var(--holz-dunkel) 45%, var(--holz-dunkel) 55%, transparent 55%); }
-  .praep-fenster.links { left:22px; }
-  .praep-fenster.rechts { right:22px; }
-  .praep-tier { width:120px; position:absolute; transition:all 0.5s ease; filter:drop-shadow(0 5px 6px rgba(0,0,0,.25)); }
+  /* --- Präpositionen Styles (SVG-Scheune) --- */
+  .praep-scene { max-width:600px; margin:0 auto 24px; background:#AFCFE0; border:5px solid var(--holz-dunkel); border-radius:18px; box-shadow:0 12px 24px rgba(0,0,0,.22), inset 0 -12px 0 rgba(0,0,0,.06); position:relative; overflow:hidden; height:320px; }
+  .praep-tier { width:120px; position:absolute; transition:all 0.5s ease; filter:drop-shadow(0 5px 6px rgba(0,0,0,.25)); z-index:5; }
   .praep-tier svg { width:100%; height:auto; }
   .luecke { display:inline-block; min-width:80px; border-bottom:4px solid #fff; color:var(--heu); padding:0 10px; font-weight:800; }
 
@@ -487,11 +464,33 @@
     </header>
     <div class="artikel-fortschritt" id="praep-fortschritt">Frage 1 von 10</div>
     <div class="praep-scene">
-      <div class="praep-obj praep-haus">
-        <div class="praep-fenster links"></div>
-        <div class="praep-fenster rechts"></div>
-        <div class="praep-haus-tuer"></div>
-      </div>
+      <svg viewBox="0 0 400 300" width="100%" height="100%" id="praep-svg-master">
+        <rect width="400" height="300" fill="#AFCFE0" />
+        <path d="M0,190 Q100,170 200,200 T400,180 L400,300 L0,300 Z" fill="#8FB36B" />
+        <path d="M0,220 Q150,200 250,230 T400,210 L400,300 L0,300 Z" fill="#6E9655" />
+        <circle cx="340" cy="180" r="40" fill="#4E8A4A" stroke="#2f4d1c" stroke-width="3"/>
+        <circle cx="310" cy="190" r="30" fill="#4E8A4A" stroke="#2f4d1c" stroke-width="3"/>
+        <circle cx="80" cy="195" r="25" fill="#4E8A4A" stroke="#2f4d1c" stroke-width="3"/>
+
+        <g id="praep-tier-layer-hinter"></g>
+
+        <g id="barn" transform="translate(110, 60)">
+          <ellipse cx="90" cy="160" rx="100" ry="20" fill="#2f4d1c" opacity="0.3"/>
+          <rect x="20" y="80" width="140" height="90" fill="#B5462E" stroke="#5A3A1E" stroke-width="4" />
+          <polygon points="0,80 90,10 180,80" fill="#8F3220" stroke="#5A3A1E" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M90,10 L90,80 L180,80 Z" fill="#7a2a1a" opacity="0.2"/>
+          <path d="M60,170 L60,110 A30,30 0 0 1 120,110 L120,170 Z" fill="#5A3A1E" />
+          <path d="M65,170 L65,115 A25,25 0 0 1 115,115 L115,170 Z" fill="#3f2d1c" />
+          <circle cx="90" cy="50" r="14" fill="#3f2d1c" stroke="#E8B84B" stroke-width="3"/>
+          <line x1="76" y1="50" x2="104" y2="50" stroke="#E8B84B" stroke-width="3"/>
+          <line x1="90" y1="36" x2="90" y2="64" stroke="#E8B84B" stroke-width="3"/>
+          <path d="M75,80 L105,80 L100,65 L80,65 Z" fill="#E8B84B" stroke="#5A3A1E" stroke-width="2"/>
+        </g>
+
+        <g id="praep-tier-layer-auf"></g>
+        <g id="praep-tier-layer-neben"></g>
+        <g id="praep-tier-layer-vor"></g>
+      </svg>
       <div class="praep-tier" id="praep-tier-pos"></div>
     </div>
     <div class="quiz-frage-container">
