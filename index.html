@@ -48,7 +48,7 @@
     z-index:0; pointer-events:none;
   }
   .wrap{position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:18px 16px 90px}
-  
+
   .tabs{display:flex; flex-wrap:nowrap; gap:10px; justify-content:flex-start; margin-bottom:24px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none; -webkit-overflow-scrolling:touch}
   .tabs::-webkit-scrollbar{display:none}
   .tab-btn{
@@ -66,7 +66,7 @@
   .view{display:none;}
   .view.aktiv{display:block; animation:fadeIn .3s ease;}
   @keyframes fadeIn{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)}}
-  
+
   header.hof{
     text-align:center; margin:6px auto 14px; max-width:760px;
     background:linear-gradient(var(--holz) 0 100%); border:5px solid var(--holz-dunkel);
@@ -138,12 +138,12 @@
   .stall .buehne.tier-klickbar{cursor:pointer;transition:transform .15s,box-shadow .15s}
   .stall .buehne.tier-klickbar:hover{transform:scale(1.03);box-shadow:0 4px 12px rgba(0,0,0,.2)}
   .stall .buehne.tier-klickbar:active{transform:scale(.98)}
-  
+
   .stall-label {
     font-weight:800; font-size:clamp(16px, 3.5vw, 20px); color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.7), 0 1px 2px rgba(0,0,0,.5);
     margin: 4px 0 -2px; text-align:center; letter-spacing: 0.8px;
   }
-  
+
   .slot{
     width:100%; min-height:88px; border-radius:14px; border:3px dashed rgba(90,58,30,.55);
     background:rgba(90,58,30,.10); display:flex; align-items:center; justify-content:center;
@@ -160,7 +160,7 @@
   .geloest-info{margin-top:4px; font-weight:800; color:var(--korrekt); font-size:12px; text-align:center; display:flex; flex-direction:column; gap:1px; animation:fadeIn .3s ease;}
   .vorrat-titel{text-align:center; font-family:var(--display); font-weight:600; color:#fff; font-size:18px; margin:6px 0 10px; text-shadow:0 1px 2px rgba(0,0,0,.25)}
   .vorrat{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; min-height:64px; padding:14px; border-radius:16px; background:rgba(58,40,20,.22); border:3px dashed rgba(255,255,255,.4)}
-  
+
   .schild{
     --c:var(--papier);
     font-family:var(--display); font-weight:700; font-size:clamp(18px, 3.5vw, 22px); letter-spacing: 0.5px;
@@ -181,7 +181,7 @@
   .schild.ghost{position:fixed; z-index:1200; pointer-events:none; transform:rotate(-4deg) scale(1.05); box-shadow:0 16px 28px rgba(0,0,0,.4), 0 4px 0 var(--holz-tief)}
   .schild.platziert{cursor:default; box-shadow:none; border-color:var(--korrekt); --c:#EAF6E6}
   .schild.platziert::before,.schild.platziert::after{background:radial-gradient(circle at 35% 35%, #bfe0b8, #4E8A4A)}
-  
+
   .banner{position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(33,40,33,.55); z-index:2000; padding:20px}
   .banner.an{display:flex}
   .banner .karte{background:var(--papier); border:6px solid var(--scheune-tief); border-radius:20px; max-width:440px; width:100%; padding:26px 24px 22px; text-align:center; box-shadow:0 18px 40px rgba(0,0,0,.4)}
@@ -194,7 +194,7 @@
   .banner button:active{transform:translateY(2px); box-shadow:0 2px 0 var(--holz-tief)}
   .konfetti{position:fixed; top:-10px; width:11px; height:14px; z-index:1900; border-radius:2px; pointer-events:none}
   footer{text-align:center; color:#fff; opacity:.85; font-weight:700; font-size:12.5px; margin-top:8px; text-shadow:0 1px 2px rgba(0,0,0,.3)}
-  
+
   /* --- Quiz Styles --- */
   .quiz-frage-container { text-align:center; margin-bottom:24px; }
   .quiz-frage { font-size:clamp(22px, 4vw, 32px); font-family:var(--display); font-weight:700; color:#fff; text-shadow:0 2px 4px rgba(0,0,0,.4); background:rgba(0,0,0,.2); padding:12px 24px; border-radius:16px; display:inline-block; border:3px dashed rgba(255,255,255,.3); }
@@ -343,7 +343,7 @@
 </style>
 </head>
 <body>
-<button class="info-btn" id="info-btn" type="button" title="Über die App">ℹ️</button>
+<button class="info-btn" id="info-btn" type="button" title="Über die App">i️</button>
 <button class="sound-btn" id="sound-btn" type="button" title="Ton an/aus">🔊</button>
 <div class="info-modal" id="info-modal" role="dialog" aria-modal="true" aria-labelledby="info-titel">
   <div class="info-karte">
@@ -355,7 +355,7 @@
       <ul>
         <li>📝 Namen zuordnen (Vater, Mutter, Kind)</li>
         <li>🎯 Tier-Quiz mit 6 Fragen</li>
-        <li>📚 Der/Die/Das – Artikel lernen</li>
+        <li>📚 Der/Die/Das - Artikel lernen</li>
         <li>📍 Präpositionen üben</li>
         <li>🔧 Werkzeuge erkennen (jetzt mit 9 Werkzeugen!)</li>
         <li>🍎 Was fressen die Tiere?</li>
@@ -398,7 +398,7 @@
   </div>
 </div>
 <div class="wrap">
-  
+
   <nav class="tabs" aria-label="Hauptnavigation">
     <button class="tab-btn aktiv" data-target="view-zuordnung" type="button">Namen zuordnen</button>
     <button class="tab-btn" data-target="view-quiz" type="button">Tier-Quiz</button>
@@ -464,34 +464,59 @@
     </header>
     <div class="artikel-fortschritt" id="praep-fortschritt">Frage 1 von 10</div>
     <div class="praep-scene">
-      <svg viewBox="0 0 400 300" width="100%" height="100%" id="praep-svg-master">
+      <svg viewBox="0 0 400 300" width="100%" height="100%" id="praep-svg-master" preserveAspectRatio="xMidYMid meet">
+        <!-- Himmel -->
         <rect width="400" height="300" fill="#AFCFE0" />
+        <!-- Gras -->
         <path d="M0,190 Q100,170 200,200 T400,180 L400,300 L0,300 Z" fill="#8FB36B" />
         <path d="M0,220 Q150,200 250,230 T400,210 L400,300 L0,300 Z" fill="#6E9655" />
+        <!-- Büsche -->
         <circle cx="340" cy="180" r="40" fill="#4E8A4A" stroke="#2f4d1c" stroke-width="3"/>
         <circle cx="310" cy="190" r="30" fill="#4E8A4A" stroke="#2f4d1c" stroke-width="3"/>
         <circle cx="80" cy="195" r="25" fill="#4E8A4A" stroke="#2f4d1c" stroke-width="3"/>
 
-        <g id="praep-tier-layer-hinter"></g>
+        <!-- Tiere, die HINTER dem Haus stehen -->
+        <g id="praep-layer-hinter" transform="translate(0,0)"></g>
 
+        <!-- Haus Körper (Rückwand + Dach) -->
         <g id="barn" transform="translate(110, 60)">
+          <!-- Bodenschatten -->
           <ellipse cx="90" cy="160" rx="100" ry="20" fill="#2f4d1c" opacity="0.3"/>
-          <rect x="20" y="80" width="140" height="90" fill="#B5462E" stroke="#5A3A1E" stroke-width="4" />
+          <!-- Rückwand/Innere -->
+          <rect x="20" y="80" width="140" height="90" fill="#7a2a1a" stroke="#5A3A1E" stroke-width="4" />
+          <!-- Dach -->
           <polygon points="0,80 90,10 180,80" fill="#8F3220" stroke="#5A3A1E" stroke-width="4" stroke-linejoin="round"/>
           <path d="M90,10 L90,80 L180,80 Z" fill="#7a2a1a" opacity="0.2"/>
-          <path d="M60,170 L60,110 A30,30 0 0 1 120,110 L120,170 Z" fill="#5A3A1E" />
-          <path d="M65,170 L65,115 A25,25 0 0 1 115,115 L115,170 Z" fill="#3f2d1c" />
+          <!-- Innenraum sichtbar durch Tür -->
+          <rect x="58" y="108" width="64" height="62" fill="#4a1e15" opacity="0.6" />
+          <!-- Dachfenster -->
           <circle cx="90" cy="50" r="14" fill="#3f2d1c" stroke="#E8B84B" stroke-width="3"/>
           <line x1="76" y1="50" x2="104" y2="50" stroke="#E8B84B" stroke-width="3"/>
           <line x1="90" y1="36" x2="90" y2="64" stroke="#E8B84B" stroke-width="3"/>
+          <!-- Heuboden -->
           <path d="M75,80 L105,80 L100,65 L80,65 Z" fill="#E8B84B" stroke="#5A3A1E" stroke-width="2"/>
         </g>
 
-        <g id="praep-tier-layer-auf"></g>
-        <g id="praep-tier-layer-neben"></g>
-        <g id="praep-tier-layer-vor"></g>
+        <!-- Tiere, die IM Haus stehen -->
+        <g id="praep-layer-innen" transform="translate(0,0)"></g>
+
+        <!-- Haus-Vorderwand mit Türdurchgang -->
+        <g id="barn-front" transform="translate(110, 60)">
+          <!-- Vorderwand mit Türöffnung -->
+          <path d="M20,80 L60,80 L60,170 L20,170 Z" fill="#B5462E" stroke="#5A3A1E" stroke-width="4"/>
+          <path d="M120,80 L160,80 L160,170 L120,170 Z" fill="#B5462E" stroke="#5A3A1E" stroke-width="4"/>
+          <path d="M20,80 L160,80 L90,10 L0,80 Z" fill="none" stroke="#5A3A1E" stroke-width="0"/>
+          <!-- Tür (etwas offen, damit man reinsehen kann) -->
+          <path d="M60,170 L60,110 A30,30 0 0 1 120,110 L120,170 Z" fill="none" stroke="#5A3A1E" stroke-width="4"/>
+          <path d="M60,170 L60,110 A30,30 0 0 1 120,110 L120,170 Z" fill="#5A3A1E" opacity="0.25"/>
+          <!-- Türflügel leicht geöffnet -->
+          <path d="M62,168 L62,116 A26,26 0 0 1 96,116 L96,168 Z" fill="#3f2d1c" opacity="0.85" stroke="#5A3A1E" stroke-width="2"/>
+          <circle cx="92" cy="140" r="3" fill="#E8B84B"/>
+        </g>
+
+        <!-- Tiere vor/neben/auf dem Haus -->
+        <g id="praep-layer-vorne" transform="translate(0,0)"></g>
       </svg>
-      <div class="praep-tier" id="praep-tier-pos"></div>
     </div>
     <div class="quiz-frage-container">
       <div class="quiz-frage">Das Tier ist <span class="luecke" id="praep-luecke">___</span> dem Haus.</div>
@@ -501,6 +526,7 @@
        <button data-val="vor">vor</button>
        <button data-val="neben">neben</button>
        <button data-val="hinter">hinter</button>
+       <button data-val="im">im</button>
     </div>
     <div class="artikel-ergebnis" id="praep-ergebnis" style="display:none;margin-top:20px;">
       <h3>Geschafft! 🎉</h3>
@@ -566,33 +592,33 @@
       <div class="statistik-karte">
         <div class="statistik-icon">🧩</div>
         <h3>Memory</h3>
-        <div class="statistik-wert" id="stat-memory-rekord">–</div>
+        <div class="statistik-wert" id="stat-memory-rekord">-</div>
         <p class="statistik-label">Wenigste Züge</p>
-        <div class="statistik-wert" style="font-size:20px;margin-top:8px;" id="stat-memory-bestzeit">–</div>
+        <div class="statistik-wert" style="font-size:20px;margin-top:8px;" id="stat-memory-bestzeit">-</div>
         <p class="statistik-label" style="font-size:12px;">Bestzeit</p>
       </div>
       <div class="statistik-karte">
         <div class="statistik-icon">📚</div>
         <h3>Artikel-Quiz</h3>
-        <div class="statistik-wert" id="stat-artikel-best">–</div>
+        <div class="statistik-wert" id="stat-artikel-best">-</div>
         <p class="statistik-label">Bester Score</p>
       </div>
       <div class="statistik-karte">
         <div class="statistik-icon">📍</div>
         <h3>Präpositionen</h3>
-        <div class="statistik-wert" id="stat-praep-best">–</div>
+        <div class="statistik-wert" id="stat-praep-best">-</div>
         <p class="statistik-label">Bester Score</p>
       </div>
       <div class="statistik-karte">
         <div class="statistik-icon">🔧</div>
         <h3>Werkzeuge</h3>
-        <div class="statistik-wert" id="stat-werkzeuge-best">–</div>
+        <div class="statistik-wert" id="stat-werkzeuge-best">-</div>
         <p class="statistik-label">Bester Score</p>
       </div>
       <div class="statistik-karte">
         <div class="statistik-icon">🥕</div>
         <h3>Futter</h3>
-        <div class="statistik-wert" id="stat-futter-best">–</div>
+        <div class="statistik-wert" id="stat-futter-best">-</div>
         <p class="statistik-label">Bester Score</p>
       </div>
       <div class="statistik-karte">
@@ -617,7 +643,7 @@
     <div class="tipp">
       <b>Sprach-Trick:</b> Bei Tieren passt der Artikel oft zum Geschlecht:
       <br><span class="der">der</span> Hahn (Vater) · <span class="die">die</span> Henne (Mutter) · <span class="das">das</span> Küken (Kind).
-      Jungtiere sind im Deutschen fast immer <b>das …</b>
+      Jungtiere sind im Deutschen fast immer <b>das ...</b>
     </div>
     <button id="banner-weiter" type="button">Weiter üben</button>
   </div>
@@ -646,7 +672,7 @@ function svgWrap(inner) { return svgWrapEnhanced(inner); }
 function svgWrapEnhanced(inner, opts={}){
   const bg = opts.bg || '#cfe7f3';
   const hasDefs = opts.defs || '';
-  const skyGradient = opts.sunset ? 
+  const skyGradient = opts.sunset ?
     '<linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#FF9A76"/><stop offset="50%" stop-color="#FDBF8F"/><stop offset="100%" stop-color="#AFCFE0"/></linearGradient>' :
     '<linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#B8D9EC"/><stop offset="100%" stop-color="#AFCFE0"/></linearGradient>';
   return '<svg viewBox="0 0 150 120" role="img" xmlns="http://www.w3.org/2000/svg">'
@@ -661,6 +687,15 @@ function svgWrapEnhanced(inner, opts={}){
 }
 function svgTrans(inner){ return '<svg viewBox="0 0 150 120" role="img" xmlns="http://www.w3.org/2000/svg">'+inner+'</svg>'; }
 function auge(x,y,r){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#241308"/><circle cx="'+(x+r*0.35)+'" cy="'+(y-r*0.35)+'" r="'+(r*0.4)+'" fill="#fff"/>';}
+
+// Helfer: Tier-SVG ohne eigenen Hintergrund (für Präpositionen-Layer)
+function getTierOhneBg(svgStr) {
+  let inner = svgStr.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
+  inner = inner.replace(/<rect width="150" height="120" fill="#cfe7f3"\/>/g, '');
+  inner = inner.replace(/<path d="M0 84 Q36 70 76 82 Q116 94 150 80 L150 120 L0 120Z" fill="#abd073"\/>/g, '');
+  inner = inner.replace(/<path d="M0 99 Q40 91 80 97 Q120 103 150 96 L150 120 L0 120Z" fill="#93bd58"\/>/g, '');
+  return inner;
+}
 
 /* ===================== NEUE TIERE ===================== */
 
@@ -726,7 +761,7 @@ function pferd(opts){
    +'<path d="M104 26 Q124 24 130 40 Q132 50 122 52 L110 46 Q102 34 104 26Z" fill="'+b+'" stroke="'+O+'" stroke-width="2.4"/>'
    +'<path d="M86 56 Q88 26 110 26 Q100 32 99 44 Q106 30 98 50 Q96 40 90 60Z" fill="'+m+'" stroke="'+O+'" stroke-width="2" stroke-linejoin="round"/>'
    // Donkey has longer ears than horse
-   +(opts.isEsel ? '<path d="M106 32 l-4 -20 l12 15Z" fill="'+b+'" stroke="'+O+'" stroke-width="1.8"/><path d="M116 34 l8 -18 l-1 18Z" fill="'+b+'" stroke="'+O+'" stroke-width="1.8"/>' 
+   +(opts.isEsel ? '<path d="M106 32 l-4 -20 l12 15Z" fill="'+b+'" stroke="'+O+'" stroke-width="1.8"/><path d="M116 34 l8 -18 l-1 18Z" fill="'+b+'" stroke="'+O+'" stroke-width="1.8"/>'
                  : '<path d="M106 28 l-2 -12 l9 8Z" fill="'+b+'" stroke="'+O+'" stroke-width="1.8"/><path d="M114 30 l4 -11 l4 10Z" fill="'+b+'" stroke="'+O+'" stroke-width="1.8"/>')
    +'<path d="M110 24 q5 -3 9 2 q-5 0 -7 3Z" fill="'+m+'"/>'
    +'<ellipse cx="128" cy="48" rx="6" ry="5" fill="'+(opts.muz||b)+'" stroke="'+O+'" stroke-width="1.8"/>'
@@ -1326,12 +1361,12 @@ function ladeQuizFrage() {
   el('quiz-frage-text').textContent = frage.text;
   const optionenEl = el('quiz-optionen');
   optionenEl.innerHTML = '';
-  
+
   mischen(FAMILIEN).forEach(f => {
     const karte = document.createElement('div');
     karte.className = 'quiz-karte';
     karte.innerHTML = f.icon + '<div class="quiz-karte-name">' + f.name + '</div>';
-    
+
     karte.addEventListener('click', () => {
       if(frage.pruefe(f)) {
         karte.classList.add('richtig');
@@ -1351,15 +1386,28 @@ function ladeQuizFrage() {
 
 /* --- Präpositionen-Logik --- */
 const praepSzenen = [
-  { posStyles: { left:'50%', transform:'translateX(-50%)', bottom:'50%', zIndex:2 }, wort:'auf' },
-  { posStyles: { left:'50%', transform:'translateX(-50%)', bottom:'0%', zIndex:10 }, wort:'vor' },
-  { posStyles: { left:'15%', transform:'none', bottom:'0%', zIndex:1 }, wort:'neben' },
-  { posStyles: { left:'75%', transform:'none', bottom:'30%', zIndex:0 }, wort:'hinter' }
+  { layer: 'praep-layer-vorne', transform: 'translate(140, 100) scale(0.85)', wort: 'auf' },
+  { layer: 'praep-layer-vorne', transform: 'translate(140, 210) scale(0.85)', wort: 'vor' },
+  { layer: 'praep-layer-vorne', transform: 'translate(40, 210) scale(0.85)', wort: 'neben' },
+  { layer: 'praep-layer-hinter', transform: 'translate(300, 180) scale(0.75)', wort: 'hinter' },
+  { layer: 'praep-layer-innen', transform: 'translate(148, 125) scale(0.55)', wort: 'im' }
 ];
 
 let praepAktuelleFrage = 0;
 let praepPunkte = 0;
 let aktuellePraepSzene = null;
+
+function praepSetzeTier(tier, szene) {
+  // Alle Layer leeren
+  ['praep-layer-hinter', 'praep-layer-innen', 'praep-layer-vorne'].forEach(id => {
+    el(id).innerHTML = '';
+  });
+  // Tier ohne eigenen Hintergrund in den richtigen SVG-Layer setzen
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('transform', szene.transform);
+  g.innerHTML = getTierOhneBg(tier.svg);
+  el(szene.layer).appendChild(g);
+}
 
 function startePraeposition() {
   praepAktuelleFrage = 0;
@@ -1368,13 +1416,13 @@ function startePraeposition() {
   el('praep-optionen').style.display = 'flex';
   el('praep-fortschritt').style.display = 'block';
   el('praep-fortschritt').textContent = 'Frage 1 von 10';
-  
+
   // Buttons zurücksetzen
   el('praep-optionen').querySelectorAll('button').forEach(b => {
     b.disabled = false;
     b.classList.remove('disabled');
   });
-  
+
   ladePraepFrage();
 }
 
@@ -1383,19 +1431,17 @@ function ladePraepFrage() {
     zeigePraepErgebnis();
     return;
   }
-  
+
   const tier = ALLE[Math.floor(Math.random()*ALLE.length)];
   aktuellePraepSzene = praepSzenen[Math.floor(Math.random()*praepSzenen.length)];
-  const tEl = el('praep-tier-pos');
-  tEl.innerHTML = tier.svg;
-  Object.assign(tEl.style, aktuellePraepSzene.posStyles);
-  
+  praepSetzeTier(tier, aktuellePraepSzene);
+
   el('praep-luecke').textContent = '___';
   el('praep-luecke').style.borderColor = '#fff';
   el('praep-luecke').style.color = 'var(--heu)';
-  
+
   el('praep-fortschritt').textContent = 'Frage ' + (praepAktuelleFrage + 1) + ' von 10';
-  
+
   const btns = el('praep-optionen').querySelectorAll('button');
   btns.forEach(b => {
     b.style.animation = '';
@@ -1404,7 +1450,7 @@ function ladePraepFrage() {
     b.classList.remove('disabled');
     b.onclick = () => {
       btns.forEach(btn => { btn.disabled = true; btn.classList.add('disabled'); });
-      
+
       if (b.dataset.val === aktuellePraepSzene.wort) {
         el('praep-luecke').textContent = aktuellePraepSzene.wort;
         el('praep-luecke').style.color = '#fff';
@@ -1436,7 +1482,7 @@ function zeigePraepErgebnis() {
   el('praep-fortschritt').style.display = 'none';
   el('praep-ergebnis').style.display = 'block';
   el('praep-punkte').textContent = 'Du hast ' + praepPunkte + ' von 10 richtig!';
-  
+
   let sterne = '';
   if (praepPunkte >= 9) sterne = '🏆⭐⭐⭐🏆';
   else if (praepPunkte >= 7) sterne = '⭐⭐⭐';
@@ -1444,7 +1490,7 @@ function zeigePraepErgebnis() {
   else if (praepPunkte >= 3) sterne = '⭐';
   else sterne = '💪';
   el('praep-stern').textContent = sterne;
-  
+
   if (praepPunkte >= 8) {
     konfettiRegen();
     if (praepPunkte >= 9) playSound('win');
@@ -1509,10 +1555,10 @@ function starteWerkzeuge() {
   if (ergebnisEl) ergebnisEl.style.display = 'none';
   el('btn-werkzeug-pruefen').style.display = 'inline-block';
   el('werkzeug-neu').textContent = 'Neu starten';
-  
+
   // Zufällige Werkzeuge auswählen
   const gewaehlteWerkzeuge = mischen(WERKZEUGE).slice(0, gewaehlteAnzahl);
-  
+
   gewaehlteWerkzeuge.forEach(w => {
     const k = document.createElement('div'); k.className = 'werkzeug-karte';
     k.innerHTML = '<div class="werkzeug-bild">'+w.svg+'</div><div class="slot" tabindex="0" data-key="'+w.key+'"><span class="platzhalter">Name hierher</span></div>';
@@ -1537,7 +1583,7 @@ function starteWerkzeuge() {
     });
     gEl.appendChild(k);
   });
-  
+
   mischen(gewaehlteWerkzeuge).forEach(w => {
     const s = document.createElement('div'); s.className = 'schild'; s.dataset.key = w.key; s.textContent = w.name;
     s.tabIndex=0;
@@ -1557,7 +1603,7 @@ function zeigeWerkzeugErgebnis() {
   el('werkzeug-neu').textContent = 'Nochmal spielen';
   const ergebnisEl = el('werkzeug-ergebnis');
   el('werkzeug-punkte').textContent = 'Du hast ' + werkzeugRichtig + ' von 6 richtig!';
-  
+
   let sterne = '';
   if (werkzeugRichtig >= 6) sterne = '🏆⭐⭐⭐🏆';
   else if (werkzeugRichtig >= 5) sterne = '⭐⭐⭐';
@@ -1565,13 +1611,13 @@ function zeigeWerkzeugErgebnis() {
   else if (werkzeugRichtig >= 3) sterne = '⭐';
   else sterne = '💪';
   el('werkzeug-stern').textContent = sterne;
-  
+
   ergebnisEl.style.display = 'block';
   if (werkzeugRichtig >= 5) {
     konfettiRegen();
     if (werkzeugRichtig >= 6) playSound('win');
   }
-  
+
   // Statistik speichern
   speichereWerkzeugeBestwert(werkzeugRichtig);
 }
@@ -1579,7 +1625,7 @@ function zeigeWerkzeugErgebnis() {
 el('btn-werkzeug-pruefen').addEventListener('click', () => {
   let neueRichtige = 0;
   const slots = el('werkzeug-staelle').querySelectorAll('.slot');
-  
+
   slots.forEach(slot => {
      if(slot.classList.contains('korrekt')) {
        neueRichtige++;
@@ -1587,7 +1633,7 @@ el('btn-werkzeug-pruefen').addEventListener('click', () => {
      }
      const schild = slot.querySelector('.schild');
      if(!schild) return;
-     
+
      if(slot.dataset.key === schild.dataset.key) {
         slot.classList.add('korrekt'); slot.classList.remove('gefuellt'); schild.classList.add('platziert');
         neueRichtige++;
@@ -1603,15 +1649,15 @@ el('btn-werkzeug-pruefen').addEventListener('click', () => {
         }, 600);
      }
   });
-  
+
   werkzeugRichtig = neueRichtige;
   const total = document.querySelectorAll('#werkzeug-staelle .slot').length;
   el('werkzeug-fortschritt').innerHTML = '<b>' + werkzeugRichtig + '</b> von ' + total + ' richtig';
-  
+
   // Prüfe ob alle richtig sind
   const alleBelegt = [...slots].every(s => s.classList.contains('korrekt') || s.classList.contains('gefuellt'));
   const alleRichtig = werkzeugRichtig === 6;
-  
+
   if (alleRichtig || (alleBelegt && slots.length === document.querySelectorAll('#werkzeug-vorrat .schild').length + werkzeugRichtig)) {
     setTimeout(zeigeWerkzeugErgebnis, alleRichtig ? 400 : 800);
   }
@@ -1672,7 +1718,7 @@ function zeigeArtikelFrage() {
   el('artikel-fortschritt').textContent = 'Frage ' + (artikelAktuell + 1) + ' von ' + ARTIKEL_FRAGEN;
   el('artikel-bild').innerHTML = tier.svg;
   el('artikel-frage').innerHTML = '___ ' + tier.wort;
-  
+
   const buttons = el('artikel-buttons').querySelectorAll('button');
   buttons.forEach(b => {
     b.className = 'artikel-btn';
@@ -1684,7 +1730,7 @@ function zeigeArtikelFrage() {
 function pruefeArtikel(btn, richtigerArtikel) {
   const buttons = el('artikel-buttons').querySelectorAll('button');
   buttons.forEach(b => b.disabled = true);
-  
+
   if (btn.dataset.artikel === richtigerArtikel) {
     btn.classList.add('richtig');
     hapticFeedback(); // Sanftes Feedback bei richtiger Antwort
@@ -1723,16 +1769,16 @@ function zeigeArtikelErgebnis() {
   el('artikel-bild').style.display = 'none';
   el('artikel-frage').style.display = 'none';
   el('artikel-buttons').style.display = 'none';
-  
+
   el('artikel-ergebnis').style.display = 'block';
   el('artikel-punkte').textContent = 'Du hast ' + artikelRichtig + ' von ' + ARTIKEL_FRAGEN + ' richtig!';
-  
+
   let sterne = '⭐';
   if (artikelRichtig >= 7) sterne = '⭐⭐';
   if (artikelRichtig >= 9) sterne = '⭐⭐⭐';
   if (artikelRichtig === 10) sterne = '🏆⭐⭐⭐🏆';
   el('artikel-stern').textContent = sterne;
-  
+
   if (artikelRichtig >= 8) {
     konfettiRegen();
     playSound('win');
@@ -1754,16 +1800,16 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     // Aktiven Tab speichern
     localStorage.setItem(LAST_TAB_KEY, btn.dataset.target);
-    
+
     // Visuelles Feedback
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('aktiv'));
     btn.classList.add('aktiv');
-    
+
     // View wechseln
     document.querySelectorAll('.view').forEach(v => v.classList.remove('aktiv'));
     const targetView = document.getElementById(btn.dataset.target);
     if (targetView) targetView.classList.add('aktiv');
-    
+
     // Spiel-spezifische Initialisierung
     if (btn.dataset.target === 'view-artikel') {
       ladeArtikelQuiz();
@@ -1827,14 +1873,14 @@ function starteMemory() {
   memoryUmgedreht = [];
   memoryStartZeit = Date.now();
   memoryVerstricheneZeit = 0;
-  
+
   // Timer starten
   if (memoryTimerInterval) clearInterval(memoryTimerInterval);
   memoryTimerInterval = setInterval(() => {
     memoryVerstricheneZeit = Math.floor((Date.now() - memoryStartZeit) / 1000);
     updateMemoryAnzeige();
   }, 1000);
-  
+
   const highscore = ladeMemoryHighscore();
   const bestzeit = ladeMemoryBestzeit();
   // Format: "Paare 0/8 · Züge 0 · Zeit 0:00" mit Icons
@@ -1842,18 +1888,18 @@ function starteMemory() {
   if (highscore) infoText += ' · 🏆 Rekord: ' + highscore + ' Züge';
   if (bestzeit) infoText += ' · ⚡ Bestzeit: ' + formatiereZeit(bestzeit);
   el('memory-fortschritt').innerHTML = infoText;
-  
+
   // Erstelle Paare (je Tier 2x)
   const paare = [];
   MEMORY_TIERE.forEach(tier => {
     paare.push({ ...tier, id: tier.key + '_1', uniqueId: Math.random() });
     paare.push({ ...tier, id: tier.key + '_2', uniqueId: Math.random() });
   });
-  
+
   // Mische
   paare.sort((a, b) => a.uniqueId - b.uniqueId);
   memoryKarten = paare;
-  
+
   // Rendern
   const grid = el('memory-grid');
   grid.innerHTML = '';
@@ -1890,21 +1936,21 @@ function memoryKlick(index) {
   // Fokus aktualisieren
   memoryFokusIndex = index;
   el('memory-grid').children[memoryFokusIndex]?.classList.add('fokus');
-  
+
   // Umgedreht
   karte.classList.add('umgedreht');
   memoryUmgedreht.push(index);
   playSound('click');
-  
+
   if (memoryUmgedreht.length === 2) {
     memoryZuege++;
     memorySperre = true;
     updateMemoryAnzeige();
-    
+
     const [idx1, idx2] = memoryUmgedreht;
     const karte1 = memoryKarten[idx1];
     const karte2 = memoryKarten[idx2];
-    
+
     if (karte1.key === karte2.key) {
       // Paar gefunden!
       hapticFeedback(); // Feedback beim Finden eines Paares
@@ -1921,7 +1967,7 @@ function memoryKlick(index) {
         playSound('match');
         hapticFeedback();
         updateMemoryAnzeige();
-        
+
         if (memoryPaare === 8) {
           // Timer stoppen
           if (memoryTimerInterval) {
@@ -1929,13 +1975,13 @@ function memoryKlick(index) {
             memoryTimerInterval = null;
           }
           const finaleZeit = memoryVerstricheneZeit;
-          
+
           setTimeout(() => {
             konfettiRegen();
             playSound('win');
             const neuerHighscore = speichereMemoryHighscore(memoryZuege);
             const neueBestzeit = speichereMemoryBestzeit(finaleZeit);
-            
+
             let nachricht = '🏆 Alle 8 Paare gefunden!';
             if (neuerHighscore && neueBestzeit) {
               nachricht = `🎉 Doppelter Rekord! ${memoryZuege} Züge · ${formatiereZeit(finaleZeit)}`;
@@ -1966,13 +2012,13 @@ el('btn-memory-neu').addEventListener('click', starteMemory);
 el('view-memory').addEventListener('keydown', (e) => {
   const karten = el('memory-grid').children;
   if (karten.length === 0) return;
-  
+
   // Alten Fokus entfernen
   for (let k of karten) k.classList.remove('fokus');
-  
+
   const cols = 4; // 4 Karten pro Reihe
   const total = karten.length;
-  
+
   if (e.key === 'ArrowRight') {
     e.preventDefault();
     memoryFokusIndex = (memoryFokusIndex + 1) % total;
@@ -1990,7 +2036,7 @@ el('view-memory').addEventListener('keydown', (e) => {
     memoryKlick(memoryFokusIndex);
     return;
   }
-  
+
   // Neuen Fokus setzen
   karten[memoryFokusIndex]?.classList.add('fokus');
   karten[memoryFokusIndex]?.focus();
@@ -2014,12 +2060,12 @@ function starteFutter() {
   futterRichtig = 0;
   futterAktuelleTiere = mischen(FUTTER_TIERE).slice(0, 6);
   futterGewaehlt = null;
-  
+
   el('futter-fortschritt').innerHTML = '<b>0</b> von 6 richtig';
-  
+
   const grid = el('futter-grid');
   grid.innerHTML = '';
-  
+
   mischen(futterAktuelleTiere).forEach(tier => {
     const karte = document.createElement('div');
     karte.className = 'futter-tier-karte';
@@ -2032,7 +2078,7 @@ function starteFutter() {
     slot.addEventListener('click', () => futterSlotKlick(slot));
     grid.appendChild(karte);
   });
-  
+
   // Sammle alle Futter-Optionen für diese Tiere
   const benoetigtesFutter = new Set();
   futterAktuelleTiere.forEach(t => t.futter.forEach(f => benoetigtesFutter.add(f)));
@@ -2040,7 +2086,7 @@ function starteFutter() {
   const falscheFutter = ALLE_FUTTER.filter(f => !benoetigtesFutter.has(f));
   const zufaelligeFalsche = mischen(falscheFutter).slice(0, 3);
   const alleOptionen = mischen([...benoetigtesFutter, ...zufaelligeFalsche]);
-  
+
   const vorrat = el('futter-vorrat');
   vorrat.innerHTML = '';
   alleOptionen.forEach(futterName => {
@@ -2068,7 +2114,7 @@ function futterSchildKlick(schild) {
 
 function futterSlotKlick(slot) {
   if (slot.classList.contains('korrekt')) return;
-  
+
   if (!futterGewaehlt) {
     // Entfernen falls vorhanden
     const alt = slot.querySelector('.futter-schild');
@@ -2080,20 +2126,20 @@ function futterSlotKlick(slot) {
     }
     return;
   }
-  
+
   const tierKey = slot.dataset.key;
   const tier = futterAktuelleTiere.find(t => t.key === tierKey);
   const futterName = futterGewaehlt.dataset.futter;
-  
+
   futterGewaehlt.classList.remove('gewaehlt');
   futterGewaehlt.classList.add('platziert');
-  
+
   const alt = slot.querySelector('.futter-schild');
   if (alt) {
     alt.classList.remove('platziert', 'gewaehlt');
     el('futter-vorrat').appendChild(alt);
   }
-  
+
   slot.innerHTML = '';
   slot.classList.add('gefuellt');
   slot.appendChild(futterGewaehlt);
@@ -2107,14 +2153,14 @@ el('btn-futter-pruefen').addEventListener('click', () => {
       neueRichtige++;
       return;
     }
-    
+
     const schild = slot.querySelector('.futter-schild');
     if (!schild) return;
-    
+
     const tierKey = slot.dataset.key;
     const tier = futterAktuelleTiere.find(t => t.key === tierKey);
     const futterName = schild.dataset.futter;
-    
+
     if (tier.futter.includes(futterName)) {
       slot.classList.add('korrekt');
       slot.classList.remove('gefuellt');
@@ -2131,10 +2177,10 @@ el('btn-futter-pruefen').addEventListener('click', () => {
       }, 600);
     }
   });
-  
+
   futterRichtig = neueRichtige;
   el('futter-fortschritt').innerHTML = '<b>' + futterRichtig + '</b> von 6 richtig';
-  
+
   if (futterRichtig === 6) {
     setTimeout(() => {
       konfettiRegen();
@@ -2184,26 +2230,26 @@ function erhoeheSpielZaehler() {
 function aktualisiereStatistik() {
   // Memory Highscore + Bestzeit
   const memoryRekord = ladeStatistik(STATISTIK_KEYS.memory);
-  el('stat-memory-rekord').textContent = memoryRekord ? memoryRekord + ' Züge' : '–';
+  el('stat-memory-rekord').textContent = memoryRekord ? memoryRekord + ' Züge' : '-';
   const memoryBestzeit = ladeMemoryBestzeit();
-  el('stat-memory-bestzeit').textContent = memoryBestzeit ? formatiereZeit(memoryBestzeit) : '–';
-  
+  el('stat-memory-bestzeit').textContent = memoryBestzeit ? formatiereZeit(memoryBestzeit) : '-';
+
   // Artikel-Quiz Best
   const artikelBest = ladeStatistik(STATISTIK_KEYS.artikel);
-  el('stat-artikel-best').textContent = artikelBest ? artikelBest + '/10' : '–';
-  
+  el('stat-artikel-best').textContent = artikelBest ? artikelBest + '/10' : '-';
+
   // Präpositionen Best
   const praepBest = ladeStatistik(STATISTIK_KEYS.praepositionen);
-  el('stat-praep-best').textContent = praepBest ? praepBest + '/10' : '–';
-  
+  el('stat-praep-best').textContent = praepBest ? praepBest + '/10' : '-';
+
   // Werkzeuge Best
   const werkzeugeBest = ladeStatistik(STATISTIK_KEYS.werkzeuge);
-  el('stat-werkzeuge-best').textContent = werkzeugeBest ? werkzeugeBest + '/6' : '–';
-  
+  el('stat-werkzeuge-best').textContent = werkzeugeBest ? werkzeugeBest + '/6' : '-';
+
   // Futter Best
   const futterBest = ladeStatistik(STATISTIK_KEYS.futter);
-  el('stat-futter-best').textContent = futterBest ? futterBest + '/6' : '–';
-  
+  el('stat-futter-best').textContent = futterBest ? futterBest + '/6' : '-';
+
   // Gesamt Spiele
   const gesamtSpiele = parseInt(localStorage.getItem(STATISTIK_KEYS.spiele) || '0', 10);
   el('stat-gesamt-spiele').textContent = gesamtSpiele;
@@ -2347,15 +2393,15 @@ const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function playSound(type) {
   if (!soundEnabled) return;
-  
+
   // AudioContext muss nach User-Interaction resumed werden
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();
   }
-  
+
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
-  
+
   switch(type) {
     case 'success': // Für richtige Antworten/Paare
       osc.type = 'sine';
@@ -2368,7 +2414,7 @@ function playSound(type) {
       osc.start(audioCtx.currentTime);
       osc.stop(audioCtx.currentTime + 0.4);
       break;
-      
+
     case 'error': // Für falsche Antworten
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(150, audioCtx.currentTime);
@@ -2380,7 +2426,7 @@ function playSound(type) {
       osc.start(audioCtx.currentTime);
       osc.stop(audioCtx.currentTime + 0.25);
       break;
-      
+
     case 'click': // Für Buttons/Klicks
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(400, audioCtx.currentTime);
@@ -2391,7 +2437,7 @@ function playSound(type) {
       osc.start(audioCtx.currentTime);
       osc.stop(audioCtx.currentTime + 0.05);
       break;
-      
+
     case 'match': // Für Memory-Paare
       osc.type = 'sine';
       osc.frequency.setValueAtTime(659.25, audioCtx.currentTime); // E5
@@ -2403,7 +2449,7 @@ function playSound(type) {
       osc.start(audioCtx.currentTime);
       osc.stop(audioCtx.currentTime + 0.3);
       break;
-      
+
     case 'win': // Für Spiel-Ende
       const t = audioCtx.currentTime;
       [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
@@ -2431,7 +2477,7 @@ const tutorialStart = document.getElementById('tutorial-start');
 function zeigeTutorial() {
   // Nur beim ersten Besitz anzeigen
   if (localStorage.getItem(TUTORIAL_SHOWN_KEY)) return;
-  
+
   tutorialModal.classList.add('sichtbar');
 }
 
