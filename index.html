@@ -253,8 +253,9 @@
 
   /* --- Memory Styles --- */
   .memory-grid { display:grid; gap:12px; grid-template-columns:repeat(4, 1fr); max-width:600px; margin:0 auto 24px; }
-  .memory-karte { aspect-ratio:1; border:4px solid var(--holz-dunkel); border-radius:16px; cursor:pointer; position:relative; transform-style:preserve-3d; transition:transform 0.4s; box-shadow:0 6px 0 var(--holz-tief); background:var(--papier); }
+  .memory-karte { aspect-ratio:1; border:4px solid var(--holz-dunkel); border-radius:16px; cursor:pointer; position:relative; transform-style:preserve-3d; transition:transform 0.4s; box-shadow:0 6px 0 var(--holz-tief); background:var(--papier); outline:none; }
   .memory-karte:hover { transform:translateY(-2px); }
+  .memory-karte:focus-visible, .memory-karte.fokus { box-shadow:0 0 0 4px var(--heu), 0 6px 0 var(--holz-tief); }
   .memory-karte:active { transform:translateY(2px); box-shadow:0 2px 0 var(--holz-tief); }
   .memory-karte.umgedreht { transform:rotateY(180deg); }
   .memory-karte.gematched { border-color:var(--korrekt); box-shadow:0 0 0 4px rgba(78,138,74,.4); cursor:default; }
@@ -330,7 +331,7 @@
 <div class="info-modal" id="info-modal" role="dialog" aria-modal="true" aria-labelledby="info-titel">
   <div class="info-karte">
     <h2 id="info-titel">🚜 Bauernhof-App</h2>
-    <div class="version">Version 1.8 · 18. Juni 2026</div>
+    <div class="version">Version 1.9 · 18. Juni 2026</div>
     <p>Eine spielerische App zum Lernen von Bauernhof-Tieren, deren Namen, Artikeln und mehr!</p>
     <div class="features">
       <h3>✨ Features</h3>
@@ -341,7 +342,7 @@
         <li>📍 Präpositionen üben</li>
         <li>🔧 Werkzeuge erkennen (jetzt mit 9 Werkzeugen!)</li>
         <li>🍎 Was fressen die Tiere?</li>
-        <li>🧠 Memory-Spiel mit Highscore + Bestzeit</li>
+        <li>🧠 Memory-Spiel mit Highscore + Bestzeit + Keyboard-Steuerung</li>
         <li>⭐ Erfolge tracken</li>
         <li>🔊 Sound-Effekte (an/aus)</li>
         <li>📱 Funktioniert offline (PWA)</li>
@@ -1588,6 +1589,9 @@ function starteMemory() {
     const div = document.createElement('div');
     div.className = 'memory-karte';
     div.dataset.index = index;
+    div.setAttribute('tabindex', '0');
+    div.setAttribute('role', 'button');
+    div.setAttribute('aria-label', 'Karte ' + (index + 1));
     div.innerHTML = `
       <div class="rueckseite"></div>
       <div class="vorderseite">${karte.svg}<div class="tier-name">${karte.name}</div></div>
@@ -1611,6 +1615,9 @@ function memoryKlick(index) {
   if (memorySperre) return;
   const karte = el('memory-grid').children[index];
   if (karte.classList.contains('umgedreht') || karte.classList.contains('gematched')) return;
+  // Fokus aktualisieren
+  memoryFokusIndex = index;
+  el('memory-grid').children[memoryFokusIndex]?.classList.add('fokus');
   
   // Umgedreht
   karte.classList.add('umgedreht');
@@ -1682,6 +1689,40 @@ function memoryKlick(index) {
 }
 
 el('btn-memory-neu').addEventListener('click', starteMemory);
+
+/* --- Memory Keyboard Navigation --- */
+el('view-memory').addEventListener('keydown', (e) => {
+  const karten = el('memory-grid').children;
+  if (karten.length === 0) return;
+  
+  // Alten Fokus entfernen
+  for (let k of karten) k.classList.remove('fokus');
+  
+  const cols = 4; // 4 Karten pro Reihe
+  const total = karten.length;
+  
+  if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    memoryFokusIndex = (memoryFokusIndex + 1) % total;
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    memoryFokusIndex = (memoryFokusIndex - 1 + total) % total;
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    memoryFokusIndex = (memoryFokusIndex + cols) % total;
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    memoryFokusIndex = (memoryFokusIndex - cols + total) % total;
+  } else if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    memoryKlick(memoryFokusIndex);
+    return;
+  }
+  
+  // Neuen Fokus setzen
+  karten[memoryFokusIndex]?.classList.add('fokus');
+  karten[memoryFokusIndex]?.focus();
+});
 
 /* --- Futter-Spiel Logik --- */
 const FUTTER_TIERE = [
