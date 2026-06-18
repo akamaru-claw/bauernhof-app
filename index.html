@@ -960,6 +960,21 @@ el('btn-werkzeug-pruefen').addEventListener('click', () => {
 });
 el('werkzeug-neu').addEventListener('click', starteWerkzeuge);
 
+/* --- LocalStorage Highscore für Memory --- */
+const MEMORY_HIGHSCORE_KEY = 'bauernhof_memory_highscore';
+function ladeMemoryHighscore() {
+  const gespeichert = localStorage.getItem(MEMORY_HIGHSCORE_KEY);
+  return gespeichert ? parseInt(gespeichert, 10) : null;
+}
+function speichereMemoryHighscore(zuege) {
+  const aktueller = ladeMemoryHighscore();
+  if (aktueller === null || zuege < aktueller) {
+    localStorage.setItem(MEMORY_HIGHSCORE_KEY, zuege.toString());
+    return true;
+  }
+  return false;
+}
+
 /* --- Artikel-Quiz Logik --- */
 const ARTIKEL_FRAGEN = 10;
 let artikelFragen = [], artikelAktuell = 0, artikelRichtig = 0;
@@ -1079,7 +1094,10 @@ function starteMemory() {
   memoryZuege = 0;
   memorySperre = false;
   memoryUmgedreht = [];
-  el('memory-fortschritt').innerHTML = 'Paare: <b>0 / 8</b> · Züge: <b>0</b>';
+  
+  const highscore = ladeMemoryHighscore();
+  const highscoreText = highscore ? ` · Rekord: ${highscore} Züge` : '';
+  el('memory-fortschritt').innerHTML = 'Paare: <b>0 / 8</b> · Züge: <b>0</b>' + highscoreText;
   
   // Erstelle Paare (je Tier 2x)
   const paare = [];
@@ -1120,7 +1138,9 @@ function memoryKlick(index) {
   if (memoryUmgedreht.length === 2) {
     memoryZuege++;
     memorySperre = true;
-    el('memory-fortschritt').innerHTML = `Paare: <b>${memoryPaare} / 6</b> · Züge: <b>${memoryZuege}</b>`;
+    const highscore = ladeMemoryHighscore();
+    const highscoreText = highscore ? ` · Rekord: ${highscore}` : '';
+    el('memory-fortschritt').innerHTML = `Paare: <b>${memoryPaare} / 8</b> · Züge: <b>${memoryZuege}</b>${highscoreText}`;
     
     const [idx1, idx2] = memoryUmgedreht;
     const karte1 = memoryKarten[idx1];
@@ -1138,12 +1158,18 @@ function memoryKlick(index) {
         memoryPaare++;
         memoryUmgedreht = [];
         memorySperre = false;
-        el('memory-fortschritt').innerHTML = `Paare: <b>${memoryPaare} / 8</b> · Züge: <b>${memoryZuege}</b>`;
+        const highscore = ladeMemoryHighscore();
+        const highscoreText = highscore ? ` · Rekord: ${highscore}` : '';
+        el('memory-fortschritt').innerHTML = `Paare: <b>${memoryPaare} / 8</b> · Züge: <b>${memoryZuege}</b>${highscoreText}`;
         
         if (memoryPaare === 8) {
           setTimeout(() => {
             konfettiRegen();
-            el('memory-fortschritt').innerHTML = `<b style="color:#E8B84B">🏆 Alle 8 Paare gefunden! ${memoryZuege} Züge</b>`;
+            const neuerHighscore = speichereMemoryHighscore(memoryZuege);
+            const nachricht = neuerHighscore 
+              ? `🎉 Neuer Rekord! Alle 8 Paare in ${memoryZuege} Zügen!` 
+              : `🏆 Alle 8 Paare gefunden! ${memoryZuege} Züge`;
+            el('memory-fortschritt').innerHTML = `<b style="color:#E8B84B">${nachricht}</b>`;
           }, 400);
         }
       }, 500);
