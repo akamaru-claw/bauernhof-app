@@ -199,14 +199,33 @@
   .quiz-karte-name { text-align:center; font-weight:800; font-family:var(--display); padding:10px 6px; color:var(--tinte); font-size:clamp(16px, 3vw, 20px); background:var(--heu); }
 
   /* --- Präpositionen Styles --- */
-  .praep-scene { max-width:600px; margin:0 auto 24px; background:linear-gradient(to bottom, #AFCFE0 0%, #AFCFE0 60%, #8FB36B 60%, #6E9655 100%); border:5px solid var(--holz-dunkel); border-radius:16px; box-shadow:0 10px 20px rgba(0,0,0,.2); position:relative; overflow:hidden; height:280px; }
+  .praep-scene { max-width:600px; margin:0 auto 24px; background:linear-gradient(to bottom, #B8D9EC 0%, #B8D9EC 55%, #A3D36D 55%, #7EBD4F 100%); border:5px solid var(--holz-dunkel); border-radius:18px; box-shadow:0 12px 24px rgba(0,0,0,.22), inset 0 -12px 0 rgba(0,0,0,.06); position:relative; overflow:hidden; height:320px; }
+  .praep-scene::before { content:""; position:absolute; top:18px; left:45px; width:70px; height:24px; border-radius:50%; background:rgba(255,255,255,.85); filter:drop-shadow(18px 4px 0 rgba(255,255,255,.55)); }
+  .praep-scene::after { content:""; position:absolute; top:10px; right:60px; width:50px; height:18px; border-radius:50%; background:rgba(255,255,255,.65); }
   .praep-obj { position:absolute; }
-  .praep-haus { width:140px; height:120px; background:var(--scheune); border:4px solid var(--holz-dunkel); border-bottom:0; left:50%; transform:translateX(-50%); bottom:40%; display:flex; justify-content:center; align-items:flex-end; }
-  .praep-haus::before { content:""; position:absolute; width:170px; height:0; border-bottom:60px solid var(--scheune-tief); border-left:85px solid transparent; border-right:85px solid transparent; top:-60px; left:-19px; }
-  .praep-haus-tuer { width:40px; height:60px; background:var(--holz); border:4px solid var(--holz-dunkel); border-bottom:0; border-radius:10px 10px 0 0; }
-  .praep-tier { width:100px; position:absolute; transition:all 0.5s ease; filter:drop-shadow(0 4px 4px rgba(0,0,0,.3)); }
+  .praep-haus {
+    width:190px; height:135px; background:repeating-linear-gradient(90deg, var(--scheune) 0 22px, #9e3b27 22px 26px);
+    border:5px solid var(--holz-dunkel); border-bottom:0; left:50%; transform:translateX(-50%); bottom:38%;
+    display:flex; justify-content:center; align-items:flex-end; border-radius:4px 4px 0 0;
+    box-shadow:inset 0 6px 0 rgba(255,255,255,.10), inset 0 -14px 0 rgba(0,0,0,.12);
+  }
+  .praep-haus::before {
+    content:""; position:absolute; width:230px; height:0; border-bottom:70px solid var(--scheune-tief);
+    border-left:110px solid transparent; border-right:110px solid transparent; top:-70px; left:-24px;
+    filter:drop-shadow(0 3px 0 rgba(0,0,0,.18));
+  }
+  .praep-haus::after {
+    content:""; position:absolute; top:0; left:0; right:0; height:22px; background:repeating-linear-gradient(90deg, var(--scheune) 0 16px, #a3412b 16px 20px);
+    border-bottom:4px solid var(--holz-dunkel);
+  }
+  .praep-haus-tuer { width:46px; height:74px; background:linear-gradient(90deg, var(--holz) 0%, #8f5f32 100%); border:4px solid var(--holz-dunkel); border-bottom:0; border-radius:12px 12px 0 0; position:relative; z-index:1; box-shadow:inset 2px 0 0 rgba(255,255,255,.15); }
+  .praep-fenster { position:absolute; top:28px; width:34px; height:34px; background:#dbebf5; border:4px solid var(--holz-dunkel); border-radius:6px; z-index:1; }
+  .praep-fenster::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg, transparent 45%, var(--holz-dunkel) 45%, var(--holz-dunkel) 55%, transparent 55%), linear-gradient(transparent 45%, var(--holz-dunkel) 45%, var(--holz-dunkel) 55%, transparent 55%); }
+  .praep-fenster.links { left:22px; }
+  .praep-fenster.rechts { right:22px; }
+  .praep-tier { width:120px; position:absolute; transition:all 0.5s ease; filter:drop-shadow(0 5px 6px rgba(0,0,0,.25)); }
   .praep-tier svg { width:100%; height:auto; }
-  .luecke { display:inline-block; min-width:80px; border-bottom:4px solid #fff; color:var(--heu); padding:0 10px; }
+  .luecke { display:inline-block; min-width:80px; border-bottom:4px solid #fff; color:var(--heu); padding:0 10px; font-weight:800; }
 
   /* --- Artikel-Quiz Styles --- */
   .artikel-container { max-width:600px; margin:0 auto 24px; text-align:center; }
@@ -448,6 +467,8 @@
     <div class="artikel-fortschritt" id="praep-fortschritt">Frage 1 von 10</div>
     <div class="praep-scene">
       <div class="praep-obj praep-haus">
+        <div class="praep-fenster links"></div>
+        <div class="praep-fenster rechts"></div>
         <div class="praep-haus-tuer"></div>
       </div>
       <div class="praep-tier" id="praep-tier-pos"></div>
