@@ -691,9 +691,21 @@ function auge(x,y,r){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#2413
 // Helfer: Tier-SVG ohne eigenen Hintergrund (für Präpositionen-Layer)
 function getTierOhneBg(svgStr) {
   let inner = svgStr.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
+  // remove old flat sky
   inner = inner.replace(/<rect width="150" height="120" fill="#cfe7f3"\/>/g, '');
-  inner = inner.replace(/<path d="M0 84 Q36 70 76 82 Q116 94 150 80 L150 120 L0 120Z" fill="#abd073"\/>/g, '');
-  inner = inner.replace(/<path d="M0 99 Q40 91 80 97 Q120 103 150 96 L150 120 L0 120Z" fill="#93bd58"\/>/g, '');
+  // remove gradient sky rect
+  inner = inner.replace(/<rect width="150" height="120" fill="url\(#sky\)"\/>/g, '');
+  // remove grass/wiese paths (both old and gradient versions)
+  inner = inner.replace(/<path d="M0 84 Q36 70 76 82 Q116 94 150 80 L150 120 L0 120Z" fill="[^"]*"\/>/g, '');
+  inner = inner.replace(/<path d="M0 99 Q40 91 80 97 Q120 103 150 96 L150 120 L0 120Z" fill="[^"]*"\/>/g, '');
+  // remove clouds
+  inner = inner.replace(/<ellipse cx="[^"]*" cy="[^"]*" rx="[^"]*" ry="[^"]*" fill="#FFF" opacity="[^"]*"\/>/g, '');
+  // remove ground shadows (sh)
+  inner = inner.replace(/<ellipse cx="[^"]*" cy="[^"]*" rx="[^"]*" ry="[^"]*" fill="#2f4d1c" opacity="0\.20"\/>/g, '');
+  // remove defs block used for sky gradient
+  inner = inner.replace(/<defs>[\s\S]*?<\/defs>/g, '');
+  // fix invalid linearGradient fills left in old code
+  inner = inner.replace(/ fill="linearGradient\([^)]*\)"/g, ' fill="#93bd58"');
   return inner;
 }
 
@@ -1389,13 +1401,13 @@ const praepSzenen = [
   // auf dem Dach (wirklich oben auf dem Giebel)
   { layer: 'praep-layer-vorne', transform: 'translate(120, 45) scale(0.55)', wort: 'auf' },
   // vor der Tür
-  { layer: 'praep-layer-vorne', transform: 'translate(140, 210) scale(0.85)', wort: 'vor' },
-  // links neben dem Haus
-  { layer: 'praep-layer-vorne', transform: 'translate(40, 210) scale(0.85)', wort: 'neben' },
+  { layer: 'praep-layer-vorne', transform: 'translate(162, 142) scale(0.60)', wort: 'vor' },
+  // links daneben auf gleicher Höhe mit der Tür
+  { layer: 'praep-layer-vorne', transform: 'translate(12, 142) scale(0.60)', wort: 'neben' },
   // rechts hinter dem Haus (teilweise hinter Vorderwand, aber sichtbar)
-  { layer: 'praep-layer-hinter', transform: 'translate(300, 180) scale(0.75)', wort: 'hinter' },
+  { layer: 'praep-layer-hinter', transform: 'translate(290, 142) scale(0.60)', wort: 'hinter' },
   // im Haus, sichtbar durch die offene Tür
-  { layer: 'praep-layer-innen', transform: 'translate(148, 125) scale(0.55)', wort: 'im' }
+  { layer: 'praep-layer-innen', transform: 'translate(148, 126) scale(0.52)', wort: 'im' }
 ];
 
 let praepAktuelleFrage = 0;
