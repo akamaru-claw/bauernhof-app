@@ -136,9 +136,9 @@
   }
   
   .slot{
-    width:100%; min-height:54px; border-radius:10px; border:3px dashed rgba(90,58,30,.55);
+    width:100%; min-height:64px; border-radius:12px; border:3px dashed rgba(90,58,30,.55);
     background:rgba(90,58,30,.10); display:flex; align-items:center; justify-content:center;
-    text-align:center; color:var(--holz-dunkel); font-weight:800; font-size:13px; padding:6px;
+    text-align:center; color:var(--holz-dunkel); font-weight:800; font-size:clamp(14px, 2.5vw, 18px); padding:8px;
     transition:background .15s, border-color .15s, transform .1s; cursor:pointer;
   }
   .slot .platzhalter{opacity:.7; pointer-events:none}
@@ -154,9 +154,9 @@
   
   .schild{
     --c:var(--papier);
-    font-family:var(--display); font-weight:600; font-size:clamp(15px,2.4vw,18px);
+    font-family:var(--display); font-weight:600; font-size:clamp(16px, 3vw, 22px);
     color:var(--tinte); background:linear-gradient(var(--c) 0 100%);
-    border:3px solid var(--holz-dunkel); border-radius:10px; padding:9px 16px;
+    border:3px solid var(--holz-dunkel); border-radius:12px; padding:12px 20px;
     cursor:grab; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
     touch-action:pan-y;
     -ms-touch-action:pan-y; white-space:nowrap; position:relative;
@@ -190,13 +190,13 @@
   .quiz-frage-container { text-align:center; margin-bottom:24px; }
   .quiz-frage { font-size:clamp(22px, 4vw, 32px); font-family:var(--display); font-weight:700; color:#fff; text-shadow:0 2px 4px rgba(0,0,0,.4); background:rgba(0,0,0,.2); padding:12px 24px; border-radius:16px; display:inline-block; border:3px dashed rgba(255,255,255,.3); }
   .quiz-optionen { display:flex; flex-wrap:wrap; gap:16px; justify-content:center; max-width:900px; margin:0 auto; }
-  .quiz-karte { width:130px; border:4px solid var(--holz-dunkel); border-radius:16px; background:var(--papier); cursor:pointer; transition:transform 0.15s, box-shadow 0.15s; overflow:hidden; box-shadow:0 6px 0 var(--holz-tief); }
+  .quiz-karte { width:140px; border:4px solid var(--holz-dunkel); border-radius:18px; background:var(--papier); cursor:pointer; transition:transform 0.15s, box-shadow 0.15s; overflow:hidden; box-shadow:0 6px 0 var(--holz-tief); }
   .quiz-karte:hover { transform:translateY(-3px); }
   .quiz-karte:active { transform:translateY(2px); box-shadow:0 2px 0 var(--holz-tief); }
   .quiz-karte.richtig { border-color:var(--korrekt); background:#eaf6e6; box-shadow:0 0 0 6px rgba(78,138,74,.4); transform:scale(1.05); cursor:default; pointer-events:none; }
   .quiz-karte.falsch { border-color:var(--falsch); background:#fce8e5; animation:nope .42s; }
   .quiz-karte svg { width:100%; height:auto; display:block; border-bottom:3px solid var(--holz-dunkel); }
-  .quiz-karte-name { text-align:center; font-weight:800; font-family:var(--display); padding:8px 4px; color:var(--tinte); font-size:15px; background:var(--heu); }
+  .quiz-karte-name { text-align:center; font-weight:800; font-family:var(--display); padding:10px 6px; color:var(--tinte); font-size:clamp(16px, 3vw, 20px); background:var(--heu); }
 
   /* --- Präpositionen Styles --- */
   .praep-scene { max-width:600px; margin:0 auto 24px; background:linear-gradient(to bottom, #AFCFE0 0%, #AFCFE0 60%, #8FB36B 60%, #6E9655 100%); border:5px solid var(--holz-dunkel); border-radius:16px; box-shadow:0 10px 20px rgba(0,0,0,.2); position:relative; overflow:hidden; height:280px; }
@@ -214,7 +214,7 @@
   .artikel-tier-bild svg { width:100%; height:auto; display:block; }
   .artikel-frage { font-size:clamp(20px, 4vw, 28px); font-family:var(--display); font-weight:700; color:#fff; text-shadow:0 2px 4px rgba(0,0,0,.4); margin-bottom:24px; background:rgba(0,0,0,.2); padding:12px 24px; border-radius:16px; border:3px dashed rgba(255,255,255,.3); display:inline-block; }
   .artikel-buttons { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:24px; }
-  .artikel-btn { font-family:var(--display); font-weight:700; font-size:clamp(24px, 6vw, 36px); min-width:90px; padding:16px 28px; border:4px solid var(--holz-dunkel); border-radius:16px; cursor:pointer; transition:all .15s; box-shadow:0 6px 0 var(--holz-tief); background:var(--papier); color:var(--tinte); }
+  .artikel-btn { font-family:var(--display); font-weight:700; font-size:clamp(32px, 8vw, 48px); min-width:100px; padding:20px 32px; border:5px solid var(--holz-dunkel); border-radius:18px; cursor:pointer; transition:all .15s; box-shadow:0 8px 0 var(--holz-tief); background:var(--papier); color:var(--tinte); }
   .artikel-btn:hover { transform:translateY(-3px); }
   .artikel-btn:active { transform:translateY(2px); box-shadow:0 2px 0 var(--holz-tief); }
   .artikel-btn.richtig { background:var(--korrekt); border-color:#3a6b36; color:#fff; box-shadow:0 0 0 6px rgba(78,138,74,.4); transform:scale(1.05); }
@@ -237,13 +237,13 @@
   .futter-tier-karte { background:var(--papier); border:4px solid var(--holz-dunkel); border-radius:16px; padding:12px; display:flex; flex-direction:column; align-items:center; box-shadow:0 6px 0 var(--holz-tief); }
   .futter-tier-bild { width:100%; max-width:100px; margin-bottom:8px; }
   .futter-tier-bild svg { width:100%; height:auto; display:block; }
-  .futter-tier-name { font-family:var(--display); font-weight:700; color:var(--tinte); margin-bottom:8px; font-size:15px; }
-  .futter-slot { width:100%; min-height:50px; border-radius:10px; border:3px dashed rgba(90,58,30,.55); background:rgba(90,58,30,.10); display:flex; align-items:center; justify-content:center; text-align:center; color:var(--holz-dunkel); font-weight:800; font-size:12px; padding:6px; transition:all .15s; cursor:pointer; }
+  .futter-tier-name { font-family:var(--display); font-weight:700; color:var(--tinte); margin-bottom:10px; font-size:clamp(16px, 3vw, 20px); }
+  .futter-slot { width:100%; min-height:60px; border-radius:12px; border:3px dashed rgba(90,58,30,.55); background:rgba(90,58,30,.10); display:flex; align-items:center; justify-content:center; text-align:center; color:var(--holz-dunkel); font-weight:800; font-size:clamp(13px, 2.5vw, 17px); padding:8px; transition:all .15s; cursor:pointer; }
   .futter-slot.gefuellt { border-style:solid; border-color:var(--holz); background:rgba(255,255,255,.15); }
   .futter-slot.korrekt { border-color:var(--korrekt); background:rgba(78,138,74,.16); cursor:default; }
   .futter-slot.falsch { animation:nope .5s; border-color:var(--falsch); background:rgba(200,82,58,.15); }
   .futter-vorrat { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; min-height:64px; padding:14px; border-radius:16px; background:rgba(58,40,20,.22); border:3px dashed rgba(255,255,255,.4); }
-  .futter-schild { font-family:var(--display); font-weight:600; font-size:15px; color:var(--tinte); background:linear-gradient(#E8B84B 0 100%); border:3px solid var(--holz-dunkel); border-radius:10px; padding:10px 16px; cursor:grab; user-select:none; touch-action:pan-y; position:relative; box-shadow:0 4px 0 var(--holz-tief), 0 6px 10px var(--schatten); transition:transform .12s ease; }
+  .futter-schild { font-family:var(--display); font-weight:600; font-size:clamp(15px, 2.8vw, 20px); color:var(--tinte); background:linear-gradient(#E8B84B 0 100%); border:3px solid var(--holz-dunkel); border-radius:12px; padding:12px 18px; cursor:grab; user-select:none; touch-action:pan-y; position:relative; box-shadow:0 4px 0 var(--holz-tief), 0 6px 10px var(--schatten); transition:transform .12s ease; }
   .futter-schild::before, .futter-schild::after { content:""; position:absolute; top:6px; width:6px; height:6px; border-radius:50%; background:radial-gradient(circle at 35% 35%, #d8c19a, #7c5a30); }
   .futter-schild::before { left:6px } .futter-schild::after { right:6px }
   .futter-schild.gewaehlt { border-color:var(--scheune); transform:rotate(-2deg) translateY(-2px); box-shadow:0 0 0 4px rgba(232,184,75,.6), 0 4px 0 var(--scheune-tief); }
@@ -266,8 +266,8 @@
   .memory-karte .rueckseite::after { content:""; width:40px; height:40px; background:url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"%23fff\"><path d=\"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/></svg>'); opacity:.4; }
   .memory-karte.umgedreht .rueckseite::after { display:none; }
   .memory-karte svg { width:85%; height:85%; display:block; filter:drop-shadow(0 2px 4px rgba(0,0,0,.2)); }
-  .memory-karte .tier-name { font-family:var(--display); font-weight:700; font-size:clamp(14px, 3vw, 18px); color:var(--tinte); text-align:center; padding:8px; background:var(--heu); position:absolute; bottom:0; left:0; right:0; }
-  .memory-info { text-align:center; margin-bottom:20px; font-family:var(--display); font-weight:700; color:#fff; font-size:20px; text-shadow:0 2px 4px rgba(0,0,0,.4); }
+  .memory-karte .tier-name { font-family:var(--display); font-weight:700; font-size:clamp(16px, 3.5vw, 22px); color:var(--tinte); text-align:center; padding:10px; background:var(--heu); position:absolute; bottom:0; left:0; right:0; }
+  .memory-info { text-align:center; margin-bottom:24px; font-family:var(--display); font-weight:700; color:#fff; font-size:clamp(20px, 4vw, 26px); text-shadow:0 2px 4px rgba(0,0,0,.4); }
   .memory-info span { color:var(--heu); }
   @keyframes memoryMatch { 0%{transform:rotateY(180deg) scale(1)} 50%{transform:rotateY(180deg) scale(1.1)} 100%{transform:rotateY(180deg) scale(1)} }
   .memory-karte.match-anim { animation:memoryMatch .4s ease; }
@@ -1212,15 +1212,15 @@ el('praep-neustart').addEventListener('click', startePraeposition);
 
 /* --- Werkzeuge-Logik --- */
 const WERKZEUGE = [
-  { key: 'schaufel', name: 'Schaufel', svg: svgTrans('<rect x="68" y="20" width="14" height="60" fill="#8B4513"/><path d="M55 80 Q75 70 95 80 L90 110 L60 110 Z" fill="#A0A0A0" stroke="#666" stroke-width="2"/><rect x="60" y="10" width="30" height="10" rx="4" fill="#5A3A1E"/>') },
-  { key: 'besen', name: 'Besen', svg: svgTrans('<rect x="70" y="10" width="10" height="70" fill="#8B4513"/><path d="M50 80 L100 80 L110 110 L40 110 Z" fill="#DAA520" stroke="#B8860B" stroke-width="2"/><rect x="45" y="80" width="60" height="8" rx="2" fill="#8B3220"/>') },
-  { key: 'giesskanne', name: 'Gießkanne', svg: svgTrans('<ellipse cx="75" cy="80" rx="30" ry="25" fill="#4E8A4A" stroke="#2E5A2E" stroke-width="2"/><path d="M100 70 L130 50 L135 55 Z" fill="#4E8A4A"/><path d="M45 70 A 25 25 0 0 1 45 40" fill="none" stroke="#4E8A4A" stroke-width="8"/><rect x="60" y="45" width="30" height="15" fill="#4E8A4A"/>') },
-  { key: 'eimer', name: 'Eimer', svg: svgTrans('<path d="M45 50 L105 50 L95 100 L55 100 Z" fill="#4682B4" stroke="#2F4F4F" stroke-width="2"/><path d="M45 50 Q75 20 105 50" fill="none" stroke="#C0C0C0" stroke-width="4"/><ellipse cx="75" cy="50" rx="30" ry="8" fill="#87CEEB"/>') },
-  { key: 'gabel', name: 'Gabel', svg: svgTrans('<rect x="70" y="40" width="10" height="50" fill="#8B4513"/><path d="M60 40 L60 15 M70 40 L70 10 M80 40 L80 15" stroke="#A0A0A0" stroke-width="4" fill="none"/><rect x="65" y="35" width="20" height="8" fill="#666"/>') },
-  { key: 'hammer', name: 'Hammer', svg: svgTrans('<rect x="72" y="35" width="8" height="60" fill="#8B4513"/><rect x="55" y="25" width="42" height="18" rx="3" fill="#A0A0A0" stroke="#666" stroke-width="2"/><rect x="65" y="32" width="22" height="10" fill="#666"/>') },
-  { key: 'schere', name: 'Schere', svg: svgTrans('<path d="M70 20 L70 70 M80 25 L80 65" stroke="#C0C0C0" stroke-width="6"/><circle cx="68" cy="75" r="8" fill="none" stroke="#D2691E" stroke-width="3"/><circle cx="82" cy="75" r="8" fill="none" stroke="#D2691E" stroke-width="3"/><circle cx="70" cy="25" r="3" fill="#A0A0A0"/><circle cx="80" cy="28" r="3" fill="#A0A0A0"/>') },
-  { key: 'mistgabel', name: 'Mistgabel', svg: svgTrans('<rect x="72" y="20" width="8" height="70" fill="#8B4513"/><path d="M58 20 L58 5 M72 20 L72 5 M86 20 L86 5" stroke="#A0A0A0" stroke-width="4" fill="none"/><rect x="55" y="18" width="40" height="6" fill="#666"/>') },
-  { key: 'sack', name: 'Sack', svg: svgTrans('<ellipse cx="75" cy="85" rx="25" ry="20" fill="#D2B48C" stroke="#8B7355" stroke-width="2"/><path d="M55 70 Q75 60 95 70" fill="none" stroke="#8B7355" stroke-width="3"/><ellipse cx="75" cy="68" rx="20" ry="5" fill="#F5DEB3"/><text x="75" y="88" text-anchor="middle" font-size="12" fill="#8B7355" font-weight="bold">Mehl</text>') }
+  { key: 'schaufel', name: 'Schaufel', svg: svgTrans('<defs><linearGradient id="schi" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8B4513"/><stop offset="50%" stop-color="#A0522D"/><stop offset="100%" stop-color="#8B4513"/></linearGradient><linearGradient id="schi2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#C0C0C0"/><stop offset="50%" stop-color="#E8E8E8"/><stop offset="100%" stop-color="#A0A0A0"/></linearGradient></defs><rect x="68" y="15" width="14" height="65" rx="3" fill="url(#schi)" stroke="#5A3A1E" stroke-width="2"/><rect x="60" y="8" width="30" height="10" rx="4" fill="#5A3A1E"/><path d="M50 78 Q75 68 100 78 L95 108 Q75 112 55 108 Z" fill="url(#schi2)" stroke="#666" stroke-width="2"/><path d="M52 80 L58 105" stroke="#888" stroke-width="1" opacity="0.5"/><ellipse cx="75" cy="95" rx="8" ry="4" fill="#A0A0A0" opacity="0.3"/>') },
+  { key: 'besen', name: 'Besen', svg: svgTrans('<defs><linearGradient id="bes" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8B4513"/><stop offset="50%" stop-color="#A0522D"/><stop offset="100%" stop-color="#8B4513"/></linearGradient></defs><rect x="70" y="8" width="10" height="72" rx="2" fill="url(#bes)" stroke="#5A3A1E" stroke-width="2"/><rect x="45" y="78" width="60" height="10" rx="3" fill="#8B3220" stroke="#5A3A1E" stroke-width="2"/><path d="M48 88 Q55 110 65 112 L85 112 Q95 110 102 88 Z" fill="#DAA520" stroke="#B8860B" stroke-width="2"/><line x1="55" y1="90" x2="58" y2="110" stroke="#C99500" stroke-width="1.5"/><line x1="70" y1="90" x2="70" y2="112" stroke="#C99500" stroke-width="1.5"/><line x1="85" y1="90" x2="82" y2="110" stroke="#C99500" stroke-width="1.5"/>') },
+  { key: 'giesskanne', name: 'Gießkanne', svg: svgTrans('<defs><linearGradient id="gie" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6BA85A"/><stop offset="50%" stop-color="#4E8A4A"/><stop offset="100%" stop-color="#3A6B3A"/></linearGradient><linearGradient id="gie2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#6BA85A"/><stop offset="100%" stop-color="#4E8A4A"/></linearGradient></defs><ellipse cx="75" cy="82" rx="32" ry="26" fill="url(#gie)" stroke="#2E5A2E" stroke-width="2"/><ellipse cx="75" cy="48" rx="20" ry="8" fill="url(#gie2)" stroke="#2E5A2E" stroke-width="2"/><path d="M105 70 L140 45 L145 52 L110 78 Z" fill="url(#gie2)" stroke="#2E5A2E" stroke-width="2"/><ellipse cx="142" cy="48" rx="4" ry="3" fill="#3A6B3A"/><path d="M40 75 A 28 28 0 0 1 40 42" fill="none" stroke="#4E8A4A" stroke-width="10" stroke-linecap="round"/><rect x="35" y="55" width="10" height="12" rx="3" fill="#2E5A2E"/><circle cx="75" cy="75" r="8" fill="#E8B84B" opacity="0.3"/>') },
+  { key: 'eimer', name: 'Eimer', svg: svgTrans('<defs><linearGradient id="eim" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#4682B4"/><stop offset="50%" stop-color="#5CA0D4"/><stop offset="100%" stop-color="#4682B4"/></linearGradient></defs><path d="M42 48 L108 48 L96 102 L54 102 Z" fill="url(#eim)" stroke="#2F4F4F" stroke-width="2.5"/><path d="M42 48 Q75 18 108 48" fill="none" stroke="#C0C0C0" stroke-width="5" stroke-linecap="round"/><ellipse cx="75" cy="48" rx="33" ry="9" fill="#87CEEB" stroke="#2F4F4F" stroke-width="2"/><ellipse cx="75" cy="100" rx="21" ry="4" fill="#366999" opacity="0.5"/><ellipse cx="65" cy="75" rx="4" ry="2" fill="#A0D0E8" opacity="0.6"/><ellipse cx="85" cy="65" rx="3" ry="1.5" fill="#A0D0E8" opacity="0.6"/>') },
+  { key: 'gabel', name: 'Gabel', svg: svgTrans('<defs><linearGradient id="gab" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8B4513"/><stop offset="50%" stop-color="#A0522D"/><stop offset="100%" stop-color="#8B4513"/></linearGradient><linearGradient id="gab2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#C0C0C0"/><stop offset="50%" stop-color="#E8E8E8"/><stop offset="100%" stop-color="#A0A0A0"/></linearGradient></defs><rect x="69" y="38" width="12" height="55" rx="2" fill="url(#gab)" stroke="#5A3A1E" stroke-width="2"/><path d="M56 38 L56 14 L60 14 L60 38" fill="url(#gab2)" stroke="#666" stroke-width="2"/><path d="M70 38 L70 8 L74 8 L74 38" fill="url(#gab2)" stroke="#666" stroke-width="2"/><path d="M84 38 L84 14 L88 14 L88 38" fill="url(#gab2)" stroke="#666" stroke-width="2"/><rect x="62" y="35" width="26" height="10" rx="3" fill="#5A5A5A"/>') },
+  { key: 'hammer', name: 'Hammer', svg: svgTrans('<defs><linearGradient id="ham" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8B4513"/><stop offset="50%" stop-color="#A0522D"/><stop offset="100%" stop-color="#8B4513"/></linearGradient><linearGradient id="ham2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#D0D0D0"/><stop offset="50%" stop-color="#A0A0A0"/><stop offset="100%" stop-color="#808080"/></linearGradient></defs><rect x="71" y="32" width="8" height="65" rx="2" fill="url(#ham)" stroke="#5A3A1E" stroke-width="2"/><rect x="50" y="20" width="50" height="22" rx="4" fill="url(#ham2)" stroke="#666" stroke-width="2"/><rect x="65" y="28" width="20" height="12" rx="2" fill="#606060"/><rect x="52" y="40" width="8" height="4" fill="#505050"/><rect x="90" y="40" width="8" height="4" fill="#505050"/>') },
+  { key: 'schere', name: 'Schere', svg: svgTrans('<defs><linearGradient id="sch1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E8E8E8"/><stop offset="100%" stop-color="#A0A0A0"/></linearGradient><linearGradient id="sch2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#D2691E"/><stop offset="100%" stop-color="#8B4513"/></linearGradient></defs><g transform="rotate(-10 75 75)"><path d="M75 18 L75 70" stroke="url(#sch1)" stroke-width="7" stroke-linecap="round"/><circle cx="68" cy="75" r="10" fill="none" stroke="url(#sch2)" stroke-width="4"/></g><g transform="rotate(10 75 75)"><path d="M75 20 L75 70" stroke="url(#sch1)" stroke-width="7" stroke-linecap="round"/><circle cx="82" cy="75" r="10" fill="none" stroke="url(#sch2)" stroke-width="4"/></g><circle cx="75" cy="22" r="4" fill="#888"/>') },
+  { key: 'mistgabel', name: 'Mistgabel', svg: svgTrans('<defs><linearGradient id="mis" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8B4513"/><stop offset="50%" stop-color="#A0522D"/><stop offset="100%" stop-color="#8B4513"/></linearGradient><linearGradient id="mis2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#C0C0C0"/><stop offset="100%" stop-color="#808080"/></linearGradient></defs><rect x="71" y="18" width="8" height="72" rx="2" fill="url(#mis)" stroke="#5A3A1E" stroke-width="2"/><path d="M55 18 L55 5" stroke="url(#mis2)" stroke-width="5" stroke-linecap="round"/><path d="M75 18 L75 5" stroke="url(#mis2)" stroke-width="5" stroke-linecap="round"/><path d="M95 18 L95 5" stroke="url(#mis2)" stroke-width="5" stroke-linecap="round"/><rect x="54" y="16" width="42" height="8" rx="2" fill="#555"/>') },
+  { key: 'sack', name: 'Sack', svg: svgTrans('<defs><linearGradient id="sac" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E8D4B0"/><stop offset="50%" stop-color="#D2B48C"/><stop offset="100%" stop-color="#B8956A"/></linearGradient></defs><ellipse cx="75" cy="85" rx="28" ry="22" fill="url(#sac)" stroke="#8B7355" stroke-width="2"/><path d="M52 72 Q75 60 98 72 L96 80 Q75 72 54 80 Z" fill="#F5DEB3" stroke="#8B7355" stroke-width="2"/><path d="M48 78 Q60 75 52 90" stroke="#8B7355" stroke-width="1.5" fill="none"/><path d="M102 78 Q90 75 98 90" stroke="#8B7355" stroke-width="1.5" fill="none"/><ellipse cx="68" cy="88" rx="3" ry="2" fill="#8B7355" opacity="0.4"/><ellipse cx="82" cy="82" rx="4" ry="2.5" fill="#8B7355" opacity="0.4"/>') }
 ];
 
 let werkzeugGewaehlt = null;
