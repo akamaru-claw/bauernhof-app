@@ -221,6 +221,25 @@
   .werkzeug-bild { width:100%; max-width:120px; margin-bottom:12px; }
   .werkzeug-bild svg { width:100%; height:auto; display:block; filter:drop-shadow(0 4px 2px rgba(0,0,0,.2)); }
 
+  /* --- Futter Styles --- */
+  .futter-grid { display:grid; gap:16px; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); margin-bottom:24px; }
+  .futter-tier-karte { background:var(--papier); border:4px solid var(--holz-dunkel); border-radius:16px; padding:12px; display:flex; flex-direction:column; align-items:center; box-shadow:0 6px 0 var(--holz-tief); }
+  .futter-tier-bild { width:100%; max-width:100px; margin-bottom:8px; }
+  .futter-tier-bild svg { width:100%; height:auto; display:block; }
+  .futter-tier-name { font-family:var(--display); font-weight:700; color:var(--tinte); margin-bottom:8px; font-size:15px; }
+  .futter-slot { width:100%; min-height:50px; border-radius:10px; border:3px dashed rgba(90,58,30,.55); background:rgba(90,58,30,.10); display:flex; align-items:center; justify-content:center; text-align:center; color:var(--holz-dunkel); font-weight:800; font-size:12px; padding:6px; transition:all .15s; cursor:pointer; }
+  .futter-slot.gefuellt { border-style:solid; border-color:var(--holz); background:rgba(255,255,255,.15); }
+  .futter-slot.korrekt { border-color:var(--korrekt); background:rgba(78,138,74,.16); cursor:default; }
+  .futter-slot.falsch { animation:nope .5s; border-color:var(--falsch); background:rgba(200,82,58,.15); }
+  .futter-vorrat { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; min-height:64px; padding:14px; border-radius:16px; background:rgba(58,40,20,.22); border:3px dashed rgba(255,255,255,.4); }
+  .futter-schild { font-family:var(--display); font-weight:600; font-size:15px; color:var(--tinte); background:linear-gradient(#E8B84B 0 100%); border:3px solid var(--holz-dunkel); border-radius:10px; padding:10px 16px; cursor:grab; user-select:none; touch-action:pan-y; position:relative; box-shadow:0 4px 0 var(--holz-tief), 0 6px 10px var(--schatten); transition:transform .12s ease; }
+  .futter-schild::before, .futter-schild::after { content:""; position:absolute; top:6px; width:6px; height:6px; border-radius:50%; background:radial-gradient(circle at 35% 35%, #d8c19a, #7c5a30); }
+  .futter-schild::before { left:6px } .futter-schild::after { right:6px }
+  .futter-schild.gewaehlt { border-color:var(--scheune); transform:rotate(-2deg) translateY(-2px); box-shadow:0 0 0 4px rgba(232,184,75,.6), 0 4px 0 var(--scheune-tief); }
+  .futter-schild.wird-gezogen { opacity:.30; touch-action:none; }
+  .futter-schild.platziert { cursor:default; box-shadow:none; border-color:var(--korrekt); background:#EAF6E6; }
+  .futter-schild.platziert::before, .futter-schild.platziert::after { background:radial-gradient(circle at 35% 35%, #bfe0b8, #4E8A4A); }
+
   /* --- Memory Styles --- */
   .memory-grid { display:grid; gap:12px; grid-template-columns:repeat(4, 1fr); max-width:600px; margin:0 auto 24px; }
   .memory-karte { aspect-ratio:1; border:4px solid var(--holz-dunkel); border-radius:16px; cursor:pointer; position:relative; transform-style:preserve-3d; transition:transform 0.4s; box-shadow:0 6px 0 var(--holz-tief); background:var(--papier); }
@@ -254,6 +273,7 @@
     <button class="tab-btn" data-target="view-artikel" type="button">Der/Die/Das</button>
     <button class="tab-btn" data-target="view-praepositionen" type="button">Präpositionen</button>
     <button class="tab-btn" data-target="view-werkzeuge" type="button">Werkzeuge</button>
+    <button class="tab-btn" data-target="view-futter" type="button">Futter</button>
     <button class="tab-btn" data-target="view-memory" type="button">Memory</button>
   </nav>
 
@@ -338,6 +358,21 @@
     <div class="werkzeug-grid" id="werkzeug-staelle"></div>
     <h2 class="vorrat-titel">Namen</h2>
     <div class="vorrat" id="werkzeug-vorrat"></div>
+  </div>
+
+  <div id="view-futter" class="view">
+    <header class="hof">
+      <h1>Was fressen die Tiere?</h1>
+      <p>Ziehe das passende Futter zu jedem Tier. Alle Tiere brauchen unterschiedliches Essen!</p>
+    </header>
+    <div class="leiste">
+      <div class="fortschritt" id="futter-fortschritt">0 von 6 richtig</div>
+      <button class="knopf wichtig" id="btn-futter-pruefen" type="button">✔️ Futter Prüfen</button>
+      <button class="knopf" id="futter-neu" type="button">Neu starten</button>
+    </div>
+    <div class="futter-grid" id="futter-grid"></div>
+    <h2 class="vorrat-titel">Futter</h2>
+    <div class="futter-vorrat" id="futter-vorrat"></div>
   </div>
 
   <div id="view-memory" class="view">
@@ -1186,6 +1221,160 @@ function memoryKlick(index) {
 }
 
 el('btn-memory-neu').addEventListener('click', starteMemory);
+
+/* --- Futter-Spiel Logik --- */
+const FUTTER_TIERE = [
+  { key: 'kuh', name: 'Kuh', futter: ['Gras', 'Heu', 'Korn'], svg: kuh },
+  { key: 'schwein', name: 'Schwein', futter: ['Gemüse', 'Getreide', 'Apfel'], svg: sau },
+  { key: 'hund', name: 'Hund', futter: ['Fleisch', 'Hundefutter', 'Knochen'], svg: huendinSvg },
+  { key: 'huhn', name: 'Huhn', futter: ['Korn', 'Mais', 'Würmer'], svg: henne },
+  { key: 'pferd', name: 'Pferd', futter: ['Hafer', 'Heu', 'Möhren'], svg: stute },
+  { key: 'kaninchen', name: 'Kaninchen', futter: ['Karotten', 'Heu', 'Salat'], svg: haesinSvg }
+];
+
+const ALLE_FUTTER = ['Gras', 'Heu', 'Korn', 'Gemüse', 'Getreide', 'Apfel', 'Fleisch', 'Hundefutter', 'Knochen', 'Mais', 'Würmer', 'Hafer', 'Möhren', 'Karotten', 'Salat'];
+
+let futterGewaehlt = null, futterRichtig = 0, futterAktuelleTiere = [];
+
+function starteFutter() {
+  futterRichtig = 0;
+  futterAktuelleTiere = mischen(FUTTER_TIERE).slice(0, 6);
+  futterGewaehlt = null;
+  
+  el('futter-fortschritt').innerHTML = '<b>0</b> von 6 richtig';
+  
+  const grid = el('futter-grid');
+  grid.innerHTML = '';
+  
+  mischen(futterAktuelleTiere).forEach(tier => {
+    const karte = document.createElement('div');
+    karte.className = 'futter-tier-karte';
+    karte.innerHTML = `
+      <div class="futter-tier-bild">${tier.svg}</div>
+      <div class="futter-tier-name">${tier.name}</div>
+      <div class="futter-slot" data-key="${tier.key}" tabindex="0"><span class="platzhalter">Futter hierher</span></div>
+    `;
+    const slot = karte.querySelector('.futter-slot');
+    slot.addEventListener('click', () => futterSlotKlick(slot));
+    grid.appendChild(karte);
+  });
+  
+  // Sammle alle Futter-Optionen für diese Tiere
+  const benoetigtesFutter = new Set();
+  futterAktuelleTiere.forEach(t => t.futter.forEach(f => benoetigtesFutter.add(f)));
+  // Füge 2-3 falsche Optionen hinzu
+  const falscheFutter = ALLE_FUTTER.filter(f => !benoetigtesFutter.has(f));
+  const zufaelligeFalsche = mischen(falscheFutter).slice(0, 3);
+  const alleOptionen = mischen([...benoetigtesFutter, ...zufaelligeFalsche]);
+  
+  const vorrat = el('futter-vorrat');
+  vorrat.innerHTML = '';
+  alleOptionen.forEach(futterName => {
+    const s = document.createElement('div');
+    s.className = 'futter-schild';
+    s.dataset.futter = futterName;
+    s.textContent = futterName;
+    s.tabIndex = 0;
+    s.addEventListener('click', () => futterSchildKlick(s));
+    vorrat.appendChild(s);
+  });
+}
+
+function futterSchildKlick(schild) {
+  if (schild.classList.contains('platziert')) return;
+  if (futterGewaehlt === schild) {
+    schild.classList.remove('gewaehlt');
+    futterGewaehlt = null;
+    return;
+  }
+  if (futterGewaehlt) futterGewaehlt.classList.remove('gewaehlt');
+  futterGewaehlt = schild;
+  schild.classList.add('gewaehlt');
+}
+
+function futterSlotKlick(slot) {
+  if (slot.classList.contains('korrekt')) return;
+  
+  if (!futterGewaehlt) {
+    // Entfernen falls vorhanden
+    const alt = slot.querySelector('.futter-schild');
+    if (alt && !alt.classList.contains('platziert')) {
+      slot.innerHTML = '<span class="platzhalter">Futter hierher</span>';
+      slot.classList.remove('gefuellt');
+      alt.classList.remove('gewaehlt');
+      el('futter-vorrat').appendChild(alt);
+    }
+    return;
+  }
+  
+  const tierKey = slot.dataset.key;
+  const tier = futterAktuelleTiere.find(t => t.key === tierKey);
+  const futterName = futterGewaehlt.dataset.futter;
+  
+  futterGewaehlt.classList.remove('gewaehlt');
+  futterGewaehlt.classList.add('platziert');
+  
+  const alt = slot.querySelector('.futter-schild');
+  if (alt) {
+    alt.classList.remove('platziert', 'gewaehlt');
+    el('futter-vorrat').appendChild(alt);
+  }
+  
+  slot.innerHTML = '';
+  slot.classList.add('gefuellt');
+  slot.appendChild(futterGewaehlt);
+  futterGewaehlt = null;
+}
+
+el('btn-futter-pruefen').addEventListener('click', () => {
+  let neueRichtige = 0;
+  document.querySelectorAll('#futter-grid .futter-slot').forEach(slot => {
+    if (slot.classList.contains('korrekt')) {
+      neueRichtige++;
+      return;
+    }
+    
+    const schild = slot.querySelector('.futter-schild');
+    if (!schild) return;
+    
+    const tierKey = slot.dataset.key;
+    const tier = futterAktuelleTiere.find(t => t.key === tierKey);
+    const futterName = schild.dataset.futter;
+    
+    if (tier.futter.includes(futterName)) {
+      slot.classList.add('korrekt');
+      slot.classList.remove('gefuellt');
+      neueRichtige++;
+    } else {
+      slot.classList.add('falsch');
+      setTimeout(() => {
+        slot.classList.remove('falsch', 'gefuellt');
+        schild.classList.remove('platziert');
+        el('futter-vorrat').appendChild(schild);
+        slot.innerHTML = '<span class="platzhalter">Futter hierher</span>';
+      }, 600);
+    }
+  });
+  
+  futterRichtig = neueRichtige;
+  el('futter-fortschritt').innerHTML = '<b>' + futterRichtig + '</b> von 6 richtig';
+  
+  if (futterRichtig === 6) {
+    setTimeout(() => {
+      konfettiRegen();
+      el('futter-fortschritt').innerHTML = '<b style="color:#E8B84B">🎉 Super! Alle Tiere sind satt!</b>';
+    }, 400);
+  }
+});
+
+el('futter-neu').addEventListener('click', starteFutter);
+
+// Tab-Wechsel Handler für Futter
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.dataset.target === 'view-futter') starteFutter();
+  });
+});
 
 starte('schwein', document.querySelector('.auswahl button[data-id="schwein"]'));
 </script>
