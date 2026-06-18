@@ -280,11 +280,55 @@
   .statistik-wert { font-family:var(--display); font-size:32px; font-weight:800; color:var(--tinte); margin:8px 0; }
   .statistik-label { font-size:14px; color:var(--tinte); opacity:.8; margin:0; }
 
+  /* --- Info-Modal Styles --- */
+  .info-btn { position:fixed; top:12px; right:12px; width:42px; height:42px; border-radius:50%; border:3px solid var(--holz-dunkel); background:var(--papier); color:var(--tinte); font-size:22px; font-weight:700; cursor:pointer; box-shadow:0 4px 0 var(--holz-tief); z-index:100; transition:transform .15s, box-shadow .15s; }
+  .info-btn:hover { transform:translateY(-2px); box-shadow:0 6px 0 var(--holz-tief); }
+  .info-btn:active { transform:translateY(2px); box-shadow:0 1px 0 var(--holz-tief); }
+  .info-modal { position:fixed; inset:0; background:rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center; z-index:200; opacity:0; pointer-events:none; transition:opacity .25s ease; }
+  .info-modal.sichtbar { opacity:1; pointer-events:auto; }
+  .info-karte { background:var(--papier); border:5px solid var(--holz-dunkel); border-radius:20px; padding:28px; max-width:420px; width:90%; text-align:center; box-shadow:0 12px 0 var(--holz-tief), 0 24px 48px rgba(0,0,0,.4); transform:translateY(20px) scale(.95); transition:transform .25s ease; }
+  .info-modal.sichtbar .info-karte { transform:translateY(0) scale(1); }
+  .info-karte h2 { font-family:var(--display); font-size:28px; color:var(--scheune); margin:0 0 16px; }
+  .info-karte .version { font-size:14px; color:var(--tinte); opacity:.6; margin-bottom:20px; }
+  .info-karte p { font-size:15px; line-height:1.6; margin:0 0 16px; }
+  .info-karte .features { text-align:left; background:rgba(110,150,85,.12); border-radius:12px; padding:16px; margin:20px 0; }
+  .info-karte .features h3 { font-family:var(--display); font-size:18px; color:var(--scheune); margin:0 0 12px; }
+  .info-karte .features ul { margin:0; padding-left:20px; }
+  .info-karte .features li { margin:6px 0; font-size:14px; }
+  .info-karte .footer-note { font-size:13px; color:var(--tinte); opacity:.6; margin-top:20px; }
+  .info-schliessen { font-family:var(--display); font-weight:700; font-size:18px; border:3px solid var(--holz-dunkel); background:var(--weide); color:#fff; padding:12px 32px; border-radius:999px; box-shadow:0 4px 0 var(--weide-tief); cursor:pointer; margin-top:8px; transition:transform .12s ease; }
+  .info-schliessen:hover { transform:translateY(-2px); }
+  .info-schliessen:active { transform:translateY(2px); box-shadow:0 1px 0 var(--weide-tief); }
+
   @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important; transition-duration:.001ms !important}}
   @media (max-width:520px){ .staelle{grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:12px} .memory-karte .rueckseite::after { width:28px; height:28px; } }
 </style>
 </head>
 <body>
+<button class="info-btn" id="info-btn" type="button" title="Über die App">ℹ️</button>
+<div class="info-modal" id="info-modal" role="dialog" aria-modal="true" aria-labelledby="info-titel">
+  <div class="info-karte">
+    <h2 id="info-titel">🚜 Bauernhof-App</h2>
+    <div class="version">Version 1.5 · 18. Juni 2026</div>
+    <p>Eine spielerische App zum Lernen von Bauernhof-Tieren, deren Namen, Artikeln und mehr!</p>
+    <div class="features">
+      <h3>✨ Features</h3>
+      <ul>
+        <li>📝 Namen zuordnen (Vater, Mutter, Kind)</li>
+        <li>🎯 Tier-Quiz mit 6 Fragen</li>
+        <li>📚 Der/Die/Das – Artikel lernen</li>
+        <li>📍 Präpositionen üben</li>
+        <li>🔧 Werkzeuge erkennen</li>
+        <li>🍎 Was fressen die Tiere?</li>
+        <li>🧠 Memory-Spiel mit Highscore</li>
+        <li>⭐ Erfolge tracken</li>
+        <li>📱 Funktioniert offline (PWA)</li>
+      </ul>
+    </div>
+    <p class="footer-note">Alle Grafiken sind handgezeichnet.<br>Made with ❤️ für Kinder.</p>
+    <button class="info-schliessen" id="info-schliessen" type="button">Schließen</button>
+  </div>
+</div>
 <div class="wrap">
   
   <nav class="tabs" aria-label="Hauptnavigation">
@@ -1689,6 +1733,32 @@ function hapticFeedback(stark = false) {
     navigator.vibrate(stark ? [60, 30, 60] : 50);
   }
 }
+
+/* --- Info-Modal Logik --- */
+const infoBtn = document.getElementById('info-btn');
+const infoModal = document.getElementById('info-modal');
+const infoSchliessen = document.getElementById('info-schliessen');
+
+function oeffneInfo() {
+  infoModal.classList.add('sichtbar');
+  infoSchliessen.focus();
+}
+
+function schliesseInfo() {
+  infoModal.classList.remove('sichtbar');
+  infoBtn.focus();
+}
+
+infoBtn.addEventListener('click', oeffneInfo);
+infoSchliessen.addEventListener('click', schliesseInfo);
+infoModal.addEventListener('click', (e) => {
+  if (e.target === infoModal) schliesseInfo();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && infoModal.classList.contains('sichtbar')) {
+    schliesseInfo();
+  }
+});
 
 /* --- Service Worker für PWA --- */
 if ('serviceWorker' in navigator) {
