@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design-Vergleich V4 vs V5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --weide-tief:#3E6B47; --weide:#6E9655; --gras:#8FB36B;
+    --scheune:#B5462E; --scheune-tief:#8F3220; --heu:#E8B84B;
+    --holz:#A8743F; --holz-tief:#774E27; --holz-dunkel:#5A3A1E;
+    --himmel:#AFCFE0; --himmel-tief:#88B4CE;
+    --papier:#F3E9D6; --tinte:#33281A;
+    --korrekt:#4E8A4A; --falsch:#C8523A;
+    --display:'Fredoka', ui-rounded, sans-serif;
+    --body:'Nunito', ui-rounded, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: var(--body);
+    padding: 24px;
+    margin: 0;
+    background:
+      radial-gradient(120% 90% at 50% -10%, var(--himmel) 0%, var(--himmel-tief) 38%, transparent 39%),
+      linear-gradient(var(--himmel-tief) 0 32%, var(--gras) 32% 100%);
+    min-height: 100vh;
+    color: var(--tinte);
+  }
+  .container { max-width: 1400px; margin: 0 auto; }
+  h1 {
+    font-family: var(--display);
+    color: var(--weide-tief);
+    text-align: center;
+    font-size: clamp(28px, 5vw, 44px);
+    margin: 0 0 8px 0;
+    text-shadow: 2px 2px 0 rgba(255,255,255,0.4);
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--holz-dunkel);
+    font-size: 16px;
+    margin: 0 0 24px 0;
+  }
+
+  .info {
+    background: #EAF6E6;
+    border-left: 5px solid var(--korrekt);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 24px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .info h3 { margin: 0 0 10px 0; color: var(--korrekt); font-family: var(--display); }
+  .info ul { margin: 0; padding-left: 22px; }
+  .info li { margin: 6px 0; line-height: 1.5; }
+
+  h2 {
+    font-family: var(--display);
+    color: var(--scheune);
+    margin: 40px 0 16px 0;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.85);
+    border-radius: 12px;
+    border-left: 6px solid var(--scheune);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  }
+  h2 small {
+    font-family: var(--body);
+    font-weight: 400;
+    color: var(--holz-dunkel);
+    font-size: 14px;
+    margin-left: 8px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+    margin: 16px 0 32px 0;
+  }
+  .karte {
+    background: white;
+    border: 3px solid var(--holz-dunkel);
+    border-radius: 16px;
+    padding: 14px;
+    text-align: center;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    transition: transform 0.2s ease;
+    position: relative;
+  }
+  .karte:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(0,0,0,0.16); }
+  .karte h3 {
+    margin: 0 0 10px 0;
+    font-family: var(--display);
+    font-size: 16px;
+    color: var(--tinte);
+  }
+  .karte .svg-wrap {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, #FAF7EE 0%, #F0E8D2 100%);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .karte svg { width: 90%; height: 90%; max-width: 200px; max-height: 200px; }
+
+  .badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--display);
+    margin-top: 4px;
+  }
+  .badge-v4 { background: #E0E0E0; color: #555; }
+  .badge-v5 { background: var(--weide); color: white; }
+
+  .label-v4, .label-v5 {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 3px 8px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: var(--display);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .label-v4 { background: var(--scheune); color: white; }
+  .label-v5 { background: var(--weide); color: white; box-shadow: 0 2px 6px rgba(110,150,85,0.4); }
+
+  .item-block {
+    background: rgba(255,255,255,0.6);
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  }
+  .item-block h3 {
+    font-family: var(--display);
+    margin: 0 0 4px 0;
+    color: var(--tinte);
+    font-size: 18px;
+  }
+  .item-block .desc {
+    margin: 0 0 14px 0;
+    color: var(--holz-dunkel);
+    font-size: 13px;
+    line-height: 1.45;
+    font-style: italic;
+  }
+  .item-block .desc b { color: var(--scheune); font-style: normal; }
+
+  .pair-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 600px) {
+    .pair-grid { grid-template-columns: 1fr; }
+  }
+
+  .nav {
+    background: var(--holz-dunkel);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-family: var(--display);
+    font-size: 14px;
+  }
+  .nav a {
+    color: var(--heu);
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .nav a:hover { background: rgba(255,255,255,0.15); }
+
+  .footer-info {
+    background: white;
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-top: 40px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  }
+  .footer-info h3 { margin: 0 0 12px 0; color: var(--weide-tief); font-family: var(--display); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🎨 Design-Vergleich V4 vs V5</h1>
+<p class="subtitle">Manuelle Auswahl: Welche Version gefällt besser?</p>
+
+<div class="nav">
+  <strong>📍 Springe zu:</strong>
+  <a href="#tiere">🐾 Tiere</a>
+  <a href="#werkzeuge">🔧 Werkzeuge</a>
+  <a href="#futter">🌾 Futter</a>
+</div>
+
+<div class="info">
+  <h3>✨ Was ist neu in V5?</h3>
+  <ul>
+    <li><b>Klarere Konturen:</b> Konsistente Outline-Stärke (2px) für einheitlichen Look</li>
+    <li><b>Größere Augen mit Doppel-Glanz:</b> Noch ausdrucksstärker und freundlicher</li>
+    <li><b>Weiche Gradienten:</b> Sanfte Farbverläufe für mehr Tiefe</li>
+    <li><b>Weniger Details:</b> Reduktion auf das Wesentliche → bessere Lesbarkeit auf kleinen Screens</li>
+    <li><b>Hellere Farben:</b> Frischere, freundlichere Töne (besser für jüngere Kinder)</li>
+    <li><b>Symmetrischere Proportionen:</b> Ausgewogener zwischen Kopf und Körper</li>
+  </ul>
+</div>
+
+<h2 id="tiere">🐾 Tiere <small>10 Tiere im Vergleich</small></h2>
+
+<!-- HUND -->
+<div class="item-block">
+  <h3>🐕 Hund (Rüde)</h3>
+  <p class="desc">
+    <b>V4:</b> Braun-schwarze Farbe, mittelgroße Schlappohren, klassische Stupsnase. 
+    <b>V5:</b> Wärmeres Braun, größere symmetrische Ohren mit Innenleben, klarere Zunge.
+  </p>
+  <div class="pair-grid">
+    <div class="karte">
+      <span class="label-v4">V4 Aktuell</span>
+      <h3>Hund V4</h3>
+      <div class="svg-wrap" id="hund-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5 Neu</span>
+      <h3>Hund V5</h3>
+      <div class="svg-wrap" id="hund-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<!-- KATZE -->
+<div class="item-block">
+  <h3>🐱 Katze (Kater)</h3>
+  <p class="desc">
+    <b>V4:</b> Orange Tabby mit sichtbaren Streifen, rosa Ohren-Innen. 
+    <b>V5:</b> Klarere Streifen, größere Augen mit doppeltem Glanz, weicherer Schwanz.
+  </p>
+  <div class="pair-grid">
+    <div class="karte">
+      <span class="label-v4">V4 Aktuell</span>
+      <h3>Katze V4</h3>
+      <div class="svg-wrap" id="katze-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5 Neu</span>
+      <h3>Katze V5</h3>
+      <div class="svg-wrap" id="katze-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<!-- PFERD -->
+<div class="item-block">
+  <h3>🐴 Pferd (Hengst)</h3>
+  <p class="desc">
+    <b>V4:</b> Dunkelbraun mit Mähne, länglicher Hals. 
+    <b>V5:</b> Wärmerer Braunton, kürzere Mähne, größeres Auge, Beine klarer definiert.
+  </p>
+  <div class="pair-grid">
+    <div class="karte">
+      <span class="label-v4">V4 Aktuell</span>
+      <h3>Pferd V4</h3>
+      <div class="svg-wrap" id="pferd-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5 Neu</span>
+      <h3>Pferd V5</h3>
+      <div class="svg-wrap" id="pferd-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<!-- HAHN -->
+<div class="item-block">
+  <h3>🐔 Hahn</h3>
+  <p class="desc">
+    <b>V4:</b> Roter Kamm, gelber Schnabel, orange Körper. 
+    <b>V5:</b> Vereinfachter Kamm, klarerer Schnabel, leuchtendere Farben, größerer Schwanz.
+  </p>
+  <div class="pair-grid">
+    <div class="karte">
+      <span class="label-v4">V4 Aktuell</span>
+      <h3>Hahn V4</h3>
+      <div class="svg-wrap" id="hahn-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5 Neu</span>
+      <h3>Hahn V5</h3>
+      <div class="svg-wrap" id="hahn-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<!-- HENNE -->
+<div class="item-block">
+  <h3>🐔 Henne</h3>
+  <p class="desc">
+    <b>V4:</b> Orange-braun, kein Kamm. 
+    <b>V5:</b> Kleinerer Kamm, runderer Körper, definiertere Federn.
+  </p>
+  <div class="pair-grid">
+    <div class="karte">
+      <span class="label-v4">V4 Aktuell</span>
+      <h3>Henne V4</h3>
+      <div class="svg-wrap" id="henne-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5 Neu</span>
+      <h3>Henne V5</h3>
+      <div class="svg-wrap" id="henne-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<!-- KANINCHEN -->
+<div class="item-block">
+  <h3>🐰 Kaninchen (Rammler)</h3>
+  <p class="desc">
+    <b>V4:</b> Braun-weiß, lange aufrechte Ohren. 
+    <b>V5:</b> Rosa Ohren-Innen klarer, weicheres Fell, größeres Auge mit Glanz.
+  </p>
+  <div class="pair-grid">
+    <div class="karte">
+      <span class="label-v4">V4 Aktuell</span>
+      <h3>Kaninchen V4</h3>
+      <div class="svg-wrap" id="kaninchen-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5 Neu</span>
+      <h3>Kaninchen V5</h3>
+      <div class="svg-wrap" id="kaninchen-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<!-- ENTE -->
+<div class="item-block">
+  <h3>🦆 Ente</h3>
+  <p class="desc">
+    <b>V4:</b> Gelber Körper, orange Schnabel. 
+    <b>V5:</b> Klarere Trennung Kopf/Körper, größerer Schnabel, definiertere Flügel.
+  </p>
+  <div class="pair-grid">
+    <div class="karte">
+      <span class="label-v4">V4 Aktuell</span>
+      <h3>Ente V4</h3>
+      <div class="svg-wrap" id="ente-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5 Neu</span>
+      <h3>Ente V5</h3>
+      <div class="svg-wrap" id="ente-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<!-- KUH -->
+<div class="item-block">
+  <h3>🐄 Kuh</h3>
+  <p class="desc">
+    <b>V4:</b> Weiß mit schwarzen Flecken, rosa Euter, Hörner. 
+    <b>V5:</b> Symmetrischere Flecken, größeres Auge, klarere Hörner, freundlicheres Euter.
+  </p>
+  <div class="pair-grid">
+    <div class="karte">
+      <span class="label-v4">V4 Aktuell</span>
+      <h3>Kuh V4</h3>
+      <div class="svg-wrap" id="kuh-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5 Neu</span>
+      <h3>Kuh V5</h3>
+      <div class="svg-wrap" id="kuh-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<!-- SCHAF -->
+<div class="item-block">
+  <h3>🐑 Schaf</h3>
+  <p class="desc">
+    <b>V4:</b> Weiße Wolle-Kugeln, schwarzer Kopf und Beine. 
+    <b>V5:</b> Vereinfachte Wolle-Textur, freundlicherer Gesichtsausdruck, klarere Beine.
+  </p>
+  <div class="pair-grid">
+    <div class="karte">
+      <span class="label-v4">V4 Aktuell</span>
+      <h3>Schaf V4</h3>
+      <div class="svg-wrap" id="schaf-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5 Neu</span>
+      <h3>Schaf V5</h3>
+      <div class="svg-wrap" id="schaf-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<!-- HUENDIN -->
+<div class="item-block">
+  <h3>🐕 Hündin</h3>
+  <p class="desc">
+    <b>V4:</b> Helles Beige. 
+    <b>V5:</b> Wärmerer Beige-Ton, definiertere Ohren, klarere Schnauze.
+  </p>
+  <div class="pair-grid">
+    <div class="karte">
+      <span class="label-v4">V4 Aktuell</span>
+      <h3>Hündin V4</h3>
+      <div class="svg-wrap" id="huendin-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5 Neu</span>
+      <h3>Hündin V5</h3>
+      <div class="svg-wrap" id="huendin-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<h2 id="werkzeuge">🔧 Werkzeuge <small>13 Werkzeuge im Vergleich</small></h2>
+
+<!-- Schaufel, Besen, Giesskanne, Eimer -->
+<div class="item-block">
+  <h3>🪣 Schaufel · Besen · Gießkanne · Eimer</h3>
+  <p class="desc">
+    <b>V4:</b> Kräftige Farben, klare Formen. 
+    <b>V5:</b> Konsistentere Outline-Stärke, weichere Übergänge, etwas hellere Farben.
+  </p>
+  <div class="grid">
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Schaufel V4</h3>
+      <div class="svg-wrap" id="schaufel-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Schaufel V5</h3>
+      <div class="svg-wrap" id="schaufel-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Besen V4</h3>
+      <div class="svg-wrap" id="besen-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Besen V5</h3>
+      <div class="svg-wrap" id="besen-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Gießkanne V4</h3>
+      <div class="svg-wrap" id="giesskanne-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Gießkanne V5</h3>
+      <div class="svg-wrap" id="giesskanne-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Eimer V4</h3>
+      <div class="svg-wrap" id="eimer-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Eimer V5</h3>
+      <div class="svg-wrap" id="eimer-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<!-- Gabel, Hammer, Schere -->
+<div class="item-block">
+  <h3>🍴 Gabel · 🔨 Hammer · ✂️ Schere</h3>
+  <p class="desc">
+    <b>V4:</b> Metallic Look, dunkle Akzente. 
+    <b>V5:</b> Hellere Metall-Töne, klarere Griffe, mehr Kontrast.
+  </p>
+  <div class="grid">
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Gabel V4</h3>
+      <div class="svg-wrap" id="gabel-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Gabel V5</h3>
+      <div class="svg-wrap" id="gabel-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Hammer V4</h3>
+      <div class="svg-wrap" id="hammer-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Hammer V5</h3>
+      <div class="svg-wrap" id="hammer-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Schere V4</h3>
+      <div class="svg-wrap" id="schere-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Schere V5</h3>
+      <div class="svg-wrap" id="schere-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<!-- Mistgabel, Sack, Spaten -->
+<div class="item-block">
+  <h3>🍴 Mistgabel · 🛍️ Sack · ⛏️ Spaten</h3>
+  <p class="desc">
+    <b>V4:</b> Detaillierte Strukturen. 
+    <b>V5:</b> Vereinfacht, leichter erkennbar auf kleinen Bildschirmen.
+  </p>
+  <div class="grid">
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Mistgabel V4</h3>
+      <div class="svg-wrap" id="mistgabel-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Mistgabel V5</h3>
+      <div class="svg-wrap" id="mistgabel-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Sack V4</h3>
+      <div class="svg-wrap" id="sack-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Sack V5</h3>
+      <div class="svg-wrap" id="sack-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Spaten V4</h3>
+      <div class="svg-wrap" id="spaten-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Spaten V5</h3>
+      <div class="svg-wrap" id="spaten-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<!-- Rechen, Kraftstoff, Heugabel -->
+<div class="item-block">
+  <h3>🍂 Rechen · ⛽ Kraftstoff · 🍴 Heugabel</h3>
+  <p class="desc">
+    <b>V4:</b> Realistische Formen. 
+    <b>V5:</b> Stilisierter, klarerer Cartoon-Look, größere Schaufelköpfe.
+  </p>
+  <div class="grid">
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Rechen V4</h3>
+      <div class="svg-wrap" id="rechen-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Rechen V5</h3>
+      <div class="svg-wrap" id="rechen-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Kraftstoff V4</h3>
+      <div class="svg-wrap" id="kraftstoff-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Kraftstoff V5</h3>
+      <div class="svg-wrap" id="kraftstoff-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Heugabel V4</h3>
+      <div class="svg-wrap" id="heugabel-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Heugabel V5</h3>
+      <div class="svg-wrap" id="heugabel-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<h2 id="futter">🌾 Futter <small>8 Futter-Sorten im Vergleich</small></h2>
+
+<!-- Heu, Karotte, Apfel, Getreide -->
+<div class="item-block">
+  <h3>🌾 Heu · 🥕 Karotte · 🍎 Apfel · 🌾 Getreide</h3>
+  <p class="desc">
+    <b>V4:</b> Erdige Naturtöne. 
+    <b>V5:</b> Frischere, leuchtendere Farben (mehr Appetit-Appeal), weichere Formen.
+  </p>
+  <div class="grid">
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Heu V4</h3>
+      <div class="svg-wrap" id="heu-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Heu V5</h3>
+      <div class="svg-wrap" id="heu-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Karotte V4</h3>
+      <div class="svg-wrap" id="karotte-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Karotte V5</h3>
+      <div class="svg-wrap" id="karotte-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Apfel V4</h3>
+      <div class="svg-wrap" id="apfel-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Apfel V5</h3>
+      <div class="svg-wrap" id="apfel-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Getreide V4</h3>
+      <div class="svg-wrap" id="getreide-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Getreide V5</h3>
+      <div class="svg-wrap" id="getreide-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<!-- Mais, Stroh, Gras, Korn -->
+<div class="item-block">
+  <h3>🌽 Mais · 🌾 Stroh · 🌱 Gras · 🌾 Korn</h3>
+  <p class="desc">
+    <b>V4:</b> Realistische Körner und Halme. 
+    <b>V5:</b> Vereinfachte, kindgerechtere Darstellungen mit klaren Farben.
+  </p>
+  <div class="grid">
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Mais V4</h3>
+      <div class="svg-wrap" id="mais-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Mais V5</h3>
+      <div class="svg-wrap" id="mais-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Stroh V4</h3>
+      <div class="svg-wrap" id="stroh-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Stroh V5</h3>
+      <div class="svg-wrap" id="stroh-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Gras V4</h3>
+      <div class="svg-wrap" id="gras-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Gras V5</h3>
+      <div class="svg-wrap" id="gras-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+    <div class="karte">
+      <span class="label-v4">V4</span>
+      <h3>Korn V4</h3>
+      <div class="svg-wrap" id="korn-v4"></div>
+      <span class="badge badge-v4">V4</span>
+    </div>
+    <div class="karte">
+      <span class="label-v5">V5</span>
+      <h3>Korn V5</h3>
+      <div class="svg-wrap" id="korn-v5"></div>
+      <span class="badge badge-v5">V5</span>
+    </div>
+  </div>
+</div>
+
+<div class="footer-info">
+  <h3>📋 Zusammenfassung der V5-Änderungen</h3>
+  <ul>
+    <li><b>10 Tiere:</b> Hund (m/w), Katze (m/w), Pferd (m/w), Hahn, Henne, Kaninchen (m/w), Ente, Kuh, Schaf</li>
+    <li><b>13 Werkzeuge:</b> Schaufel, Besen, Gießkanne, Eimer, Gabel, Hammer, Schere, Mistgabel, Sack, Spaten, Rechen, Kraftstoff, Heugabel</li>
+    <li><b>8 Futter-Sorten:</b> Heu, Karotte, Apfel, Getreide, Mais, Stroh, Gras, Korn</li>
+    <li><b>Gesamt:</b> 31 V4/V5 Paare zum Vergleichen</li>
+  </ul>
+  <p style="margin-top: 16px; font-style: italic; color: var(--holz-dunkel);">
+    💡 <b>Tipp:</b> Schau dir die Vergleiche in Ruhe an und entscheide pro Item, ob V4 oder V5 besser gefällt. 
+    Die finale Version kann eine Mischung sein.
+  </p>
+</div>
+
+</div>
+
+<!-- V4 originals -->
+<script src="tiere-v4.js"></script>
+<script src="werkzeuge-futter-v4.js"></script>
+
+<script>
+/* ============================================================
+   V5 Designs - Verbesserte Versionen
+   ============================================================ */
+const O5 = '#33281A';
+const svgW5 = (w, h) => `viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg"`;
+const svgWrap5 = (c) => `<svg ${svgW5(150, 150)}>${c}</svg>`;
+
+// Auge mit Doppel-Glanz für V5
+const augeV5 = (cx, cy, r) =>
+  `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#FFF" stroke="${O5}" stroke-width="1.5"/>`+
+  `<circle cx="${cx}" cy="${cy}" r="${r*0.5}" fill="#222"/>`+
+  `<circle cx="${cx+r*0.25}" cy="${cy-r*0.25}" r="${r*0.28}" fill="#FFF"/>`+
+  `<circle cx="${cx-r*0.2}" cy="${cy+r*0.2}" r="${r*0.12}" fill="#FFF" opacity="0.7"/>`;
+
+const wangeV5 = (cx, cy, rx, ry) =>
+  `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#FFB6C1" opacity="0.55"/>`;
+
+const gradientDefs5 = (id, c1, c2) =>
+  `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">`+
+  `<stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>`+
+  `</linearGradient></defs>`;
+
+// =========== HUND V5 ===========
+const hundV5 = (bodyColor, earColor, earInner) => svgWrap5(
+  gradientDefs5('hundBody', bodyColor, lighten(bodyColor, -15)) +
+  // Schatten
+  `<ellipse cx="75" cy="138" rx="48" ry="7" fill="#000" opacity="0.12"/>`+
+  // Hinterbeine
+  `<rect x="40" y="100" width="14" height="28" rx="7" fill="url(#hundBody)" stroke="${O5}" stroke-width="2"/>`+
+  `<rect x="96" y="100" width="14" height="28" rx="7" fill="url(#hundBody)" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="47" cy="130" rx="9" ry="5" fill="#3A2814"/>`+
+  `<ellipse cx="103" cy="130" rx="9" ry="5" fill="#3A2814"/>`+
+  // Körper
+  `<ellipse cx="75" cy="95" rx="44" ry="32" fill="url(#hundBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Schwanz
+  `<path d="M115 90 Q140 70 142 88 Q144 100 130 95" fill="none" stroke="${earColor}" stroke-width="11" stroke-linecap="round"/>`+
+  // Vorderbeine
+  `<rect x="55" y="105" width="14" height="26" rx="7" fill="url(#hundBody)" stroke="${O5}" stroke-width="2"/>`+
+  `<rect x="81" y="105" width="14" height="26" rx="7" fill="url(#hundBody)" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="62" cy="132" rx="9" ry="5" fill="#3A2814"/>`+
+  `<ellipse cx="88" cy="132" rx="9" ry="5" fill="#3A2814"/>`+
+  // Kopf (groß, rund)
+  `<circle cx="75" cy="55" r="36" fill="url(#hundBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Ohren (klar definiert, symmetrisch)
+  `<ellipse cx="42" cy="42" rx="14" ry="24" fill="${earColor}" stroke="${O5}" stroke-width="2" transform="rotate(-22 42 42)"/>`+
+  `<ellipse cx="108" cy="42" rx="14" ry="24" fill="${earColor}" stroke="${O5}" stroke-width="2" transform="rotate(22 108 42)"/>`+
+  `<ellipse cx="44" cy="45" rx="7" ry="16" fill="${earInner}" transform="rotate(-22 42 42)"/>`+
+  `<ellipse cx="106" cy="45" rx="7" ry="16" fill="${earInner}" transform="rotate(22 108 42)"/>`+
+  // Schnauze
+  `<ellipse cx="75" cy="68" rx="20" ry="13" fill="#FFEFD5" stroke="${O5}" stroke-width="1.5"/>`+
+  // Nase
+  `<ellipse cx="75" cy="62" rx="7" ry="5" fill="#222"/>`+
+  `<ellipse cx="73" cy="60" rx="2" ry="1.5" fill="#FFF" opacity="0.6"/>`+
+  // Mund
+  `<path d="M66 73 Q75 81 84 73" fill="none" stroke="#3A2814" stroke-width="2.5" stroke-linecap="round"/>`+
+  // Zunge
+  `<ellipse cx="75" cy="78" rx="7" ry="5" fill="#FF6B9D" opacity="0.85"/>`+
+  // Wangen
+  wangeV5(53, 60, 10, 6) + wangeV5(97, 60, 10, 6) +
+  // Augen
+  augeV5(60, 50, 8) + augeV5(90, 50, 8) +
+  // Fleck
+  `<ellipse cx="55" cy="55" rx="9" ry="6" fill="#3A2814" opacity="0.18"/>`
+);
+
+function lighten(hex, percent) {
+  const num = parseInt(hex.replace('#',''), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = Math.min(255, Math.max(0, (num >> 16) + amt));
+  const G = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + amt));
+  const B = Math.min(255, Math.max(0, (num & 0x0000FF) + amt));
+  return '#' + (0x1000000 + R*0x10000 + G*0x100 + B).toString(16).slice(1);
+}
+
+const ruedeV5 = hundV5('#E07A3C', '#8B4513', '#FFB6C1');
+const huendinV5 = hundV5('#E8C896', '#A0522D', '#FFD4DD');
+
+// =========== KATZE V5 ===========
+const katzeV5 = (bodyColor, stripes) => svgWrap5(
+  gradientDefs5('katzeBody', bodyColor, lighten(bodyColor, -15)) +
+  // Schatten
+  `<ellipse cx="75" cy="138" rx="42" ry="7" fill="#000" opacity="0.12"/>`+
+  // Schwanz
+  `<path d="M105 95 Q140 75 132 45 Q128 35 118 45" fill="none" stroke="${bodyColor}" stroke-width="15" stroke-linecap="round"/>`+
+  `<path d="M105 95 Q140 75 132 45" fill="none" stroke="${stripes}" stroke-width="2" opacity="0.5"/>`+
+  // Hinterbeine
+  `<rect x="45" y="105" width="12" height="25" rx="6" fill="url(#katzeBody)" stroke="${O5}" stroke-width="2"/>`+
+  `<rect x="93" y="105" width="12" height="25" rx="6" fill="url(#katzeBody)" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="51" cy="130" rx="8" ry="5" fill="#FFF5EE"/>`+
+  `<ellipse cx="99" cy="130" rx="8" ry="5" fill="#FFF5EE"/>`+
+  // Körper
+  `<ellipse cx="75" cy="95" rx="40" ry="28" fill="url(#katzeBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Streifen
+  `<path d="M50 85 Q75 92 100 85" stroke="${stripes}" stroke-width="3.5" opacity="0.45" fill="none"/>`+
+  `<path d="M48 95 Q75 102 102 95" stroke="${stripes}" stroke-width="3.5" opacity="0.45" fill="none"/>`+
+  // Vorderbeine
+  `<rect x="60" y="108" width="12" height="24" rx="6" fill="url(#katzeBody)" stroke="${O5}" stroke-width="2"/>`+
+  `<rect x="78" y="108" width="12" height="24" rx="6" fill="url(#katzeBody)" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="66" cy="132" rx="7" ry="4" fill="#FFF5EE"/>`+
+  `<ellipse cx="84" cy="132" rx="7" ry="4" fill="#FFF5EE"/>`+
+  // Kopf
+  `<circle cx="75" cy="55" r="32" fill="url(#katzeBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Ohren
+  `<path d="M50 38 L60 55 L42 55 Z" fill="${bodyColor}" stroke="${O5}" stroke-width="2" stroke-linejoin="round"/>`+
+  `<path d="M55 44 L58 52 L46 52 Z" fill="#FFB6C1"/>`+
+  `<path d="M100 38 L108 55 L92 55 Z" fill="${bodyColor}" stroke="${O5}" stroke-width="2" stroke-linejoin="round"/>`+
+  `<path d="M95 44 L98 52 L104 52 Z" fill="#FFB6C1"/>`+
+  // Schnurrhaare
+  `<path d="M48 65 L36 62 M48 68 L34 68 M48 71 L36 74" stroke="#666" stroke-width="1.5" opacity="0.55"/>`+
+  `<path d="M102 65 L114 62 M102 68 L116 68 M102 71 L114 74" stroke="#666" stroke-width="1.5" opacity="0.55"/>`+
+  // Schnauze
+  `<ellipse cx="75" cy="68" rx="13" ry="9" fill="#FFF5EE" stroke="${O5}" stroke-width="1.5"/>`+
+  // Nase
+  `<path d="M72 64 L78 64 L75 68 Z" fill="#FF8DA1"/>`+
+  // Mund
+  `<path d="M75 68 L75 72 M75 72 Q71 75 68 73 M75 72 Q79 75 82 73" stroke="#3A2814" stroke-width="1.8" fill="none"/>`+
+  // Wangen
+  wangeV5(50, 60, 8, 5) + wangeV5(100, 60, 8, 5) +
+  // Augen
+  augeV5(62, 52, 7) + augeV5(88, 52, 7)
+);
+
+const katerV5 = katzeV5('#FFB347', '#CC6600');
+const katzeV5Inst = katzeV5('#909090', '#444');
+
+// =========== PFERD V5 ===========
+const pferdV5 = (opts) => svgWrap5(
+  gradientDefs5('pferdBody', opts.body, lighten(opts.body, -10)) +
+  // Schatten
+  `<ellipse cx="75" cy="138" rx="55" ry="8" fill="#000" opacity="0.12"/>`+
+  // Hinterbein
+  `<rect x="38" y="98" width="14" height="32" rx="6" fill="${opts.leg}" stroke="${O5}" stroke-width="2"/>`+
+  `<rect x="100" y="98" width="14" height="32" rx="6" fill="${opts.leg}" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="45" cy="132" rx="9" ry="5" fill="#222"/>`+
+  `<ellipse cx="107" cy="132" rx="9" ry="5" fill="#222"/>`+
+  // Körper (groß, lang)
+  `<ellipse cx="75" cy="90" rx="55" ry="30" fill="url(#pferdBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Vorderbeine
+  `<rect x="55" y="100" width="14" height="30" rx="6" fill="${opts.leg}" stroke="${O5}" stroke-width="2"/>`+
+  `<rect x="80" y="100" width="14" height="30" rx="6" fill="${opts.leg}" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="62" cy="132" rx="9" ry="5" fill="#222"/>`+
+  `<ellipse cx="87" cy="132" rx="9" ry="5" fill="#222"/>`+
+  // Schweif
+  `<path d="M125 80 Q140 85 138 105 Q135 115 128 110" fill="${opts.mane}" stroke="${O5}" stroke-width="2"/>`+
+  // Hals
+  `<path d="M40 80 Q35 55 50 45 L60 60 Q55 85 50 95 Z" fill="url(#pferdBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Mähne
+  `<path d="M40 80 Q28 60 35 40 Q42 35 50 45" fill="${opts.mane}" stroke="${O5}" stroke-width="2"/>`+
+  // Kopf
+  `<ellipse cx="45" cy="55" rx="22" ry="18" fill="url(#pferdBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Schnauze
+  `<ellipse cx="30" cy="60" rx="12" ry="9" fill="${opts.muz}" stroke="${O5}" stroke-width="1.5"/>`+
+  // Nüstern
+  `<ellipse cx="24" cy="58" rx="3" ry="2" fill="#222"/>`+
+  // Ohr
+  `<path d="M42 38 L40 28 L48 36 Z" fill="${opts.mane}" stroke="${O5}" stroke-width="1.5"/>`+
+  // Auge
+  augeV5(50, 50, 5) +
+  // Wange
+  wangeV5(40, 62, 6, 4)
+);
+
+const hengstV5 = pferdV5({body:'#9B5A2C', mane:'#2c1b0e', leg:'#6b3e23', muz:'#5A3A1E'});
+const stuteV5 = pferdV5({body:'#D49A5A', mane:'#8B4513', leg:'#A0522D', muz:'#8A4F24'});
+
+// =========== HUHN V5 ===========
+const huhnV5 = (isHahn) => svgWrap5(
+  gradientDefs5('huhnBody', isHahn ? '#FF6B5C' : '#E89A5C', lighten(isHahn ? '#FF6B5C' : '#E89A5C', -15)) +
+  // Schatten
+  `<ellipse cx="75" cy="138" rx="38" ry="6" fill="#000" opacity="0.12"/>`+
+  // Beine
+  `<rect x="65" y="105" width="4" height="25" fill="#E8B84B"/>`+
+  `<rect x="80" y="105" width="4" height="25" fill="#E8B84B"/>`+
+  `<path d="M62 130 L68 130 M63 132 L67 132 M64 134 L66 134" stroke="#E8B84B" stroke-width="2"/>`+
+  `<path d="M77 130 L83 130 M78 132 L82 132 M79 134 L81 134" stroke="#E8B84B" stroke-width="2"/>`+
+  // Körper (rund)
+  `<ellipse cx="75" cy="90" rx="35" ry="30" fill="url(#huhnBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Flügel
+  `<ellipse cx="55" cy="85" rx="14" ry="22" fill="${lighten(isHahn ? '#FF6B5C' : '#E89A5C', -10)}" stroke="${O5}" stroke-width="2"/>`+
+  // Schwanz
+  (isHahn ?
+    `<path d="M105 80 Q130 60 132 75 Q130 85 125 80 Q130 90 122 88" fill="${lighten('#FF6B5C', -10)}" stroke="${O5}" stroke-width="2"/>` :
+    `<path d="M105 85 Q120 75 118 90 Q115 95 110 90" fill="${lighten('#E89A5C', -10)}" stroke="${O5}" stroke-width="2"/>`) +
+  // Kopf
+  `<circle cx="80" cy="55" r="22" fill="url(#huhnBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Kamm
+  (isHahn ?
+    `<path d="M70 38 Q72 28 76 35 Q80 25 84 35 Q88 28 90 38 Z" fill="#E74C3C" stroke="${O5}" stroke-width="1.5"/>` :
+    `<path d="M72 38 Q75 32 78 36 Q82 32 86 38 Z" fill="#E74C3C" stroke="${O5}" stroke-width="1.5"/>`) +
+  // Kehllappen
+  (isHahn ?
+    `<path d="M85 60 Q92 65 88 72 Z" fill="#E74C3C" stroke="${O5}" stroke-width="1.5"/>` :
+    `<ellipse cx="86" cy="65" rx="3" ry="4" fill="#E74C3C"/>`) +
+  // Schnabel
+  `<path d="M100 55 L113 53 L100 60 Z" fill="#FFC107" stroke="${O5}" stroke-width="1.5"/>`+
+  // Auge
+  augeV5(86, 50, 4.5) +
+  // Wange
+  wangeV5(80, 62, 6, 4)
+);
+
+const hahnV5 = huhnV5(true);
+const henneV5 = huhnV5(false);
+
+// =========== KANINCHEN V5 ===========
+const kaninchenV5 = (bodyColor, earColor) => svgWrap5(
+  gradientDefs5('kaninBody', bodyColor, lighten(bodyColor, -15)) +
+  // Schatten
+  `<ellipse cx="75" cy="138" rx="32" ry="6" fill="#000" opacity="0.12"/>`+
+  // Hinterbeine (groß, lang)
+  `<ellipse cx="45" cy="115" rx="14" ry="22" fill="url(#kaninBody)" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="105" cy="115" rx="14" ry="22" fill="url(#kaninBody)" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="45" cy="135" rx="11" ry="5" fill="#FFF5EE" stroke="${O5}" stroke-width="1.5"/>`+
+  `<ellipse cx="105" cy="135" rx="11" ry="5" fill="#FFF5EE" stroke="${O5}" stroke-width="1.5"/>`+
+  // Schwänzchen
+  `<circle cx="40" cy="105" r="7" fill="#FFF" stroke="${O5}" stroke-width="1.5"/>`+
+  // Körper
+  `<ellipse cx="75" cy="100" rx="35" ry="28" fill="url(#kaninBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Vorderbeine
+  `<ellipse cx="65" cy="120" rx="8" ry="16" fill="url(#kaninBody)" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="85" cy="120" rx="8" ry="16" fill="url(#kaninBody)" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="65" cy="135" rx="6" ry="4" fill="#FFF5EE" stroke="${O5}" stroke-width="1"/>`+
+  `<ellipse cx="85" cy="135" rx="6" ry="4" fill="#FFF5EE" stroke="${O5}" stroke-width="1"/>`+
+  // Ohren (lang, klar definiert)
+  `<ellipse cx="62" cy="40" rx="9" ry="28" fill="${earColor}" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="88" cy="40" rx="9" ry="28" fill="${earColor}" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="62" cy="42" rx="5" ry="20" fill="#FFB6C1"/>`+
+  `<ellipse cx="88" cy="42" rx="5" ry="20" fill="#FFB6C1"/>`+
+  // Kopf
+  `<circle cx="75" cy="75" r="26" fill="url(#kaninBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Nase
+  `<path d="M70 78 Q75 74 80 78 Q75 82 70 78 Z" fill="#FF8DA1" stroke="${O5}" stroke-width="1"/>`+
+  // Mund
+  `<path d="M75 80 L75 84 M75 84 Q72 87 70 85 M75 84 Q78 87 80 85" stroke="#3A2814" stroke-width="1.5" fill="none"/>`+
+  // Wangen
+  wangeV5(58, 78, 7, 4) + wangeV5(92, 78, 7, 4) +
+  // Augen
+  augeV5(66, 70, 5) + augeV5(84, 70, 5) +
+  // Schnurrhaare
+  `<path d="M50 80 L40 78 M50 82 L38 82 M50 84 L40 86" stroke="#666" stroke-width="1" opacity="0.5"/>`+
+  `<path d="M100 80 L110 78 M100 82 L112 82 M100 84 L110 86" stroke="#666" stroke-width="1" opacity="0.5"/>`
+);
+
+const rammlerV5 = kaninchenV5('#9B6B47', '#F5DEB3');
+const haesinV5 = kaninchenV5('#E0E0E0', '#FFFFFF');
+
+// =========== ENTE V5 ===========
+const enteV5 = svgWrap5(
+  gradientDefs5('enteBody', '#FFD93D', '#F0B400') +
+  gradientDefs5('enteKopf', '#4FC3F7', '#0288D1') +
+  // Schatten
+  `<ellipse cx="75" cy="138" rx="38" ry="6" fill="#000" opacity="0.12"/>`+
+  // Beine
+  `<rect x="60" y="110" width="4" height="22" fill="#FF8C00"/>`+
+  `<rect x="86" y="110" width="4" height="22" fill="#FF8C00"/>`+
+  `<path d="M58 132 L66 132 M59 134 L65 134 M60 136 L64 136" stroke="#FF8C00" stroke-width="2"/>`+
+  `<path d="M84 132 L92 132 M85 134 L91 134 M86 136 L90 136" stroke="#FF8C00" stroke-width="2"/>`+
+  // Schwanz (locken)
+  `<path d="M105 90 Q118 80 116 95" fill="url(#enteBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Körper
+  `<ellipse cx="75" cy="95" rx="38" ry="28" fill="url(#enteBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Flügel
+  `<ellipse cx="60" cy="90" rx="18" ry="22" fill="#FFCB47" stroke="${O5}" stroke-width="2"/>`+
+  `<path d="M50 80 Q60 78 70 82 M50 90 Q60 88 70 92 M50 100 Q60 98 70 102" stroke="#E0A800" stroke-width="1.5" fill="none"/>`+
+  // Hals
+  `<path d="M50 75 Q40 50 55 45 L65 55 Q60 75 60 85 Z" fill="#FFF" stroke="${O5}" stroke-width="2"/>`+
+  // Kopf
+  `<circle cx="55" cy="50" r="22" fill="url(#enteKopf)" stroke="${O5}" stroke-width="2"/>`+
+  // Schnabel
+  `<path d="M30 50 L15 48 L15 54 L30 56 Z" fill="#FFC107" stroke="${O5}" stroke-width="1.5"/>`+
+  `<line x1="20" y1="52" x2="28" y2="52" stroke="${O5}" stroke-width="1"/>`+
+  // Auge
+  augeV5(60, 45, 4.5) +
+  // Wange
+  wangeV5(48, 55, 6, 4)
+);
+
+// =========== KUH V5 ===========
+const kuhV5 = svgWrap5(
+  gradientDefs5('kuhBody', '#FAFAFA', '#E0E0E0') +
+  // Schatten
+  `<ellipse cx="75" cy="138" rx="55" ry="8" fill="#000" opacity="0.12"/>`+
+  // Beine
+  `<rect x="40" y="105" width="12" height="28" rx="5" fill="#FAFAFA" stroke="${O5}" stroke-width="2"/>`+
+  `<rect x="98" y="105" width="12" height="28" rx="5" fill="#FAFAFA" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="46" cy="134" rx="8" ry="4" fill="#333"/>`+
+  `<ellipse cx="104" cy="134" rx="8" ry="4" fill="#333"/>`+
+  // Körper (groß)
+  `<ellipse cx="75" cy="90" rx="52" ry="35" fill="url(#kuhBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Flecken (symmetrischer)
+  `<ellipse cx="55" cy="80" rx="14" ry="11" fill="#222"/>`+
+  `<ellipse cx="95" cy="95" rx="13" ry="10" fill="#222"/>`+
+  `<ellipse cx="78" cy="108" rx="10" ry="7" fill="#222"/>`+
+  // Euter
+  `<ellipse cx="75" cy="118" rx="14" ry="10" fill="#FFB6C1" stroke="${O5}" stroke-width="1.5"/>`+
+  `<circle cx="70" cy="125" r="2.5" fill="#FF8DA1"/>`+
+  `<circle cx="80" cy="125" r="2.5" fill="#FF8DA1"/>`+
+  // Schwanz
+  `<path d="M122 80 Q132 95 128 110" fill="none" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="128" cy="112" rx="6" ry="9" fill="#222"/>`+
+  // Hals
+  `<path d="M30 70 L20 45 L40 50 Z" fill="url(#kuhBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Kopf
+  `<ellipse cx="32" cy="55" rx="24" ry="20" fill="url(#kuhBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Hörner (klar definiert)
+  `<path d="M22 38 Q15 25 24 28" stroke="#D2B48C" stroke-width="5" fill="none" stroke-linecap="round"/>`+
+  `<path d="M42 38 Q49 25 40 28" stroke="#D2B48C" stroke-width="5" fill="none" stroke-linecap="round"/>`+
+  // Ohren
+  `<ellipse cx="16" cy="50" rx="8" ry="12" fill="#FAFAFA" stroke="${O5}" stroke-width="2" transform="rotate(-30 16 50)"/>`+
+  `<ellipse cx="48" cy="50" rx="8" ry="12" fill="#FAFAFA" stroke="${O5}" stroke-width="2" transform="rotate(30 48 50)"/>`+
+  `<ellipse cx="17" cy="52" rx="4" ry="7" fill="#FFB6C1" transform="rotate(-30 16 50)"/>`+
+  `<ellipse cx="47" cy="52" rx="4" ry="7" fill="#FFB6C1" transform="rotate(30 48 50)"/>`+
+  // Schnauze
+  `<ellipse cx="20" cy="60" rx="14" ry="10" fill="#FFB6C1" stroke="${O5}" stroke-width="1.5"/>`+
+  // Nase
+  `<ellipse cx="15" cy="58" rx="6" ry="4" fill="#FF6B9D"/>`+
+  // Mund
+  `<path d="M18 65 Q20 68 23 66" fill="none" stroke="#3A2814" stroke-width="1.5"/>`+
+  // Auge
+  augeV5(34, 52, 5) +
+  // Wange
+  wangeV5(28, 62, 6, 4) +
+  // Kopf-Fleck
+  `<ellipse cx="40" cy="48" rx="6" ry="4" fill="#222"/>`
+);
+
+// =========== SCHAF V5 ===========
+const schafV5 = svgWrap5(
+  gradientDefs5('schafBody', '#FFFFFF', '#E8E8E8') +
+  // Schatten
+  `<ellipse cx="75" cy="138" rx="50" ry="8" fill="#000" opacity="0.12"/>`+
+  // Beine (klar definiert, schwarz)
+  `<rect x="45" y="105" width="8" height="28" rx="3" fill="#333"/>`+
+  `<rect x="63" y="108" width="8" height="25" rx="3" fill="#333"/>`+
+  `<rect x="80" y="108" width="8" height="25" rx="3" fill="#333"/>`+
+  `<rect x="98" y="105" width="8" height="28" rx="3" fill="#333"/>`+
+  // Wolle-Körper (Hauptform + wenige, klar definierte Locken)
+  `<ellipse cx="75" cy="90" rx="48" ry="35" fill="url(#schafBody)" stroke="${O5}" stroke-width="2"/>`+
+  // Wolle-Detail (weniger, größer)
+  `<circle cx="45" cy="75" r="14" fill="#FFFFFF" stroke="${O5}" stroke-width="1.5"/>`+
+  `<circle cx="65" cy="68" r="15" fill="#FFFFFF" stroke="${O5}" stroke-width="1.5"/>`+
+  `<circle cx="88" cy="68" r="14" fill="#FFFFFF" stroke="${O5}" stroke-width="1.5"/>`+
+  `<circle cx="108" cy="80" r="12" fill="#FFFFFF" stroke="${O5}" stroke-width="1.5"/>`+
+  `<circle cx="40" cy="95" r="11" fill="#FFFFFF" stroke="${O5}" stroke-width="1.5"/>`+
+  `<circle cx="110" cy="100" r="11" fill="#FFFFFF" stroke="${O5}" stroke-width="1.5"/>`+
+  `<circle cx="55" cy="108" r="12" fill="#FFFFFF" stroke="${O5}" stroke-width="1.5"/>`+
+  `<circle cx="95" cy="108" r="12" fill="#FFFFFF" stroke="${O5}" stroke-width="1.5"/>`+
+  // Schwanz (klein, flauschig)
+  `<circle cx="32" cy="90" r="9" fill="#FFFFFF" stroke="${O5}" stroke-width="1.5"/>`+
+  // Kopf (freundlicher, größer)
+  `<ellipse cx="130" cy="65" rx="22" ry="20" fill="#333"/>`+
+  `<ellipse cx="130" cy="63" rx="18" ry="15" fill="#FAFAFA"/>`+
+  // Ohren
+  `<ellipse cx="110" cy="55" rx="7" ry="11" fill="#333" transform="rotate(-25 110 55)"/>`+
+  `<ellipse cx="150" cy="55" rx="7" ry="11" fill="#333" transform="rotate(25 150 55)"/>`+
+  // Augen
+  augeV5(124, 60, 4.5) + augeV5(138, 60, 4.5) +
+  // Wange
+  wangeV5(122, 70, 6, 4) + wangeV5(140, 70, 6, 4) +
+  // Nase
+  `<ellipse cx="148" cy="70" rx="3" ry="2" fill="#FF6B9D"/>`+
+  // Mund
+  `<path d="M142 74 Q146 76 148 74" stroke="#3A2814" stroke-width="1.5" fill="none"/>`
+);
+
+// =========== V5 Werkzeuge & Futter ===========
+// Vereinfachte, kindgerechtere Werkzeuge
+
+const schaufelV5 = svgWrap5(
+  // Stiel
+  `<rect x="70" y="20" width="10" height="80" rx="5" fill="#A8743F" stroke="${O5}" stroke-width="2"/>`+
+  `<line x1="72" y1="25" x2="72" y2="95" stroke="#774E27" stroke-width="1.5" opacity="0.5"/>`+
+  // Schaufelblatt (groß, rund)
+  `<path d="M40 100 L110 100 L100 135 Q75 142 50 135 Z" fill="#9AA8B5" stroke="${O5}" stroke-width="2.5"/>`+
+  `<ellipse cx="75" cy="105" rx="30" ry="4" fill="#B8C4D0" opacity="0.6"/>`+
+  // Highlight
+  `<path d="M50 105 Q60 100 70 105" stroke="#FFF" stroke-width="2" fill="none" opacity="0.5"/>`
+);
+
+const besenV5 = svgWrap5(
+  // Stiel (lang, gebogen)
+  `<path d="M55 25 Q60 80 75 130" stroke="#A8743F" stroke-width="9" fill="none" stroke-linecap="round"/>`+
+  `<path d="M55 25 Q60 80 75 130" stroke="#774E27" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>`+
+  // Borsten (gebündelt)
+  `<path d="M70 110 L60 145 L65 145 L72 115 Z" fill="#E8B84B" stroke="${O5}" stroke-width="1.5"/>`+
+  `<path d="M75 110 L72 148 L77 148 L78 115 Z" fill="#FFC857" stroke="${O5}" stroke-width="1.5"/>`+
+  `<path d="M80 110 L85 145 L90 145 L82 115 Z" fill="#E8B84B" stroke="${O5}" stroke-width="1.5"/>`+
+  `<path d="M85 110 L98 142 L93 142 L86 115 Z" fill="#FFC857" stroke="${O5}" stroke-width="1.5"/>`+
+  // Band (rot)
+  `<rect x="63" y="100" width="32" height="12" rx="3" fill="#C8523A" stroke="${O5}" stroke-width="2"/>`
+);
+
+const giesskanneV5 = svgWrap5(
+  // Körper
+  `<path d="M30 75 L30 110 Q30 130 50 130 L100 130 Q120 130 120 110 L120 75 Z" fill="#7FB069" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="75" cy="78" rx="42" ry="6" fill="#8FC36E"/>`+
+  `<ellipse cx="75" cy="76" rx="38" ry="4" fill="#A0D080"/>`+
+  // Ausguss
+  `<path d="M120 85 L140 70 L142 78 L125 95 Z" fill="#7FB069" stroke="${O5}" stroke-width="2"/>`+
+  // Brausekopf
+  `<ellipse cx="142" cy="74" rx="5" ry="6" fill="#5A3A1E" stroke="${O5}" stroke-width="1.5"/>`+
+  // Henkel
+  `<path d="M30 75 Q15 65 20 95 Q25 100 30 95" fill="none" stroke="${O5}" stroke-width="3"/>`+
+  `<path d="M120 75 Q135 65 130 95 Q125 100 120 95" fill="none" stroke="${O5}" stroke-width="3"/>`
+);
+
+const eimerV5 = svgWrap5(
+  // Körper (Trapez)
+  `<path d="M35 50 L115 50 L120 125 Q120 132 113 132 L37 132 Q30 132 30 125 Z" fill="#4682B4" stroke="${O5}" stroke-width="2"/>`+
+  // Highlight
+  `<path d="M40 60 Q45 80 42 110" stroke="#FFF" stroke-width="6" fill="none" opacity="0.3"/>`+
+  // Oberer Rand
+  `<ellipse cx="75" cy="50" rx="40" ry="6" fill="#3A6A95" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="75" cy="48" rx="36" ry="4" fill="#5A9AC9"/>`+
+  // Henkel
+  `<path d="M40 48 Q75 20 110 48" fill="none" stroke="${O5}" stroke-width="3"/>`+
+  // Wasser (innen)
+  `<ellipse cx="75" cy="55" rx="28" ry="3" fill="#88B4CE" opacity="0.5"/>`
+);
+
+const gabelV5 = svgWrap5(
+  // Stiel
+  `<rect x="70" y="55" width="10" height="80" rx="5" fill="#A8743F" stroke="${O5}" stroke-width="2"/>`+
+  // Zinken
+  `<path d="M55 50 L55 25 L60 25 L60 50 Z" fill="#C0C8D0" stroke="${O5}" stroke-width="1.5"/>`+
+  `<path d="M65 50 L65 20 L70 20 L70 50 Z" fill="#C0C8D0" stroke="${O5}" stroke-width="1.5"/>`+
+  `<path d="M75 50 L75 18 L80 18 L80 50 Z" fill="#C0C8D0" stroke="${O5}" stroke-width="1.5"/>`+
+  `<path d="M85 50 L85 22 L90 22 L90 50 Z" fill="#C0C8D0" stroke="${O5}" stroke-width="1.5"/>`+
+  // Querbalken
+  `<rect x="50" y="48" width="45" height="10" rx="2" fill="#9AA8B5" stroke="${O5}" stroke-width="2"/>`
+);
+
+const hammerV5 = svgWrap5(
+  // Stiel
+  `<rect x="72" y="50" width="10" height="85" rx="5" fill="#A8743F" stroke="${O5}" stroke-width="2"/>`+
+  // Hammerkopf (zweiseitig)
+  `<rect x="30" y="25" width="90" height="28" rx="4" fill="#5A6470" stroke="${O5}" stroke-width="2"/>`+
+  `<rect x="30" y="25" width="90" height="10" rx="4" fill="#6A7480"/>`+
+  // Nagelende (spitz)
+  `<path d="M120 28 L135 38 L120 50 Z" fill="#5A6470" stroke="${O5}" stroke-width="2"/>`+
+  // Highlight
+  `<rect x="35" y="30" width="80" height="3" rx="1" fill="#FFF" opacity="0.3"/>`
+);
+
+const schereV5 = svgWrap5(
+  // Klingen
+  `<ellipse cx="50" cy="35" rx="35" ry="8" fill="#C0C8D0" stroke="${O5}" stroke-width="2" transform="rotate(35 50 35)"/>`+
+  `<ellipse cx="50" cy="45" rx="35" ry="8" fill="#D0D8E0" stroke="${O5}" stroke-width="2" transform="rotate(-35 50 45)"/>`+
+  // Mittelstück
+  `<circle cx="55" cy="70" r="6" fill="#5A6470" stroke="${O5}" stroke-width="2"/>`+
+  // Griffe
+  `<ellipse cx="40" cy="105" rx="18" ry="14" fill="#C8523A" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="40" cy="105" rx="10" ry="7" fill="#E07060" opacity="0.5"/>`+
+  `<ellipse cx="75" cy="115" rx="18" ry="14" fill="#7FB069" stroke="${O5}" stroke-width="2"/>`+
+  `<ellipse cx="75" cy="115" rx="10" ry="7" fill="#9FC889" opacity="0.5"/>`+
+  // Verbindung Griffe zu Klingen
+  `<path d="M55 70 L40 92 M55 70 L75 102" stroke="#5A6470" stroke-width="3" fill="none"/>`
+);
+
+const mistgabelV5 = svgWrap5(
+  // Stiel
+  `<rect x="70" y="55" width="10" height="80" rx="5" fill="#A8743F" stroke="${O5}" stroke-width="2"/>`+
+  // Zinken (3, gebogen)
+  `<path d="M55 25 Q50 50 60 55" stroke="#9AA8B5" stroke-width="9" fill="none" stroke-linecap="round"/>`+
+  `<path d="M75 20 Q73 50 78 55" stroke="#9AA8B5" stroke-width="9" fill="none" stroke-linecap="round"/>`+
+  `<path d="M95 25 Q100 50 90 55" stroke="#9AA8B5" stroke-width="9" fill="none" stroke-linecap="round"/>`+
+  // Querbalken
+  `<rect x="48" y="52" width="50" height="10" rx="3" fill="#A8743F" stroke="${O5}" stroke-width="2"/>`
+);
+
+const sackV5 = svgWrap5(
+  // Sack (rund, groß)
+  `<ellipse cx="75" cy="115" rx="48" ry="22" fill="#D2B48C" stroke="${O5}" stroke-width="2"/>`+
+  `<path d="M30 75 Q30 50 50 45 L100 45 Q120 50 120 75 L120 110 Q120 130 75 132 Q30 130 30 110 Z" fill="#D2B48C" stroke="${O5}" stroke-width="2"/>`+
+  // Highlight
+  `<ellipse cx="55" cy="70" rx="12" ry="20" fill="#E8D5B0" opacity="0.6"/>`+
+  // Sack oben (zugebunden)
+  `<path d="M48 45 Q75 30 102 45" fill="#C8A878" stroke="${O5}" stroke-width="2"/>`+
+  `<line x1="48" y1="42" x2="102" y2="42" stroke="${O5}" stroke-width="2"/>`+
+  // Etikett
+  `<rect x="58" y="80" width="34" height="20" rx="2" fill="#F5DEB3" stroke="${O5}" stroke-width="1.5"/>`+
+  `<line x1="64" y1="86" x2="86" y2="86" stroke="${O5}" stroke-width="1"/>`+
+  `<line x1="64" y1="92" x2="80" y2="92" stroke="${O5}" stroke-width="1"/>`
+);
+
+const spatenV5 = svgWrap5(
+  // Stiel
+  `<rect x="72" y="25" width="10" height="90" rx="5" fill="#A8743F" stroke="${O5}" stroke-width="2"/>`+
+  // Griff (T-Form oben)
+  `<rect x="50" y="18" width="50" height="10" rx="5" fill="#A8743F" stroke="${O5}" stroke-width="2"/>`+
+  // Spatenblatt (spitz, schmal)
+  `<path d="M55 110 L95 110 L85 145 Q75 150 65 145 Z" fill="#9AA8B5" stroke="${O5}" stroke-width="2"/>`+
+  `<line x1="65" y1="115" x2="75" y2="140" stroke="${O5}" stroke-width="1.5" opacity="0.5"/>`+
+  `<line x1="85" y1="115" x2="75" y2="140" stroke="${O5}" stroke-width="1.5" opacity="0.5"/>`
+);
+
+const rechenV5 = svgWrap5(
+  // Stiel
+  `<rect x="72" y="30" width="10" height="105" rx="5" fill="#A8743F" stroke="${O5}" stroke-width="2"/>`+
+  // Querbalken
+  `<rect x="35" y="32" width="80" height="10" rx="3" fill="#A8743F" stroke="${O5}" stroke-width="2"/>`+
+  // Zinken (5 Stück)
+  `<path d="M40 42 L40 60" stroke="#9AA8B5" stroke-width="6" stroke-linecap="round"/>`+
+  `<path d="M55 42 L55 65" stroke="#9AA8B5" stroke-width="6" stroke-linecap="round"/>`+
+  `<path d="M72 42 L72 68" stroke="#9AA8B5" stroke-width="6" stroke-linecap="round"/>`+
+  `<path d="M90 42 L90 65" stroke="#9AA8B5" stroke-width="6" stroke-linecap="round"/>`+
+  `<path d="M108 42 L108 60" stroke="#9AA8B5" stroke-width="6" stroke-linecap="round"/>`
+);
+
+const kraftstoffV5 = svgWrap5(
+  // Kanister
+  `<path d="M40 50 L40 125 Q40 135 50 135 L100 135 Q110 135 110 125 L110 50 Z" fill="#C8523A" stroke="${O5}" stroke-width="2"/>`+
+  // Henkel
+  `<path d="M55 50 Q55 35 75 35 Q95 35 95 50" fill="none" stroke="${O5}" stroke-width="3"/>`+
+  // Ausguss
+  `<path d="M110 70 L125 65 L125 85 L110 80 Z" fill="#A04030" stroke="${O5}" stroke-width="2"/>`+
+  // Etikett
+  `<rect x="50" y="75" width="50" height="35" rx="3" fill="#F5DEB3" stroke="${O5}" stroke-width="1.5"/>`+
+  // Tropfen-Logo
+  `<path d="M75 85 Q70 92 70 97 Q70 103 75 103 Q80 103 80 97 Q80 92 75 85 Z" fill="#C8523A" stroke="${O5}" stroke-width="1.5"/>`+
+  // "Benzin" Linien
+  `<line x1="58" y1="103" x2="92" y2="103" stroke="${O5}" stroke-width="1.5"/>`+
+  // Highlight
+  `<path d="M45 60 Q50 80 47 120" stroke="#FFF" stroke-width="6" fill="none" opacity="0.3"/>`
+);
+
+const heugabelV5 = svgWrap5(
+  // Stiel
+  `<rect x="70" y="55" width="10" height="85" rx="5" fill="#A8743F" stroke="${O5}" stroke-width="2"/>`+
+  // Zinken (3, gebogen wie Mistgabel aber dünner)
+  `<path d="M55 50 Q48 35 60 25" stroke="#9AA8B5" stroke-width="6" fill="none" stroke-linecap="round"/>`+
+  `<path d="M75 48 Q75 30 75 20" stroke="#9AA8B5" stroke-width="6" fill="none" stroke-linecap="round"/>`+
+  `<path d="M95 50 Q102 35 90 25" stroke="#9AA8B5" stroke-width="6" fill="none" stroke-linecap="round"/>`+
+  // Querbalken
+  `<rect x="50" y="48" width="50" height="8" rx="2" fill="#A8743F" stroke="${O5}" stroke-width="2"/>`+
+  // Heu drapiert
+  `<path d="M55 30 Q60 28 65 30" stroke="#E8B84B" stroke-width="2" fill="none"/>`+
+  `<path d="M85 30 Q90 28 95 30" stroke="#E8B84B" stroke-width="2" fill="none"/>`
+);
+
+// =========== FUTTER V5 ===========
+
+const heuV5 = svgWrap5(
+  // Halm-Bündel (mehrere Schichten)
+  `<path d="M20 110 Q30 100 40 110 Q50 100 60 110 Q70 100 80 110 Q90 100 100 110 Q110 100 120 110 Q130 100 135 110 L135 135 L20 135 Z" fill="#F0D870" stroke="${O5}" stroke-width="2"/>`+
+  // Halme (oben rausstehend)
+  `<path d="M30 110 Q35 95 40 100" stroke="#E8B84B" stroke-width="3" fill="none" stroke-linecap="round"/>`+
+  `<path d="M50 105 Q55 88 60 95" stroke="#E8B84B" stroke-width="3" fill="none" stroke-linecap="round"/>`+
+  `<path d="M70 108 Q75 92 80 98" stroke="#E8B84B" stroke-width="3" fill="none" stroke-linecap="round"/>`+
+  `<path d="M90 105 Q95 88 100 95" stroke="#E8B84B" stroke-width="3" fill="none" stroke-linecap="round"/>`+
+  `<path d="M110 110 Q115 95 120 100" stroke="#E8B84B" stroke-width="3" fill="none" stroke-linecap="round"/>`+
+  // Highlight
+  `<path d="M30 118 Q75 115 120 118" stroke="#FFE890" stroke-width="4" fill="none" opacity="0.6"/>`
+);
+
+const karotteV5 = svgWrap5(
+  // Karotte (klassische Form)
+  `<path d="M50 40 L100 40 L88 130 Q75 138 62 130 Z" fill="#FF8C42" stroke="${O5}" stroke-width="2"/>`+
+  // Streifen
+  `<line x1="60" y1="50" x2="65" y2="125" stroke="${O5}" stroke-width="1.5" opacity="0.4"/>`+
+  `<line x1="75" y1="45" x2="75" y2="132" stroke="${O5}" stroke-width="1.5" opacity="0.4"/>`+
+  `<line x1="90" y1="50" x2="85" y2="125" stroke="${O5}" stroke-width="1.5" opacity="0.4"/>`+
+  // Highlight
+  `<path d="M60 60 Q65 80 62 110" stroke="#FFB070" stroke-width="6" fill="none" opacity="0.5"/>`+
+  // Grün oben
+  `<ellipse cx="60" cy="32" rx="8" ry="20" fill="#7FB069" stroke="${O5}" stroke-width="1.5" transform="rotate(-15 60 32)"/>`+
+  `<ellipse cx="75" cy="25" rx="8" ry="25" fill="#8FC36E" stroke="${O5}" stroke-width="1.5"/>`+
+  `<ellipse cx="90" cy="32" rx="8" ry="20" fill="#7FB069" stroke="${O5}" stroke-width="1.5" transform="rotate(15 90 32)"/>`
+);
+
+const apfelV5 = svgWrap5(
+  // Apfel (rund, rot)
+  `<path d="M75 40 Q40 40 35 75 Q35 110 60 125 Q75 130 90 125 Q115 110 115 75 Q110 40 75 40 Z" fill="#E74C3C" stroke="${O5}" stroke-width="2"/>`+
+  // Highlight
+  `<ellipse cx="58" cy="65" rx="14" ry="18" fill="#FF6B5C" opacity="0.6"/>`+
+  `<ellipse cx="55" cy="60" rx="6" ry="8" fill="#FF8B7C" opacity="0.7"/>`+
+  // Stiel
+  `<rect x="73" y="30" width="4" height="15" rx="2" fill="#6B4226" stroke="${O5}" stroke-width="1.5"/>`+
+  // Blatt
+  `<path d="M77 35 Q95 25 100 40 Q90 45 80 42 Z" fill="#7FB069" stroke="${O5}" stroke-width="1.5"/>`+
+  `<line x1="80" y1="40" x2="95" y2="35" stroke="${O5}" stroke-width="1" opacity="0.6"/>`
+);
+
+const getreideV5 = svgWrap5(
+  // Halm (groß, mittig)
+  `<path d="M75 130 L75 30" stroke="#E8B84B" stroke-width="4" stroke-linecap="round"/>`+
+  // Ähre (groß, oval)
+  `<ellipse cx="75" cy="45" rx="14" ry="32" fill="#E8B84B" stroke="${O5}" stroke-width="2"/>`+
+  // Körner-Schuppen (Schachbrettmuster)
+  `<path d="M68 25 Q72 22 76 25 Q80 28 76 31 Q72 34 68 31 Z" fill="#FFC857" stroke="${O5}" stroke-width="1"/>`+
+  `<path d="M68 38 Q72 35 76 38 Q80 41 76 44 Q72 47 68 44 Z" fill="#FFC857" stroke="${O5}" stroke-width="1"/>`+
+  `<path d="M68 51 Q72 48 76 51 Q80 54 76 57 Q72 60 68 57 Z" fill="#FFC857" stroke="${O5}" stroke-width="1"/>`+
+  `<path d="M68 64 Q72 61 76 64 Q80 67 76 70 Q72 73 68 70 Z" fill="#FFC857" stroke="${O5}" stroke-width="1"/>`+
+  // Grannen (lange Spitzen oben)
+  `<path d="M75 15 L72 5 M75 15 L78 5 M75 15 L75 2" stroke="#E8B84B" stroke-width="1.5" stroke-linecap="round"/>`+
+  // Highlight
+  `<path d="M70 40 Q72 50 70 60" stroke="#FFE890" stroke-width="3" fill="none" opacity="0.6"/>`
+);
+
+const maisV5 = svgWrap5(
+  // Kolben (groß)
+  `<ellipse cx="75" cy="75" rx="20" ry="45" fill="#FFD93D" stroke="${O5}" stroke-width="2"/>`+
+  // Körner (Reihen)
+  `<circle cx="65" cy="50" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  `<circle cx="75" cy="48" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  `<circle cx="85" cy="50" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  `<circle cx="65" cy="62" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  `<circle cx="75" cy="60" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  `<circle cx="85" cy="62" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  `<circle cx="65" cy="74" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  `<circle cx="75" cy="72" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  `<circle cx="85" cy="74" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  `<circle cx="65" cy="86" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  `<circle cx="75" cy="84" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  `<circle cx="85" cy="86" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  `<circle cx="65" cy="98" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  `<circle cx="75" cy="96" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  `<circle cx="85" cy="98" r="4" fill="#FFE890" stroke="${O5}" stroke-width="1"/>`+
+  // Blätter oben
+  `<path d="M55 35 Q40 20 35 50 Q45 45 55 40 Z" fill="#7FB069" stroke="${O5}" stroke-width="1.5"/>`+
+  `<path d="M95 35 Q110 20 115 50 Q105 45 95 40 Z" fill="#7FB069" stroke="${O5}" stroke-width="1.5"/>`+
+  // Blätter unten
+  `<path d="M55 115 Q40 130 35 105 Q45 110 55 115 Z" fill="#7FB069" stroke="${O5}" stroke-width="1.5"/>`+
+  `<path d="M95 115 Q110 130 115 105 Q105 110 95 115 Z" fill="#7FB069" stroke="${O5}" stroke-width="1.5"/>`
+);
+
+const strohV5 = svgWrap5(
+  // Strohballen (rechteckig)
+  `<rect x="20" y="55" width="110" height="65" rx="8" fill="#E8B84B" stroke="${O5}" stroke-width="2"/>`+
+  // Streifen (waagrecht)
+  `<line x1="20" y1="75" x2="130" y2="75" stroke="${O5}" stroke-width="1.5" opacity="0.5"/>`+
+  `<line x1="20" y1="95" x2="130" y2="95" stroke="${O5}" stroke-width="1.5" opacity="0.5"/>`+
+  // Highlights
+  `<rect x="25" y="58" width="100" height="5" rx="2" fill="#FFC857" opacity="0.6"/>`+
+  // Halme (über die Kante)
+  `<path d="M30 55 L30 40 M45 55 L45 38 M60 55 L60 42 M75 55 L75 35 M90 55 L90 40 M105 55 L105 38 M120 55 L120 42" stroke="#D2A040" stroke-width="2" stroke-linecap="round"/>`+
+  // Etikett/Logo
+  `<circle cx="105" cy="100" r="10" fill="#FFF" stroke="${O5}" stroke-width="1.5" opacity="0.7"/>`+
+  `<text x="105" y="104" text-anchor="middle" font-size="14" font-weight="bold" fill="${O5}" opacity="0.5">🌾</text>`
+);
+
+const grasV5 = svgWrap5(
+  // Grasbüschel (mehrere Halme)
+  `<path d="M30 130 Q35 90 40 70 Q42 95 45 130 Z" fill="#7FB069" stroke="${O5}" stroke-width="1.5"/>`+
+  `<path d="M45 130 Q50 85 55 60 Q58 90 60 130 Z" fill="#8FC36E" stroke="${O5}" stroke-width="1.5"/>`+
+  `<path d="M60 130 Q65 80 70 50 Q73 85 75 130 Z" fill="#9FD37D" stroke="${O5}" stroke-width="1.5"/>`+
+  `<path d="M75 130 Q80 78 85 45 Q88 82 90 130 Z" fill="#9FD37D" stroke="${O5}" stroke-width="1.5"/>`+
+  `<path d="M90 130 Q95 80 100 55 Q103 85 105 130 Z" fill="#8FC36E" stroke="${O5}" stroke-width="1.5"/>`+
+  `<path d="M105 130 Q110 85 115 65 Q117 95 120 130 Z" fill="#7FB069" stroke="${O5}" stroke-width="1.5"/>`+
+  // Highlights (helle Spitzen)
+  `<path d="M55 65 L55 75" stroke="#C5E1A5" stroke-width="1.5" opacity="0.7"/>`+
+  `<path d="M70 55 L70 70" stroke="#C5E1A5" stroke-width="1.5" opacity="0.7"/>`+
+  `<path d="M85 50 L85 65" stroke="#C5E1A5" stroke-width="1.5" opacity="0.7"/>`+
+  `<path d="M100 60 L100 75" stroke="#C5E1A5" stroke-width="1.5" opacity="0.7"/>`+
+  // Boden-Linie
+  `<path d="M20 130 L130 130" stroke="${O5}" stroke-width="2" opacity="0.5"/>`
+);
+
+const kornV5 = svgWrap5(
+  // Sack-Form
+  `<path d="M35 60 Q35 45 50 42 L100 42 Q115 45 115 60 L118 120 Q118 132 75 135 Q32 132 32 120 Z" fill="#C8A060" stroke="${O5}" stroke-width="2"/>`+
+  // Highlight oben
+  `<ellipse cx="75" cy="55" rx="32" ry="8" fill="#D8B070"/>`+
+  // Körner oben (sichtbar)
+  `<circle cx="60" cy="50" r="3" fill="#E8B84B" stroke="${O5}" stroke-width="0.5"/>`+
+  `<circle cx="72" cy="46" r="3" fill="#E8B84B" stroke="${O5}" stroke-width="0.5"/>`+
+  `<circle cx="84" cy="48" r="3" fill="#E8B84B" stroke="${O5}" stroke-width="0.5"/>`+
+  `<circle cx="68" cy="54" r="3" fill="#E8B84B" stroke="${O5}" stroke-width="0.5"/>`+
+  `<circle cx="80" cy="54" r="3" fill="#E8B84B" stroke="${O5}" stroke-width="0.5"/>`+
+  // Sack-Nähte
+  `<line x1="40" y1="75" x2="110" y2="75" stroke="${O5}" stroke-width="1.5" opacity="0.4"/>`+
+  `<line x1="38" y1="100" x2="112" y2="100" stroke="${O5}" stroke-width="1.5" opacity="0.4"/>`+
+  // Etikett
+  `<rect x="58" y="90" width="34" height="22" rx="2" fill="#F5DEB3" stroke="${O5}" stroke-width="1.5"/>`+
+  `<text x="75" y="105" text-anchor="middle" font-size="11" font-weight="bold" fill="${O5}">Korn</text>`
+);
+
+/* ============================================================
+   Jetzt alles in die Karten einfügen
+   ============================================================ */
+
+function setSvg(id, svg) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = svg;
+}
+
+// Tiere
+setSvg('hund-v4', tiereV4.ruede);
+setSvg('hund-v5', ruedeV5);
+setSvg('katze-v4', tiereV4.kater);
+setSvg('katze-v5', katerV5);
+setSvg('pferd-v4', tiereV4.hengst);
+setSvg('pferd-v5', hengstV5);
+setSvg('hahn-v4', tiereV4.hahn);
+setSvg('hahn-v5', hahnV5);
+setSvg('henne-v4', tiereV4.henne);
+setSvg('henne-v5', henneV5);
+setSvg('kaninchen-v4', tiereV4.rammler);
+setSvg('kaninchen-v5', rammlerV5);
+setSvg('ente-v4', tiereV4.ente);
+setSvg('ente-v5', enteV5);
+setSvg('kuh-v4', tiereV4.kuh);
+setSvg('kuh-v5', kuhV5);
+setSvg('schaf-v4', tiereV4.schaf);
+setSvg('schaf-v5', schafV5);
+setSvg('huendin-v4', tiereV4.huendin);
+setSvg('huendin-v5', huendinV5);
+
+// Werkzeuge
+setSvg('schaufel-v4', werkzeugeV4.schaufel);
+setSvg('schaufel-v5', schaufelV5);
+setSvg('besen-v4', werkzeugeV4.besen);
+setSvg('besen-v5', besenV5);
+setSvg('giesskanne-v4', werkzeugeV4.giesskanne);
+setSvg('giesskanne-v5', giesskanneV5);
+setSvg('eimer-v4', werkzeugeV4.eimer);
+setSvg('eimer-v5', eimerV5);
+setSvg('gabel-v4', werkzeugeV4.gabel);
+setSvg('gabel-v5', gabelV5);
+setSvg('hammer-v4', werkzeugeV4.hammer);
+setSvg('hammer-v5', hammerV5);
+setSvg('schere-v4', werkzeugeV4.schere);
+setSvg('schere-v5', schereV5);
+setSvg('mistgabel-v4', werkzeugeV4.mistgabel);
+setSvg('mistgabel-v5', mistgabelV5);
+setSvg('sack-v4', werkzeugeV4.sack);
+setSvg('sack-v5', sackV5);
+setSvg('spaten-v4', werkzeugeV4.spaten);
+setSvg('spaten-v5', spatenV5);
+setSvg('rechen-v4', werkzeugeV4.rechen);
+setSvg('rechen-v5', rechenV5);
+setSvg('kraftstoff-v4', werkzeugeV4.kraftstoff);
+setSvg('kraftstoff-v5', kraftstoffV5);
+setSvg('heugabel-v4', werkzeugeV4.heugabel);
+setSvg('heugabel-v5', heugabelV5);
+
+// Futter
+setSvg('heu-v4', futterV4.heu);
+setSvg('heu-v5', heuV5);
+setSvg('karotte-v4', futterV4.karotte);
+setSvg('karotte-v5', karotteV5);
+setSvg('apfel-v4', futterV4.apfel);
+setSvg('apfel-v5', apfelV5);
+setSvg('getreide-v4', futterV4.getreide);
+setSvg('getreide-v5', getreideV5);
+setSvg('mais-v4', futterV4.mais);
+setSvg('mais-v5', maisV5);
+setSvg('stroh-v4', futterV4.stroh);
+setSvg('stroh-v5', strohV5);
+setSvg('gras-v4', futterV4.gras);
+setSvg('gras-v5', grasV5);
+setSvg('korn-v4', futterV4.korn);
+setSvg('korn-v5', kornV5);
+</script>
+
+</body>
+</html>
